@@ -1,8 +1,17 @@
 import { Avatar, Button } from "antd";
+import { ConfigConsumerProps } from "antd/es/config-provider";
+import Link from "next/link";
 import styled from "styled-components";
 
-const url =
-  "https://avatars.githubusercontent.com/u/53461157?s=400&u=cf8e8ca53bb3533ef721587ee5e61ae1965ba316&v=4";
+// const url =
+//   "https://avatars.githubusercontent.com/u/53461157?s=400&u=cf8e8ca53bb3533ef721587ee5e61ae1965ba316&v=4";
+
+interface IntroProps {
+  config?: {
+    username: string;
+    intro: string[];
+  };
+}
 
 const InfoWrapper = styled.div`
   text-align: center;
@@ -25,7 +34,7 @@ const AvatarWrapper = styled.div`
       height: 98%;
       border-radius: 50%;
       overflow: hidden;
-      animation: halation 3s infinite ease-in-out;
+      /* animation: halation 3s infinite ease-in-out; */
     }
 
     @keyframes halation {
@@ -57,28 +66,37 @@ const AvatarWrapper = styled.div`
 
 const UserName = styled.h1`
   user-select: none;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px 0;
 `;
-const Motto = styled.p`
+const Motto = styled.ul`
   color: var(--wick-gray);
+  margin: 10px 0;
 `;
 
-export default function Intro() {
+export default function Intro({ config }: IntroProps) {
+  console.log(config);
   return (
     <InfoWrapper>
       <AvatarWrapper>
         <Avatar
-          size={{ xs: 48, sm: 64, md: 80, lg: 128, xl: 160, xxl: 200 }}
+          // TODO: Antd SSR BUG
+          // size={{ xs: 48, sm: 64, md: 80, lg: 128, xl: 160, xxl: 200 }}
+          size={200}
           draggable={false}
-          src={url}
+          src="freddie.jpg"
         />
       </AvatarWrapper>
-      <UserName>Wick</UserName>
+      <UserName>{config && config.username}</UserName>
       <Motto>
-        <p>Fans of Queen~🎵</p>
+        Fans of Queen~🎵
+        {config &&
+          config.intro &&
+          config.intro.map((item, index) => {
+            return <li key={index}>{item}</li>;
+          })}
       </Motto>
-      <Button ghost={true}>博客</Button>
-      <Button ghost={true}>照片集</Button>
-      <Button ghost={true}>关于</Button>
     </InfoWrapper>
   );
 }

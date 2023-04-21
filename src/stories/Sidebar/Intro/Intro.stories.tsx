@@ -11,6 +11,10 @@ type Story = StoryObj<typeof Intro>;
 
 export const Common: Story = {
   render() {
-    return <Intro></Intro>;
+    return (
+      <Intro
+        config={{ username: "OnlyWick", intro: ["Wick", "OnlyWick"] }}
+      ></Intro>
+    );
   },
 };
