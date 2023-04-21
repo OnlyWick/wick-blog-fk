@@ -1,4 +1,4 @@
-import { Button, Card } from "antd";
+import { Button, Card, Divider, Tag } from "antd";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { okaidia } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -6,6 +6,10 @@ import styled from "styled-components";
 
 const ArticleViewerWrapper = styled.div``;
 
+const ArticleViewerHeader = styled.div``;
+const ArticleViewerBaseInfo = styled.div`
+  color: #bdbdbd;
+`;
 const ArticleViewerTitle = styled.h1`
   font-size: 36px;
   font-weight: bold;
@@ -38,7 +42,19 @@ export default function ArticleViewer() {
   const markdown: string = localStorage.getItem("article")!;
   return (
     <Card>
-      <ArticleViewerTitle>如何正确摸鱼</ArticleViewerTitle>
+      <ArticleViewerHeader>
+        <ArticleViewerTitle>如何正确摸鱼</ArticleViewerTitle>
+        <ArticleViewerBaseInfo>
+          <span>2023年4月22日01:39</span>
+          <Divider type="vertical"></Divider>
+          <span>阅读 999</span>
+          <Divider type="vertical"></Divider>
+          <Tag color="orange">前端</Tag>
+          <Tag color="orange">后端</Tag>
+          <Tag color="orange">React</Tag>
+          <Tag color="orange">Vue</Tag>
+        </ArticleViewerBaseInfo>
+      </ArticleViewerHeader>
       <ArticleViewerBody>
         <ReactMarkdown
           components={{
