@@ -71,6 +71,10 @@ const CommentItemActionItemCounter = styled.span`
 const CommentItemSub = styled.div`
   overflow: hidden;
   margin-top: 16px;
+
+  & .ant-card-body > div:first-child {
+    margin-top: 0;
+  }
 `;
 
 interface UserInfoProps {
@@ -121,22 +125,28 @@ const CommentItemParentReplyWrapper = styled.div`
   box-sizing: border-box;
   border-radius: 4px;
   padding: 0 12px;
-  line-height: 36px;
   height: 36px;
+  line-height: 36px;
   font-size: 14px;
   color: #8a919f;
   margin: 8px 0;
 
   & > .ant-typography {
     margin-bottom: 0;
-    line-height: revert;
+    line-height: 36px;
     color: #8a919f;
   }
 `;
 
+const SubCommentItemWrapper = styled.div<CommentItemWrapperProps>`
+  display: flex;
+  overflow: hidden;
+  margin-top: 16px;
+`;
+
 function CommentItemInternal({ comment }: SubCommentProps) {
   return (
-    <CommentItemWrapper>
+    <SubCommentItemWrapper>
       <CommentItemLeft>
         <Avatar size="large" src="freddie.jpg"></Avatar>
       </CommentItemLeft>
@@ -185,9 +195,8 @@ function CommentItemInternal({ comment }: SubCommentProps) {
             </CommentItemActionItem>
           </CommentItemActions>
         </CommentItemMain>
-        <CommentItemSub></CommentItemSub>
       </CommentItemRight>
-    </CommentItemWrapper>
+    </SubCommentItemWrapper>
   );
 }
 
@@ -195,7 +204,7 @@ export default function CommentItem({ comment, sub }: CommentItemProps) {
   return (
     <CommentItemWrapper sub={sub}>
       <CommentItemLeft>
-        <Avatar size="large" src="freddie.jpg"></Avatar>
+        <Avatar size={52} src="freddie.jpg"></Avatar>
       </CommentItemLeft>
       <CommentItemRight>
         <CommentItemHeader>
