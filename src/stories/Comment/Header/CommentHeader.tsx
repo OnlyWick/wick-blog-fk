@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { Input } from "antd";
 import { useState } from "react";
 import EmojiIcon from "@/stories/Common/icon/EmojiIcon";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 
 const { TextArea } = Input;
 
@@ -103,6 +105,7 @@ export default function CommentHeader() {
                 <Button type="link" icon={<EmojiIcon />}>
                   表情
                 </Button>
+                <Picker data={data} />
               </CommentActionLeft>
               <CommentActionRight>
                 {count > 15 && (
