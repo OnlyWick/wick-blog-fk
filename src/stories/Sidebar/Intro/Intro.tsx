@@ -69,6 +69,10 @@ const UserName = styled.h1`
   font-size: 24px;
   font-weight: bold;
   margin: 10px 0;
+  line-height: 1.25;
+  background: linear-gradient(315deg, #42d392 25%, #647eff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;
 const Motto = styled.ul`
   color: var(--wick-gray);

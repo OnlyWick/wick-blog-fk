@@ -7,6 +7,7 @@ const EmojiSelectorWrapper = styled.ul`
   padding: 12px;
   border: 1px solid #f0f0f0;
   box-sizing: border-box;
+  background-color: #fff;
 `;
 
 const EmojiContentWrapper = styled.li`
@@ -134,12 +135,17 @@ const builtinEmoji: EmojiArray = [
 ];
 
 interface EmojiSelectorProps {
-  numPerRows: number;
+  numPerRows?: number;
 }
 export default function EmojiSelector({ numPerRows = 8 }: EmojiSelectorProps) {
   if (numPerRows < 0 || numPerRows > 8) {
     numPerRows = 8;
   }
+
+  const handleCloseEmojiSelector = (event) => {
+    event.stopPropagation();
+  };
+
   const renderEmojiArray = builtinEmoji.reduce<EmojiArray[]>((acc, _, i) => {
     if (i % numPerRows === 0) {
       const arr = builtinEmoji.slice(i, i + numPerRows);
@@ -153,7 +159,7 @@ export default function EmojiSelector({ numPerRows = 8 }: EmojiSelectorProps) {
   }, []);
 
   return (
-    <EmojiSelectorWrapper>
+    <EmojiSelectorWrapper onClick={handleCloseEmojiSelector}>
       <EmojiContentWrapper>
         <EmojiContentTitle>最近使用</EmojiContentTitle>
         <EmojiWrapper>
@@ -176,7 +182,6 @@ export default function EmojiSelector({ numPerRows = 8 }: EmojiSelectorProps) {
           return (
             <EmojiWrapper key={index}>
               {emojiArray.map((item, index) => {
-                console.log(index);
                 return item ? (
                   <EmojiContent key={index}>{item?.emoji}</EmojiContent>
                 ) : (

@@ -1,10 +1,9 @@
 import { Avatar, Button, Divider } from "antd";
 import styled from "styled-components";
 import { Input } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EmojiIcon from "@/stories/Common/icon/EmojiIcon";
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
+import EmojiSelector from "@/stories/Common/EmojiSelector/EmojiSelector";
 
 const { TextArea } = Input;
 
@@ -51,10 +50,22 @@ const CommentActions = styled.div`
 `;
 
 const CommentActionLeft = styled.div`
+  position: relative;
+
   & > .ant-btn:first-child {
     padding: 0;
   }
 `;
+
+interface EmojiSelectorWrapperProps {
+  show?: boolean;
+}
+const EmojiSelectorWrapper = styled.div<EmojiSelectorWrapperProps>`
+  position: absolute;
+  display: ${(props) => (props.show ? "block" : "none")};
+  z-index: 1;
+`;
+
 const CommentActionRight = styled.div`
   display: flex;
   align-items: center;
@@ -68,6 +79,7 @@ const CommentWordsLeft = styled.div`
 export default function CommentHeader() {
   const [count, setCount] = useState(0);
   const [maxLength, setMaxLength] = useState(0);
+  const [showEmojiSelector, setShowEmojiSelector] = useState(false);
 
   // FIXME: setTimeout 可以, 但是记得修复(感觉不优雅, 临时解决)
   const handleFormatter = (info: any) => {
@@ -77,6 +89,21 @@ export default function CommentHeader() {
     });
     return false;
   };
+
+  const handleShowEmojiSelector = (event) => {
+    event.stopPropagation();
+    setShowEmojiSelector(true);
+  };
+  const handleCloseEmojiSelector = () => {
+    setShowEmojiSelector(false);
+  };
+
+  useEffect(() => {
+    document.body.addEventListener("click", handleCloseEmojiSelector);
+    return () => {
+      document.body.removeEventListener("click", handleCloseEmojiSelector);
+    };
+  }, [showEmojiSelector]);
 
   return (
     <>
@@ -102,10 +129,16 @@ export default function CommentHeader() {
             />
             <CommentActions>
               <CommentActionLeft>
-                <Button type="link" icon={<EmojiIcon />}>
+                <Button
+                  type="link"
+                  icon={<EmojiIcon />}
+                  onClick={handleShowEmojiSelector}
+                >
                   表情
                 </Button>
-                <Picker data={data} />
+                <EmojiSelectorWrapper show={showEmojiSelector}>
+                  <EmojiSelector />
+                </EmojiSelectorWrapper>
               </CommentActionLeft>
               <CommentActionRight>
                 {count > 15 && (

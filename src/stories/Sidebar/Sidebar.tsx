@@ -19,9 +19,6 @@ const Overlay = styled.div`
   height: 300px;
   overflow: hidden;
   color: #000;
-  /* background-image: url(Queen.jpg);
-  background-repeat: no-repeat;
-  background-size: contain; */
 `;
 
 export default function Sidebar(config?: Partial<SidebarProps>) {
