@@ -142,7 +142,7 @@ export default function EmojiSelector({ numPerRows = 8 }: EmojiSelectorProps) {
     numPerRows = 8;
   }
 
-  const handleCloseEmojiSelector = (event) => {
+  const handleCloseEmojiSelector = (event: any) => {
     event.stopPropagation();
   };
 

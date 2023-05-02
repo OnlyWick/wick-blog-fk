@@ -90,7 +90,7 @@ export default function CommentHeader() {
     return false;
   };
 
-  const handleShowEmojiSelector = (event) => {
+  const handleShowEmojiSelector = (event: any) => {
     event.stopPropagation();
     setShowEmojiSelector(true);
   };

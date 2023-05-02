@@ -7,9 +7,7 @@ interface ArticleListProps {
   children: ReactNode[];
 }
 
-const ArticleListWrapper = styled.ul`
-  padding: 24px 48px 0;
-`;
+const ArticleListWrapper = styled.ul``;
 
 const ArticleListItem = styled.li`
   margin-bottom: 12px;

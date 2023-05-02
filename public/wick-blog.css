@@ -4,5 +4,9 @@
 
 :root, body {
     height: 100%;
-    padding-left: 378px;
+    /* padding-left: 378px; */
+}
+
+#__next {
+    height: 100%;
 }
