@@ -1,74 +1,111 @@
-import { Button, Drawer, SiderProps } from "antd";
+import { Button } from "antd";
 import Intro from "./Intro";
 import SiteConfig from "../SiteConfig";
-import { useState } from "react";
 import styled from "styled-components";
-import { NodeNextRequest } from "next/dist/server/base-http/node";
+import Link from "next/link";
 
 interface SidebarProps {
-  username: string;
-  avatar: string;
-  motto: string[];
-  siteConfig: {
+  fullscreen: boolean;
+  username?: string;
+  avatar?: string;
+  motto?: string[];
+  siteConfig?: {
     approve: string;
     copyright: string;
   };
 }
 
-const Overlay = styled.div`
-  height: 300px;
-  overflow: hidden;
-  color: #000;
+interface SidebarWrapperProps {
+  fullscreen?: boolean;
+}
+const SidebarWrapper = styled.div<SidebarWrapperProps>`
+  ${(props) =>
+    props.fullscreen
+      ? `left: 0;
+         top: 0;
+         right: 0;
+         bottom: 0;
+         position: absolute;
+         display: flex;
+         justify-content: center;
+         flex-direction: column;
+        `
+      : `
+    padding-top: 200px;
+      position: static;`}
+  background: #313131;
+  height: 100%;
+  align-items: center;
+  box-sizing: border-box;
 `;
 
-export default function Sidebar(config?: Partial<SidebarProps>) {
-  const [switchPage, setSwitchPage] = useState(false);
-  const handleClick = function () {
-    setSwitchPage(!switchPage);
-  };
+interface SidebarNavProps {
+  fullscreen?: boolean;
+}
 
+const SidebarNav = styled.div<SidebarNavProps>`
+  display: flex;
+  flex-direction: ${(props) => (props.fullscreen ? "row" : "column")};
+  align-items: center;
+  justify-content: center;
+`;
+
+export default function Sidebar({ fullscreen, siteConfig }: SidebarProps) {
   return (
-    <Drawer
-      open={true}
-      closable={false}
-      placement="left"
-      bodyStyle={{
-        padding: 0,
-        // background: "linear-gradient(to bottom, #17ead9, #6078ea)",
-        background: "#313131",
-      }}
-      width={switchPage ? "378px" : "100%"}
-      mask={false}
-    >
-      <Overlay></Overlay>
+    <SidebarWrapper fullscreen={fullscreen}>
       <Intro></Intro>
 
-      <nav style={{ display: "flex", flexDirection: "column" }}>
-        <Button
-          type="primary"
-          style={{
-            border: "none",
-            backgroundColor: "#f1f1f1",
-            color: "#313131",
-          }}
-          onClick={handleClick}
-          // ghost
-        >
-          博客
-        </Button>
-        <Button onClick={handleClick} ghost>
-          照片集
-        </Button>
-        <Button onClick={handleClick} ghost>
-          关于
-        </Button>
-      </nav>
+      <SidebarNav fullscreen={fullscreen}>
+        <Link href="/blog">
+          <Button
+            type="primary"
+            style={{
+              width: "100px",
+              border: "none",
+              backgroundColor: "#f1f1f1",
+              color: "#313131",
+              margin: "10px",
+            }}
+          >
+            博客
+          </Button>
+        </Link>
+        <Link href="/album">
+          <Button
+            style={{
+              width: "100px",
+              border: "none",
+              backgroundColor: "#f1f1f1",
+              color: "#313131",
+              margin: "10px",
+            }}
+            ghost
+          >
+            照片集
+          </Button>
+        </Link>
+
+        <Link href="/about">
+          <Button
+            style={{
+              width: "100px",
+              border: "none",
+              backgroundColor: "#f1f1f1",
+              color: "#313131",
+              margin: "10px",
+            }}
+            ghost
+          >
+            关于
+          </Button>
+        </Link>
+      </SidebarNav>
       <SiteConfig
         config={{
-          approve: config?.siteConfig?.approve,
-          copyright: config?.siteConfig?.copyright,
+          approve: siteConfig?.approve,
+          copyright: siteConfig?.copyright,
         }}
       ></SiteConfig>
-    </Drawer>
+    </SidebarWrapper>
   );
 }

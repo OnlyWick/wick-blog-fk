@@ -1,12 +1,5 @@
 // eslint-disable-next-line @next/next/no-document-import-in-page
-import Document, {
-  DocumentContext,
-  DocumentInitialProps,
-  Head,
-  Html,
-  Main,
-  NextScript,
-} from "next/document";
+import Document, { Head, Html, Main, NextScript } from "next/document";
 import { ServerStyleSheet } from "styled-components";
 import { doExtraStyle } from "../../scripts/genAntdCss";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
@@ -51,7 +44,7 @@ export default class MyDocument extends Document {
   }
   render() {
     return (
-      <Html lang="en">
+      <Html lang="zh">
         <Head />
         <body>
           <Main />

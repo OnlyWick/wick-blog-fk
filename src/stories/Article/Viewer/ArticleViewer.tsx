@@ -1,4 +1,5 @@
 import { Button, Card, Divider, Tag } from "antd";
+import { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { okaidia } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -38,7 +39,11 @@ const ArticleViewerCodeAction = styled.div`
   }
 `;
 
-export default function ArticleViewer() {
+interface ArticleViewerProps {
+  children: ReactNode;
+}
+
+export default function ArticleViewer({ children }: ArticleViewerProps) {
   const markdown: string = localStorage.getItem("article")!;
   return (
     <Card>

@@ -80,7 +80,6 @@ const Motto = styled.ul`
 `;
 
 export default function Intro({ config }: IntroProps) {
-  console.log(config);
   return (
     <InfoWrapper>
       <AvatarWrapper>
@@ -89,10 +88,10 @@ export default function Intro({ config }: IntroProps) {
           // size={{ xs: 48, sm: 64, md: 80, lg: 128, xl: 160, xxl: 200 }}
           size={200}
           draggable={false}
-          src="freddie.jpg"
+          src="/freddie.jpg"
         />
       </AvatarWrapper>
-      <UserName>{config && config.username}</UserName>
+      <UserName>OnlyWick</UserName>
       <Motto>
         Fans of Queen~🎵
         {config &&

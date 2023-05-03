@@ -2,7 +2,10 @@ import { SmileOutlined } from "@ant-design/icons";
 import { Card, Dropdown, MenuProps, Segmented } from "antd";
 import styled from "styled-components";
 
-const TopNavWrapper = styled.div``;
+const TopNavWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 export default function TopNav() {
   const items: MenuProps["items"] = [
@@ -54,10 +57,9 @@ export default function TopNav() {
   return (
     <TopNavWrapper>
       <Segmented
-        block
-        size="large"
+        size="middle"
         style={{
-          background: "#888",
+          background: "rgb(208 208 208)",
         }}
         options={[
           "最新",

@@ -1,9 +1,21 @@
-import { Divider, Image } from "antd";
+import { AlertProps, Button, Divider, Image } from "antd";
 import { useState } from "react";
 import styled from "styled-components";
 
 const AlbumItemWrapper = styled.div`
-  padding-right: 60px;
+  display: flex;
+`;
+
+const AlbumItemLeft = styled.div`
+  flex: 1;
+`;
+
+const AlbumItemRight = styled.div`
+  width: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #ccc;
 `;
 
 const AlbumItemTimeline = styled.div``;
@@ -13,11 +25,11 @@ const AlbumItemContent = styled.ul`
 `;
 
 interface AlbumItemImageProps {
-  mode?: boolean;
+  mode?: "thumbnail" | "detail";
 }
 
 const AlbumItemImage = styled.li<AlbumItemImageProps>`
-  width: ${(props) => (props.mode ? "100%" : "auto")};
+  width: ${(props) => (props.mode === "detail" ? "100%" : "auto")};
 
   & {
     .ant-image {
@@ -31,44 +43,50 @@ const AlbumItemDay = styled.div`
   color: #bdbdbd;
 `;
 
-export default function AlbumItem() {
-  const [isDetailMode, setDetailMode] = useState(true);
+interface AlbumItemProps {
+  mode?: "thumbnail" | "detail";
+}
 
-  const handleDetailMode = function () {
-    setDetailMode(true);
-  };
-
+export default function AlbumItem({ mode }: AlbumItemProps) {
   return (
     <AlbumItemWrapper>
-      <AlbumItemTimeline>
-        <Divider plain>4 月</Divider>
-      </AlbumItemTimeline>
-      <AlbumItemContent>
-        <Image.PreviewGroup>
-          <AlbumItemImage mode={true}>
-            {isDetailMode && <AlbumItemDay>今天</AlbumItemDay>}
-            <Image src="https://p3-passport.byteimg.com/img/user-avatar/3d99b843527461e48ee39069bcd52ece~180x180.awebp"></Image>
-          </AlbumItemImage>
-          <AlbumItemImage>
-            <Image src="https://p3-passport.byteimg.com/img/user-avatar/3d99b843527461e48ee39069bcd52ece~180x180.awebp"></Image>
+      <AlbumItemLeft>
+        <AlbumItemTimeline>
+          <Divider style={{ margin: "0 0 4px" }} plain>
+            4 月
+          </Divider>
+        </AlbumItemTimeline>
+        <AlbumItemContent>
+          <Image.PreviewGroup>
+            <AlbumItemImage mode={mode}>
+              {mode === "detail" && <AlbumItemDay>今天</AlbumItemDay>}
+              <Image
+                width={200}
+                src="https://p3-passport.byteimg.com/img/user-avatar/3d99b843527461e48ee39069bcd52ece~180x180.awebp"
+              ></Image>
+            </AlbumItemImage>
+            <AlbumItemImage>
+              {mode === "detail" && <AlbumItemDay>昨天</AlbumItemDay>}
+              <Image
+                width={200}
+                src="https://p3-passport.byteimg.com/img/user-avatar/3d99b843527461e48ee39069bcd52ece~180x180.awebp"
+              ></Image>
 
-            <Image src="https://p3-passport.byteimg.com/img/user-avatar/3d99b843527461e48ee39069bcd52ece~180x180.awebp"></Image>
-          </AlbumItemImage>
-          <AlbumItemImage>
-            <Image src="https://p3-passport.byteimg.com/img/user-avatar/3d99b843527461e48ee39069bcd52ece~180x180.awebp"></Image>
-          </AlbumItemImage>
-
-          <AlbumItemImage>
-            <Image src="https://p3-passport.byteimg.com/img/user-avatar/3d99b843527461e48ee39069bcd52ece~180x180.awebp"></Image>
-          </AlbumItemImage>
-          <AlbumItemImage>
-            <Image src="https://p3-passport.byteimg.com/img/user-avatar/3d99b843527461e48ee39069bcd52ece~180x180.awebp"></Image>
-          </AlbumItemImage>
-          <AlbumItemImage>
-            <Image src="https://p3-passport.byteimg.com/img/user-avatar/3d99b843527461e48ee39069bcd52ece~180x180.awebp"></Image>
-          </AlbumItemImage>
-        </Image.PreviewGroup>
-      </AlbumItemContent>
+              <Image
+                width={200}
+                src="https://p3-passport.byteimg.com/img/user-avatar/3d99b843527461e48ee39069bcd52ece~180x180.awebp"
+              ></Image>
+            </AlbumItemImage>
+            <AlbumItemImage mode={mode}>
+              {mode === "detail" && <AlbumItemDay>前天</AlbumItemDay>}
+              <Image
+                width={200}
+                src="https://p3-passport.byteimg.com/img/user-avatar/3d99b843527461e48ee39069bcd52ece~180x180.awebp"
+              ></Image>
+            </AlbumItemImage>
+          </Image.PreviewGroup>
+        </AlbumItemContent>
+      </AlbumItemLeft>
     </AlbumItemWrapper>
   );
 }
