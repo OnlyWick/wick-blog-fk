@@ -25,18 +25,25 @@ const SidebarWrapper = styled.div<SidebarWrapperProps>`
          top: 0;
          right: 0;
          bottom: 0;
-         position: absolute;
+         position: fixed;
          display: flex;
          justify-content: center;
          flex-direction: column;
         `
       : `
-    padding-top: 200px;
-      position: static;`}
-  background: #313131;
+        padding-top: 200px;
+        width: 378px;
+        position: static;`}
+  background: #fff;
   height: 100%;
   align-items: center;
   box-sizing: border-box;
+  position: fixed;
+  transition: all 0.35s;
+  left: ${(props) => (props.fullscreen ? "0" : "-378px")};
+  @media screen and (min-width: 769px) {
+    left: 0;
+  }
 `;
 
 interface SidebarNavProps {

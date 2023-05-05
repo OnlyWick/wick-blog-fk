@@ -1,8 +1,7 @@
 import { Button, Card, Divider, Tag } from "antd";
-import { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { okaidia } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { okaidia } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import styled from "styled-components";
 
 const ArticleViewerWrapper = styled.div``;
@@ -40,19 +39,31 @@ const ArticleViewerCodeAction = styled.div`
 `;
 
 interface ArticleViewerProps {
-  children: ReactNode;
+  title?: string;
+  tag?: string[];
+  keywords?: string[];
+  readCount?: number;
+  updatedAt?: string;
+  children: string;
 }
 
-export default function ArticleViewer({ children }: ArticleViewerProps) {
-  const markdown: string = localStorage.getItem("article")!;
+export default function ArticleViewer({
+  title,
+  tag,
+  keywords,
+  readCount,
+  updatedAt,
+  children,
+}: ArticleViewerProps) {
+  console.log(children);
   return (
     <Card>
       <ArticleViewerHeader>
-        <ArticleViewerTitle>如何正确摸鱼</ArticleViewerTitle>
+        <ArticleViewerTitle>{title}</ArticleViewerTitle>
         <ArticleViewerBaseInfo>
-          <span>2023年4月22日01:39</span>
+          <span>{updatedAt}</span>
           <Divider type="vertical"></Divider>
-          <span>阅读 999</span>
+          <span>{readCount}</span>
           <Divider type="vertical"></Divider>
           <Tag color="orange">前端</Tag>
           <Tag color="orange">后端</Tag>
@@ -91,7 +102,7 @@ export default function ArticleViewer({ children }: ArticleViewerProps) {
             },
           }}
         >
-          {markdown}
+          {children}
         </ReactMarkdown>
       </ArticleViewerBody>
     </Card>

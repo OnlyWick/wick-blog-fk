@@ -2,8 +2,9 @@ import { ReactNode } from "react";
 import styled, { CSSProperties } from "styled-components";
 
 const SiderWrapper = styled.aside`
-  height: 100%;
+  min-width: 378px;
   flex: 0 0 378px;
+  position: relative;
 `;
 
 interface SiderProps {

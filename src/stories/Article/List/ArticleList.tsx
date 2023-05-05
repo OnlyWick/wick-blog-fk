@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import ArticleItem from "./Item/ArticleItem";
-import { Card } from "antd";
 import styled from "styled-components";
 
 interface ArticleListProps {

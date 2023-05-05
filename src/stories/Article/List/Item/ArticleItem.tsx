@@ -9,6 +9,7 @@ const ArticleItemHeader = styled.div`
   align-items: center;
   padding: 0 0 6px;
   border-bottom: 1px solid #ccc;
+  flex-wrap: wrap;
 `;
 const ArticleItemTitle = styled.h1`
   font-size: 20px;
@@ -35,6 +36,7 @@ const ArticleItemBody = styled.a`
 `;
 const ArticleItemContent = styled.div`
   color: #737373;
+  word-break: break-all;
 `;
 
 export default function ArticleItem(config: ArticleItemProps) {

@@ -1,12 +1,28 @@
 :root {
-    --wick-gray: #c8c8c8;
+  --wick-gray: #c8c8c8;
+  background: #eee;
 }
 
-:root, body {
-    height: 100%;
-    /* padding-left: 378px; */
+:root,
+body {
+  height: 100%;
 }
 
 #__next {
+  transition: all 0.35s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 769px) {
+  #__next {
+    padding-left: 0;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  #__next {
+    padding-left: 378px;
     height: 100%;
+  }
 }

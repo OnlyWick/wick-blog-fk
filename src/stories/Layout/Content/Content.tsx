@@ -2,7 +2,6 @@ import { CSSProperties, ReactNode } from "react";
 import styled from "styled-components";
 
 const ContentWrapper = styled.div`
-  height: 100%;
   flex: auto;
 `;
 

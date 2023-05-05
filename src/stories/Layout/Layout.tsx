@@ -7,7 +7,6 @@ interface LayoutWrapperProps {
 }
 
 const LayoutWrapper = styled.section<LayoutWrapperProps>`
-  height: 100%;
   display: flex;
   flex-direction: ${(props) => (props.hasSider ? "row" : "column")};
   flex: auto;
