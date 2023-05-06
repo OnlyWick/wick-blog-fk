@@ -36,9 +36,19 @@ export default function App({ Component, pageProps }: AppProps) {
         <>
           <GlobalStyle />
           <Sidebar fullscreen={false}></Sidebar>
-          <TopNav></TopNav>
-          <Layout>
-            <Content style={{ padding: "0 50px" }}>
+          {/* <TopNav></TopNav> */}
+          <Layout style={{ width: "100%", alignItems: "center" }}>
+            <Content
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "0 50px",
+                maxWidth: "1280px",
+                width: "100%",
+              }}
+            >
               <Component {...pageProps} />
             </Content>
           </Layout>

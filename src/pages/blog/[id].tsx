@@ -1,4 +1,5 @@
 import ArticleViewer from "@/stories/Article/Viewer";
+import Comment from "@/stories/Comment/Comment";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 type Data = {
@@ -33,13 +34,10 @@ export default function Id({ article }: any) {
   return (
     <>
       <ArticleViewer
-        updatedAt={article.data.updatedAt}
-        readCount={article.data.readCount}
-        title={article.data.title}
-      >
-        {article.data.content}
-        {/* 你好世界 */}
-      </ArticleViewer>
+        style={{ marginTop: "64px", marginBottom: "24px" }}
+        config={article.data}
+      />
+      <Comment></Comment>
     </>
   );
 }

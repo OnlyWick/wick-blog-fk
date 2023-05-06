@@ -1,10 +1,9 @@
 import { ArrowUpIcon, CommentIcon } from "@/stories/Common/icon";
-import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
-import { Avatar, Button, Typography } from "antd";
-import Card from "antd/es/card/Card";
+// import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
+import { Avatar, Button, Typography, Card } from "antd";
 import styled from "styled-components";
 
-const { Paragraph, Text } = Typography;
+const { Paragraph } = Typography;
 
 interface CommentItemWrapperProps {
   sub?: boolean;
@@ -148,7 +147,7 @@ function CommentItemInternal({ comment }: SubCommentProps) {
   return (
     <SubCommentItemWrapper>
       <CommentItemLeft>
-        <Avatar size="large" src="freddie.jpg"></Avatar>
+        <Avatar size="large" src="/freddie.jpg"></Avatar>
       </CommentItemLeft>
       <CommentItemRight>
         <CommentItemHeader>
@@ -178,19 +177,15 @@ function CommentItemInternal({ comment }: SubCommentProps) {
                 &quot;
               </CommentItemParentReplyWrapper>
             )}
-            <MarkdownPreview>{comment.content}</MarkdownPreview>
+            {/* <MarkdownPreview>{comment.content}</MarkdownPreview> */}
           </CommentItemContent>
           <CommentItemActions>
             <CommentItemActionItem>
-              <Button type="link" ghost icon={<ArrowUpIcon />}></Button>
+              <Button type="link" icon={<ArrowUpIcon />}></Button>
               <CommentItemActionItemCounter>888</CommentItemActionItemCounter>
             </CommentItemActionItem>
             <CommentItemActionItem>
-              <Button
-                type="link"
-                ghost
-                icon={<CommentIcon></CommentIcon>}
-              ></Button>
+              <Button type="link" icon={<CommentIcon></CommentIcon>}></Button>
               <CommentItemActionItemCounter>888</CommentItemActionItemCounter>
             </CommentItemActionItem>
           </CommentItemActions>
@@ -201,10 +196,11 @@ function CommentItemInternal({ comment }: SubCommentProps) {
 }
 
 export default function CommentItem({ comment, sub }: CommentItemProps) {
+  console.log(comment.subComment);
   return (
     <CommentItemWrapper sub={sub}>
       <CommentItemLeft>
-        <Avatar size={52} src="freddie.jpg"></Avatar>
+        <Avatar size={52} src="/freddie.jpg"></Avatar>
       </CommentItemLeft>
       <CommentItemRight>
         <CommentItemHeader>
@@ -215,19 +211,15 @@ export default function CommentItem({ comment, sub }: CommentItemProps) {
         </CommentItemHeader>
         <CommentItemMain>
           <CommentItemContent>
-            <MarkdownPreview>{comment.content}</MarkdownPreview>
+            {/* <MarkdownPreview>{comment.content}</MarkdownPreview> */}
           </CommentItemContent>
           <CommentItemActions>
             <CommentItemActionItem>
-              <Button type="link" ghost icon={<ArrowUpIcon />}></Button>
+              <Button type="link" icon={<ArrowUpIcon />}></Button>
               <CommentItemActionItemCounter>888</CommentItemActionItemCounter>
             </CommentItemActionItem>
             <CommentItemActionItem>
-              <Button
-                type="link"
-                ghost
-                icon={<CommentIcon></CommentIcon>}
-              ></Button>
+              <Button type="link" icon={<CommentIcon></CommentIcon>}></Button>
               <CommentItemActionItemCounter>888</CommentItemActionItemCounter>
             </CommentItemActionItem>
           </CommentItemActions>
@@ -239,12 +231,12 @@ export default function CommentItem({ comment, sub }: CommentItemProps) {
                 backgroundColor: "rgba(233,233,233,.5)",
               }}
             >
-              {comment.subComment?.map((sub, index) => (
+              {/* {comment.subComment?.map((sub, index) => (
                 <CommentItemInternal
-                  key={index}
-                  comment={sub}
+                  key={sub.commentId}
+                  comment={{}}
                 ></CommentItemInternal>
-              ))}
+              ))} */}
             </Card>
           </CommentItemSub>
         )}

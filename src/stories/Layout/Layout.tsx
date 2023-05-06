@@ -10,6 +10,7 @@ const LayoutWrapper = styled.section<LayoutWrapperProps>`
   display: flex;
   flex-direction: ${(props) => (props.hasSider ? "row" : "column")};
   flex: auto;
+  box-sizing: border-box;
 
   & {
     > section {

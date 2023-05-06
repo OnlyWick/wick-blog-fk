@@ -1,4 +1,5 @@
 import { Button, Card, Divider, Tag } from "antd";
+import { CSSProperties } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { okaidia } from "react-syntax-highlighter/dist/cjs/styles/prism";
@@ -39,72 +40,71 @@ const ArticleViewerCodeAction = styled.div`
 `;
 
 interface ArticleViewerProps {
-  title?: string;
-  tag?: string[];
-  keywords?: string[];
-  readCount?: number;
-  updatedAt?: string;
-  children: string;
+  config: {
+    title?: string;
+    tags?: { id: string; name: string; color: string | null }[];
+    keywords?: string[];
+    readCount?: number;
+    updatedAt?: string;
+    content: string;
+  };
+  style?: CSSProperties;
 }
 
-export default function ArticleViewer({
-  title,
-  tag,
-  keywords,
-  readCount,
-  updatedAt,
-  children,
-}: ArticleViewerProps) {
-  console.log(children);
+export default function ArticleViewer({ config, style }: ArticleViewerProps) {
   return (
-    <Card>
-      <ArticleViewerHeader>
-        <ArticleViewerTitle>{title}</ArticleViewerTitle>
-        <ArticleViewerBaseInfo>
-          <span>{updatedAt}</span>
-          <Divider type="vertical"></Divider>
-          <span>{readCount}</span>
-          <Divider type="vertical"></Divider>
-          <Tag color="orange">前端</Tag>
-          <Tag color="orange">后端</Tag>
-          <Tag color="orange">React</Tag>
-          <Tag color="orange">Vue</Tag>
-        </ArticleViewerBaseInfo>
-      </ArticleViewerHeader>
-      <ArticleViewerBody>
-        <ReactMarkdown
-          components={{
-            code({ node, inline, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || "");
-              return !inline && match ? (
-                <ArticleViewerCode>
-                  <ArticleViewerCodeAction>
-                    <span>{match[1]}</span>
-                    <Button type="text" ghost>
-                      复制代码
-                    </Button>
-                  </ArticleViewerCodeAction>
-                  <SyntaxHighlighter
-                    {...props}
-                    style={okaidia}
-                    language={match[1]}
-                    PreTag="div"
-                    showLineNumbers={true}
-                  >
-                    {String(children).replace(/\n$/, "")}
-                  </SyntaxHighlighter>
-                </ArticleViewerCode>
-              ) : (
-                <code {...props} className={className}>
-                  {children}
-                </code>
-              );
-            },
-          }}
-        >
-          {children}
-        </ReactMarkdown>
-      </ArticleViewerBody>
-    </Card>
+    <ArticleViewerWrapper style={style}>
+      <Card>
+        <ArticleViewerHeader>
+          <ArticleViewerTitle>{config.title}</ArticleViewerTitle>
+          <ArticleViewerBaseInfo>
+            <span>{config.updatedAt}</span>
+            <Divider type="vertical"></Divider>
+            <span>{config.readCount}</span>
+            <Divider type="vertical"></Divider>
+            {config.tags &&
+              config.tags.map((tag) => {
+                return (
+                  <Tag key={tag.id} color={tag.color ? tag.color : "orange"}>
+                    {tag.name}
+                  </Tag>
+                );
+              })}
+          </ArticleViewerBaseInfo>
+        </ArticleViewerHeader>
+        <ArticleViewerBody>
+          <ReactMarkdown
+            components={{
+              code({ node, inline, className, children, ...props }) {
+                const match = /language-(\w+)/.exec(className || "");
+                return !inline && match ? (
+                  <ArticleViewerCode>
+                    <ArticleViewerCodeAction>
+                      <span>{match[1]}</span>
+                      <Button type="text">复制代码</Button>
+                    </ArticleViewerCodeAction>
+                    <SyntaxHighlighter
+                      {...props}
+                      style={okaidia}
+                      language={match[1]}
+                      PreTag="div"
+                      showLineNumbers={true}
+                    >
+                      {String(children).replace(/\n$/, "")}
+                    </SyntaxHighlighter>
+                  </ArticleViewerCode>
+                ) : (
+                  <code {...props} className={className}>
+                    {children}
+                  </code>
+                );
+              },
+            }}
+          >
+            {config.content}
+          </ReactMarkdown>
+        </ArticleViewerBody>
+      </Card>
+    </ArticleViewerWrapper>
   );
 }

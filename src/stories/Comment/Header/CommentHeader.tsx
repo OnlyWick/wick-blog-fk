@@ -116,7 +116,7 @@ export default function CommentHeader() {
         </CommentHeaderHeader>
         <CommentHeaderBody>
           <CommentHeaderLeft>
-            <Avatar src="freddie.jpg" size={52}></Avatar>
+            <Avatar src="/freddie.jpg" size={52}></Avatar>
           </CommentHeaderLeft>
           <CommentHeaderRight>
             <TextArea

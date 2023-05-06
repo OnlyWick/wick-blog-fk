@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 const ContentWrapper = styled.div`
   flex: auto;
+  box-sizing: border-box;
 `;
 
 interface ContentProps {

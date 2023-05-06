@@ -11,6 +11,6 @@ type Story = StoryObj<typeof ArticleViewer>;
 
 export const Common: Story = {
   render() {
-    return <ArticleViewer>随便啦</ArticleViewer>;
+    return <ArticleViewer config={{} as any}></ArticleViewer>;
   },
 };

@@ -3,6 +3,7 @@ import styled, { CSSProperties } from "styled-components";
 
 const FooterWrapper = styled.footer`
   padding: 24px 50px;
+  box-sizing: border-box;
 `;
 
 interface FooterProps {

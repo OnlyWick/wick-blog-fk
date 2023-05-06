@@ -163,7 +163,7 @@ export default function EmojiSelector({ numPerRows = 8 }: EmojiSelectorProps) {
       <EmojiContentWrapper>
         <EmojiContentTitle>最近使用</EmojiContentTitle>
         <EmojiWrapper>
-          {renderEmojiArray.map((_, index) => {
+          {/* {renderEmojiArray.map((_, index) => {
             return (
               <EmojiContent key={index}>
                 {
@@ -173,24 +173,27 @@ export default function EmojiSelector({ numPerRows = 8 }: EmojiSelectorProps) {
                 }
               </EmojiContent>
             );
-          })}
+          })} */}
         </EmojiWrapper>
       </EmojiContentWrapper>
       <EmojiContentWrapper>
         <EmojiContentTitle>所有表情</EmojiContentTitle>
-        {renderEmojiArray.map((emojiArray, index) => {
+        {/* {renderEmojiArray.map((emojiArray, index) => {
           return (
             <EmojiWrapper key={index}>
               {emojiArray.map((item, index) => {
                 return item ? (
-                  <EmojiContent key={index}>{item?.emoji}</EmojiContent>
+                  <EmojiContent
+                    dangerouslySetInnerHTML={{ __html: item?.emoji }}
+                    key={index}
+                  ></EmojiContent>
                 ) : (
                   <EmojiContentEmpty></EmojiContentEmpty>
                 );
               })}
             </EmojiWrapper>
           );
-        })}
+        })} */}
       </EmojiContentWrapper>
     </EmojiSelectorWrapper>
   );

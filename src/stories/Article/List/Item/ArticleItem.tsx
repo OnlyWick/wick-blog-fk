@@ -1,7 +1,15 @@
 import { Card, Tag } from "antd";
 import styled from "styled-components";
 
-interface ArticleItemProps {}
+interface ArticleItemProps {
+  article: {
+    id: string;
+    title: string;
+    description: null;
+    tags: { id: string; name: string; color: string | null }[];
+    updatedAt: string;
+  };
+}
 
 const ArticleItemHeader = styled.div`
   display: flex;
@@ -30,7 +38,7 @@ const ArticleItemUsername = styled.span`
 const ArticleItemTime = styled.span``;
 const ArticleItemTags = styled.div``;
 
-const ArticleItemBody = styled.a`
+const ArticleItemBody = styled.div`
   user-select: none;
   padding: 10px 0 0;
 `;
@@ -39,33 +47,29 @@ const ArticleItemContent = styled.div`
   word-break: break-all;
 `;
 
-export default function ArticleItem(config: ArticleItemProps) {
+export default function ArticleItem({ article }: ArticleItemProps) {
   return (
     <>
       <Card hoverable>
         <ArticleItemHeader>
           <ArticleItemBaseInfo>
             <ArticleItemUsername>OnlyWick</ArticleItemUsername>
-            <ArticleItemTime>2023年4月21日19:54</ArticleItemTime>
+            <ArticleItemTime>{article.updatedAt}</ArticleItemTime>
           </ArticleItemBaseInfo>
           <ArticleItemTags>
-            <Tag color="cyan">前端</Tag>
-            <Tag color="cyan">后端</Tag>
-            <Tag color="cyan">React</Tag>
-            <Tag color="cyan">Vue</Tag>
+            {article.tags &&
+              article.tags.map((tag) => {
+                return (
+                  <Tag key={tag.id} color={tag.color ? tag.color : "cyan"}>
+                    {tag.name}
+                  </Tag>
+                );
+              })}
           </ArticleItemTags>
         </ArticleItemHeader>
-        <ArticleItemBody href="/blog/123">
-          <ArticleItemTitle>正确摸鱼</ArticleItemTitle>
-          <ArticleItemContent>
-            当进行网络请求和 API
-            调用时，你是否知道本次请求的参数类型以及返回的响应数据类型？知道了请求的数据类型与响应的数据类型，会为得到的
-            json 数据定义 type/interface，使其有更好的类型提示？还是会在 any
-            类型下获取属性，但由于没有类型提示，导致写错个单词，最终提示 Cannot
-            read properties of undefined (reading )？ 作者：愧怍
-            链接：https://juejin.cn/post/7208019379829112893 来源：稀土掘金
-            著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
-          </ArticleItemContent>
+        <ArticleItemBody>
+          <ArticleItemTitle>{article.title}</ArticleItemTitle>
+          <ArticleItemContent>{article.description}</ArticleItemContent>
         </ArticleItemBody>
       </Card>
     </>

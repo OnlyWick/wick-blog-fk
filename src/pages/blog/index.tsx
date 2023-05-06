@@ -1,8 +1,7 @@
 import Layout from "@/stories/Layout";
 import Header from "@/stories/Layout/Header/Header";
-import TopNav from "@/stories/TopNav/TopNav";
 import { SmileOutlined } from "@ant-design/icons";
-import { Dropdown, MenuProps, Segmented } from "antd";
+import { Card, Dropdown, MenuProps, Segmented } from "antd";
 import dynamic from "next/dynamic";
 import useSWR from "swr";
 
@@ -23,14 +22,15 @@ const ArticleItem = dynamic(
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
 export default function Blog() {
-  const { data, error, isLoading } = useSWR(
-    "http://localhost:9396/article",
-    fetcher
-  );
-  console.log(data, error, isLoading);
-  fetch("").then((res) => {
-    console.log;
+  const {
+    data: articles,
+    error,
+    isLoading,
+  } = useSWR("http://localhost:9396/article", fetcher, {
+    revalidateOnFocus: false,
   });
+  console.log(articles);
+
   const items: MenuProps["items"] = [
     {
       key: "1",
@@ -78,9 +78,9 @@ export default function Blog() {
     },
   ];
 
-  return (
-    <>
-      <Layout>
+  if (!articles) {
+    return (
+      <Layout style={{ width: "100%" }}>
         <Header
           style={{
             display: "flex",
@@ -112,12 +112,47 @@ export default function Blog() {
             ]}
           ></Segmented>
         </Header>
-        <ArticleList>
-          <ArticleItem></ArticleItem>
-          <ArticleItem></ArticleItem>
-          <ArticleItem></ArticleItem>
-          <ArticleItem></ArticleItem>
-        </ArticleList>
+        <Card loading={true}></Card>
+      </Layout>
+    );
+  }
+  console.log(articles);
+
+  return (
+    <>
+      <Layout style={{ width: "100%" }}>
+        <Header
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Segmented
+            size="middle"
+            style={{
+              background: "rgb(208 208 208)",
+            }}
+            options={[
+              "最新",
+              "最热",
+              {
+                label: (
+                  <div>
+                    <Dropdown
+                      placement="bottom"
+                      menu={{ items }}
+                      trigger={["click"]}
+                    >
+                      <span>专栏</span>
+                    </Dropdown>
+                  </div>
+                ),
+                value: "专栏",
+              },
+            ]}
+          ></Segmented>
+        </Header>
+        <ArticleList articles={articles.data}></ArticleList>
       </Layout>
     </>
   );

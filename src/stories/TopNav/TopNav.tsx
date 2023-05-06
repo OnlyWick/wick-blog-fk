@@ -1,8 +1,4 @@
-import {
-  MailOutlined,
-  AppstoreOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
+import { MailOutlined, AppstoreOutlined } from "@ant-design/icons";
 import { MenuProps, Menu } from "antd";
 import Link from "next/link";
 import { useState } from "react";
