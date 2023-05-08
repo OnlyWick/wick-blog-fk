@@ -1,6 +1,7 @@
 :root {
   --wick-gray: #c8c8c8;
   background: #eee;
+  scroll-behavior: smooth;
 }
 
 :root,

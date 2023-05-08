@@ -17,7 +17,6 @@ const ArticleActionItem = styled.div`
   cursor: pointer;
   margin-bottom: 8px;
   transition: all 0.35s;
-  /* background-color: #ccc; */
 
   &:hover {
     color: aqua;

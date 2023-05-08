@@ -4,6 +4,7 @@ import Comment from "@/stories/Comment/Comment";
 import Layout from "@/stories/Layout";
 import Content from "@/stories/Layout/Content/Content";
 import Sider from "@/stories/Layout/Sider/Sider";
+import { Affix } from "antd";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 type Data = {
@@ -38,7 +39,9 @@ export default function Id({ article }: any) {
   return (
     <Layout style={{ marginTop: "24px", width: "100%" }}>
       <Sider width="auto" style={{ marginRight: "24px" }}>
-        <ArticleAction></ArticleAction>
+        <Affix>
+          <ArticleAction></ArticleAction>
+        </Affix>
       </Sider>
       <Content>
         <ArticleViewer style={{ marginBottom: "24px" }} config={article.data} />
