@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 const Sidebar = dynamic(() => import("@/stories/Sidebar/Sidebar"));
@@ -28,6 +29,17 @@ interface HomeProps {
 }
 
 export default function Home({ siteConfig }: HomeProps) {
+  useEffect(() => {
+    document.addEventListener(
+      "touchmove",
+      function (event: any) {
+        if (event.scale !== 1) {
+          event.preventDefault();
+        }
+      },
+      { passive: false }
+    );
+  });
   return (
     <>
       <Sidebar fullscreen={true}></Sidebar>

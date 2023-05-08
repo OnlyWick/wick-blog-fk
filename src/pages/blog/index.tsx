@@ -1,22 +1,15 @@
 import Layout from "@/stories/Layout";
 import Header from "@/stories/Layout/Header/Header";
 import { SmileOutlined } from "@ant-design/icons";
-import { Card, Dropdown, MenuProps, Segmented } from "antd";
+import { Card, Dropdown, Empty, MenuProps, Segmented } from "antd";
 import dynamic from "next/dynamic";
+import styled from "styled-components";
 import useSWR from "swr";
 
-const ArticleList = dynamic(
-  () => import("@/stories/Article/List/ArticleList"),
-  {
-    loading: () => <div>Fuck You</div>,
-  }
-);
+const ArticleList = dynamic(() => import("@/stories/Article/List/ArticleList"));
 
 const ArticleItem = dynamic(
-  () => import("@/stories/Article/List/Item/ArticleItem"),
-  {
-    loading: () => <div>Fuck You</div>,
-  }
+  () => import("@/stories/Article/List/Item/ArticleItem")
 );
 
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
@@ -26,10 +19,9 @@ export default function Blog() {
     data: articles,
     error,
     isLoading,
-  } = useSWR("http://localhost:9396/article", fetcher, {
-    revalidateOnFocus: false,
+  } = useSWR("http://192.168.31.86:9396/article", fetcher, {
+    // revalidateOnFocus: false,
   });
-  console.log(articles);
 
   const items: MenuProps["items"] = [
     {
@@ -78,82 +70,48 @@ export default function Blog() {
     },
   ];
 
-  if (!articles) {
-    return (
-      <Layout style={{ width: "100%" }}>
-        <Header
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <Segmented
-            size="middle"
-            style={{
-              background: "rgb(208 208 208)",
-            }}
-            options={[
-              "最新",
-              "最热",
-              {
-                label: (
-                  <div>
-                    <Dropdown
-                      placement="bottom"
-                      menu={{ items }}
-                      trigger={["click"]}
-                    >
-                      <span>专栏</span>
-                    </Dropdown>
-                  </div>
-                ),
-                value: "专栏",
-              },
-            ]}
-          ></Segmented>
-        </Header>
-        <Card loading={true}></Card>
-      </Layout>
-    );
-  }
-  console.log(articles);
-
   return (
-    <>
-      <Layout style={{ width: "100%" }}>
-        <Header
+    <Layout style={{ width: "100%" }}>
+      <Header
+        style={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <Segmented
+          size="middle"
           style={{
-            display: "flex",
-            alignItems: "center",
+            background: "rgb(208 208 208)",
           }}
-        >
-          <Segmented
-            size="middle"
-            style={{
-              background: "rgb(208 208 208)",
-            }}
-            options={[
-              "最新",
-              "最热",
-              {
-                label: (
-                  <div>
-                    <Dropdown
-                      placement="bottom"
-                      menu={{ items }}
-                      trigger={["click"]}
-                    >
-                      <span>专栏</span>
-                    </Dropdown>
-                  </div>
-                ),
-                value: "专栏",
-              },
-            ]}
-          ></Segmented>
-        </Header>
+          options={[
+            "最新",
+            "最热",
+            {
+              label: (
+                <div>
+                  <Dropdown
+                    placement="bottom"
+                    menu={{ items }}
+                    trigger={["click"]}
+                  >
+                    <span>专栏</span>
+                  </Dropdown>
+                </div>
+              ),
+              value: "专栏",
+            },
+          ]}
+        ></Segmented>
+      </Header>
+      {!articles ? (
+        <Card loading={true}></Card>
+      ) : articles.data.length === 0 ? (
+        <Card>
+          <Empty description="作者是个废物, 写不出东西? 啊, 作者竟然是我"></Empty>
+        </Card>
+      ) : (
         <ArticleList articles={articles.data}></ArticleList>
-      </Layout>
-    </>
+      )}
+    </Layout>
   );
 }

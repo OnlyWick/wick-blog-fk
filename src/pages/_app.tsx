@@ -24,6 +24,22 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+const MainContainer = styled.div`
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.35s;
+  display: flex;
+  justify-content: center;
+
+  @media screen and (min-width: 769px) {
+    padding: 0 50px;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 0 10px;
+  }
+`;
+
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const isRoot = router.pathname === "/";
@@ -38,19 +54,15 @@ export default function App({ Component, pageProps }: AppProps) {
           <Sidebar fullscreen={false}></Sidebar>
           {/* <TopNav></TopNav> */}
           <Layout style={{ width: "100%", alignItems: "center" }}>
-            <Content
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                padding: "0 50px",
-                maxWidth: "1280px",
-                width: "100%",
-              }}
-            >
-              <Component {...pageProps} />
-            </Content>
+            <MainContainer>
+              <Content
+                style={{
+                  maxWidth: "1280px",
+                }}
+              >
+                <Component {...pageProps} />
+              </Content>
+            </MainContainer>
           </Layout>
         </>
       )}

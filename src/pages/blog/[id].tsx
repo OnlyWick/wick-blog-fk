@@ -1,5 +1,9 @@
+import ArticleAction from "@/stories/Article/Action/ArticleAction";
 import ArticleViewer from "@/stories/Article/Viewer";
 import Comment from "@/stories/Comment/Comment";
+import Layout from "@/stories/Layout";
+import Content from "@/stories/Layout/Content/Content";
+import Sider from "@/stories/Layout/Sider/Sider";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 type Data = {
@@ -32,12 +36,14 @@ export const getServerSideProps: GetServerSideProps<{
 export default function Id({ article }: any) {
   console.log(article);
   return (
-    <>
-      <ArticleViewer
-        style={{ marginTop: "64px", marginBottom: "24px" }}
-        config={article.data}
-      />
-      <Comment></Comment>
-    </>
+    <Layout style={{ marginTop: "24px", width: "100%" }}>
+      <Sider width="auto" style={{ marginRight: "24px" }}>
+        <ArticleAction></ArticleAction>
+      </Sider>
+      <Content>
+        <ArticleViewer style={{ marginBottom: "24px" }} config={article.data} />
+        <Comment></Comment>
+      </Content>
+    </Layout>
   );
 }

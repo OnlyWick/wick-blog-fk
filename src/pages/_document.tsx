@@ -3,6 +3,7 @@ import Document, { Head, Html, Main, NextScript } from "next/document";
 import { ServerStyleSheet } from "styled-components";
 import { doExtraStyle } from "../../scripts/genAntdCss";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
+import Script from "next/script";
 
 // 解决 styled-components flicker
 export default class MyDocument extends Document {
@@ -45,7 +46,27 @@ export default class MyDocument extends Document {
   render() {
     return (
       <Html lang="zh">
-        <Head />
+        <Head>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+          />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+    document.addEventListener(
+      "touchmove",
+      function (event) {
+        if (event.scale !== 1) {
+          event.preventDefault();
+        }
+      },
+      { passive: false }
+    );
+    `,
+            }}
+          ></script>
+        </Head>
         <body>
           <Main />
           <NextScript />

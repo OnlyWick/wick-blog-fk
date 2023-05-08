@@ -11,6 +11,6 @@ type Story = StoryObj<typeof ArticleItem>;
 
 export const Common: Story = {
   render() {
-    return <ArticleItem config={{} as any}></ArticleItem>;
+    return <ArticleItem article={{} as any}></ArticleItem>;
   },
 };

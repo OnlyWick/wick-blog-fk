@@ -22,6 +22,8 @@ const AvatarWrapper = styled.div`
   position: relative;
   display: inline-block;
   margin: 0 auto;
+  overflow: hidden;
+  border-radius: 50%;
 
   & {
     ::before {
