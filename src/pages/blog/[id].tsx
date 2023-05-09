@@ -1,4 +1,3 @@
-import ArticleAction from "@/stories/Article/Action/ArticleAction";
 import ArticleViewer from "@/stories/Article/Viewer";
 import Comment from "@/stories/Comment/Comment";
 import Layout from "@/stories/Layout";
@@ -6,10 +5,33 @@ import Content from "@/stories/Layout/Content/Content";
 import Sider from "@/stories/Layout/Sider/Sider";
 import { Affix } from "antd";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import dynamic from "next/dynamic";
+import styled from "styled-components";
 
 type Data = {
   id: string;
 };
+
+const ArticleAction = dynamic(
+  () => import("@/stories/Article/Action/ArticleAction"),
+  { ssr: false }
+);
+
+const ArticleToc = dynamic(() => import("@/stories/Article/Toc/ArticleToc"), {
+  ssr: false,
+});
+
+const ArticleActionWrapper = styled.div`
+  @media screen and (max-width: 1337px) {
+    display: none;
+  }
+`;
+
+const ArticleTocWrapper = styled.div`
+  @media screen and (max-width: 1600px) {
+    display: none;
+  }
+`;
 
 export const getServerSideProps: GetServerSideProps<{
   article: Data | null;
@@ -25,7 +47,6 @@ export const getServerSideProps: GetServerSideProps<{
 
   const res = await fetch(`http://localhost:9396/article/${id}`);
   const articleData: Data = await res.json();
-  console.log(articleData);
 
   return {
     props: {
@@ -35,18 +56,36 @@ export const getServerSideProps: GetServerSideProps<{
 };
 
 export default function Id({ article }: any) {
-  console.log(article);
   return (
     <Layout style={{ marginTop: "24px", width: "100%" }}>
-      <Sider width="auto" style={{ marginRight: "24px" }}>
-        <Affix>
-          <ArticleAction></ArticleAction>
-        </Affix>
+      <Sider width="auto">
+        <ArticleActionWrapper style={{ marginRight: "24px" }}>
+          <Affix offsetTop={24}>
+            <ArticleAction></ArticleAction>
+          </Affix>
+        </ArticleActionWrapper>
       </Sider>
-      <Content>
-        <ArticleViewer style={{ marginBottom: "24px" }} config={article.data} />
+      <Content
+        style={{
+          overflow: "auto",
+        }}
+      >
+        <ArticleViewer
+          style={{
+            marginBottom: "24px",
+          }}
+          config={article.data}
+        />
         <Comment></Comment>
       </Content>
+
+      <ArticleTocWrapper>
+        <Sider width="15rem" style={{ marginLeft: "24px" }}>
+          <Affix offsetTop={24}>
+            <ArticleToc source=".markdown-body"></ArticleToc>
+          </Affix>
+        </Sider>
+      </ArticleTocWrapper>
     </Layout>
   );
 }

@@ -196,7 +196,6 @@ function CommentItemInternal({ comment }: SubCommentProps) {
 }
 
 export default function CommentItem({ comment, sub }: CommentItemProps) {
-  console.log(comment.subComment);
   return (
     <CommentItemWrapper sub={sub}>
       <CommentItemLeft>

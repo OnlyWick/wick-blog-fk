@@ -52,12 +52,12 @@ export default function App({ Component, pageProps }: AppProps) {
         <>
           <GlobalStyle />
           <Sidebar fullscreen={false}></Sidebar>
-          {/* <TopNav></TopNav> */}
-          <Layout style={{ width: "100%", alignItems: "center" }}>
+          <Layout style={{ width: "100%" }}>
             <MainContainer>
               <Content
                 style={{
                   maxWidth: "1280px",
+                  overflow: "auto",
                 }}
               >
                 <Component {...pageProps} />

@@ -11,6 +11,8 @@ type Story = StoryObj<typeof ArticleViewer>;
 
 export const Common: Story = {
   render() {
-    return <ArticleViewer config={{ content: "# Hi Wick" }}></ArticleViewer>;
+    return (
+      <ArticleViewer config={{ content: localStorage.article }}></ArticleViewer>
+    );
   },
 };

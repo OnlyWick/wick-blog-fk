@@ -4,6 +4,7 @@ import styled from "styled-components";
 const ColumnWrapper = styled.div`
   display: flex;
   box-sizing: border-box;
+  min-height: 220px;
 `;
 const ColumnCover = styled.div`
   flex: 1;
@@ -11,7 +12,6 @@ const ColumnCover = styled.div`
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-  height: 150px;
   border-radius: 4px;
 `;
 

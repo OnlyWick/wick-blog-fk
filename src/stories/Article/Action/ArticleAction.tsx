@@ -1,10 +1,16 @@
-import { Divider } from "antd";
+import { ArrowUpIcon, CommentIcon } from "@/stories/Common/icon";
+import ArrowDownIcon from "@/stories/Common/icon/ArrowDownIcon";
+import Share from "@/stories/Common/icon/Share";
+import { Divider, QRCode } from "antd";
+import { BaseSyntheticEvent, useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 
 const ArticleActionWrapper = styled.div`
   display: inline-flex;
+  position: relative;
   flex-direction: column;
   color: #aaa;
+  text-align: center;
 `;
 
 const ArticleActionItem = styled.div`
@@ -17,43 +23,63 @@ const ArticleActionItem = styled.div`
   cursor: pointer;
   margin-bottom: 8px;
   transition: all 0.35s;
+  position: relative;
 
   &:hover {
     color: aqua;
   }
 `;
+
+const ArticleActionVoteCount = styled.span`
+  font-size: 18px;
+  font-weight: 500;
+`;
+
+interface ArticleActionQRCodeProps {
+  show?: boolean;
+}
+
+const ArticleActionQRCode = styled.div<ArticleActionQRCodeProps>`
+  display: ${(props) => (props.show ? "block" : "none")};
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  left: 100%;
+  z-index: 100;
+  top: 0;
+`;
 export default function ArticleAction() {
+  const [showQRCode, setShowQRCode] = useState(false);
+  const handleGenerateQrCode = useCallback(
+    (e: BaseSyntheticEvent) => {
+      e.stopPropagation();
+      setShowQRCode(!showQRCode);
+    },
+    [showQRCode]
+  );
+
+  useEffect(() => {
+    const cancelShowQRCode = () => {
+      setShowQRCode(false);
+    };
+    window.addEventListener("click", cancelShowQRCode);
+
+    return () => {
+      window.removeEventListener("click", cancelShowQRCode);
+    };
+  }, []);
+
   return (
     <ArticleActionWrapper>
       <ArticleActionItem>
-        <svg fill="currentColor" width="36" height="36" viewBox="0 0 36 36">
-          <path d="M2 25h32L18 9 2 25Z"></path>
-        </svg>
+        <ArrowUpIcon />
       </ArticleActionItem>
-      <ArticleActionItem>999</ArticleActionItem>
+      <ArticleActionVoteCount>9</ArticleActionVoteCount>
       <ArticleActionItem>
-        <svg
-          fill="currentColor"
-          aria-hidden="true"
-          width="36"
-          height="36"
-          viewBox="0 0 36 36"
-        >
-          <path d="M2 11h32L18 27 2 11Z"></path>
-        </svg>
+        <ArrowDownIcon />
       </ArticleActionItem>
       <ArticleActionItem>
-        <svg
-          fill="currentColor"
-          viewBox="0 0 1024 1024"
-          version="1.1"
-          xmlns="http://www.w3.org/2000/svg"
-          p-id="3829"
-          width="36"
-          height="36"
-        >
-          <path d="M847.800487 81.619926 175.537434 81.619926c-61.883419 0-112.049982 53.165874-112.049982 118.745475l0 445.234387c0 65.579601 51.299363 126.017088 114.594945 126.017088l170.742732 0c29.764907 32.380478 152.938228 162.667823 152.938228 162.667823 5.476735 5.807263 14.334473 5.807263 19.808138 0 0 0 90.184999-104.464213 148.947334-162.667823l174.736697 0c63.294558 0 114.594945-60.454884 114.594945-126.017088L959.850469 200.3654C959.850469 134.785799 909.68493 81.619926 847.800487 81.619926zM287.587416 497.193783c-30.950919 0-56.024991-26.574239-56.024991-59.373249 0-32.797987 25.073048-59.372226 56.024991-59.372226 30.933523 0 56.006572 26.574239 56.006572 59.372226C343.593987 470.620567 318.520939 497.193783 287.587416 497.193783zM511.667937 497.193783c-30.931476 0-56.023968-26.574239-56.023968-59.373249 0-32.797987 25.092491-59.372226 56.023968-59.372226 30.933523 0 56.024991 26.574239 56.024991 59.372226C567.692928 470.620567 542.60146 497.193783 511.667937 497.193783zM735.768925 497.193783c-30.950919 0-56.024991-26.574239-56.024991-59.373249 0-32.797987 25.074072-59.372226 56.024991-59.372226 30.9325 0 56.024991 26.574239 56.024991 59.372226C791.793916 470.620567 766.700401 497.193783 735.768925 497.193783z"></path>
-        </svg>
+        <CommentIcon></CommentIcon>
       </ArticleActionItem>
       <Divider
         style={{
@@ -61,17 +87,16 @@ export default function ArticleAction() {
         }}
         type="horizontal"
       ></Divider>
-      <ArticleActionItem>
-        <svg
-          fill="currentColor"
-          viewBox="0 0 1024 1024"
-          version="1.1"
-          xmlns="http://www.w3.org/2000/svg"
-          width="30"
-          height="30"
+      <ArticleActionItem onClick={handleGenerateQrCode}>
+        <Share></Share>
+        <ArticleActionQRCode
+          show={showQRCode}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
         >
-          <path d="M812.333229 702.996063c-46.845072 0-89.466408 18.430848-119.288544 51.132804L319.564027 536.79845a103.801512 103.801512 0 0 0 0-51.132804l373.480658-215.858509c29.822136 32.63796 72.443472 52.540716 119.288544 52.540716 90.87432-1.407912 159.094057-69.563652 160.501969-160.437972C971.491282 71.03556 903.271546 1.407912 812.333229 0c-90.87432 1.407912-160.437973 71.03556-161.90988 161.909881 0 9.91938 1.471908 19.83876 2.87982 29.822136L282.638335 404.774702A160.629961 160.629961 0 0 0 161.941879 350.698081C71.067558 352.169989 1.43991 420.453722 0.031998 511.328042c1.407912 90.87432 71.03556 159.030061 161.909881 160.501969 46.845072 0 90.87432-21.310668 120.696456-54.012625l370.664834 214.450597c-1.407912 9.983376-2.815824 19.83876-2.815824 31.230048 1.407912 90.87432 71.03556 159.094057 161.90988 160.501969 90.87432-1.407912 159.030061-69.563652 160.437973-160.501969-1.407912-90.87432-69.563652-159.030061-160.501969-160.437972z"></path>
-        </svg>
+          <QRCode value={window.location.href}></QRCode>
+        </ArticleActionQRCode>
       </ArticleActionItem>
     </ArticleActionWrapper>
   );
