@@ -1,5 +1,5 @@
 import { Card, Divider, Tag } from "antd";
-import { CSSProperties, useEffect, useRef, useState } from "react";
+import { CSSProperties, useCallback, useEffect, useRef, useState } from "react";
 import { Viewer } from "@bytemd/react";
 import styled from "styled-components";
 import "bytemd/dist/index.min.css";
@@ -42,29 +42,60 @@ const ArticleViewerCodeAction = styled.div`
   }
 `;
 
-const ArticleCatalogWrapper = styled.ul``;
+const ArticleCatalogWrapper = styled.ul`
+  padding-left: 4px;
+
+  & > li {
+    font-weight: bold;
+  }
+`;
 
 interface ArticleCatalogItemProps {
-  isActive?: boolean;
+  originHref: string;
+  targetHref: string;
+  parentHref: string;
+  isH1: string;
 }
 
 const ArticleCatalogItem = styled.li<ArticleCatalogItemProps>`
-  padding: 4px 0;
-
-  & ul li {
-    padding: 8px 24px;
+  font-size: 16px;
+  /* border-left: 4px solid red; */
+  // TODO: 点击子元素, h1 要变色
+  & > a {
+    border-left: 4px solid transparent;
+    ${(props) =>
+      props.originHref === props.targetHref ||
+      props.parentHref === props.originHref
+        ? `
+      border-left: 4px solid #3eaf7c;
+      color: #3eaf7c;
+    `
+        : ""};
+    padding: 2px 2px 2px 14px;
   }
 
-  & a {
-    color: ${(props) => (props.isActive ? "red" : "#3eaf7c")};
-    /* color: #3eaf7c; */
-    text-decoration: none;
+  & ul > li {
+    font-weight: normal;
+    border: none;
+    padding: 0px 0 4px 16px;
+    & a {
+      border: none;
+    }
   }
 `;
-const ArticleCatalogItemLink = styled.a.attrs((props) => ({
-  href: props.href,
-}))`
-  color: red !important;
+
+interface ArticleCatalogItemLinkProps {
+  href: string;
+  targetHref: string;
+}
+const ArticleCatalogItemLink = styled.a<ArticleCatalogItemLinkProps>`
+  color: #2c3e50;
+  ${(props) =>
+    props.href === props.targetHref
+      ? `
+        color:#3eaf7c;
+    `
+      : ""};
 `;
 
 interface ArticleViewerProps {
@@ -81,69 +112,119 @@ interface ArticleViewerProps {
 
 const plugins = [highlight(), highlightSSR()];
 
-type CatalogItem = Array<{
+type CatalogItem = {
   level: number;
   href: string;
   text: string;
-  children?: CatalogItem;
-}>;
+  children?: CatalogItem[];
+};
 
 export default function ArticleViewer({ config, style }: ArticleViewerProps) {
   const viewerRef = useRef<HTMLDivElement>(null);
-  const [level, setLevel] = useState<CatalogItem>([]);
-  const [activeCatalog, setActiveCatalog] = useState(false);
+  const [level, setLevel] = useState<CatalogItem[]>([]);
+  const [activeCatalog, setActiveCatalog] = useState("");
+  const [parentCatalog, setParentCatalog] = useState("");
 
+  // 生成目录数据结构
   useEffect(() => {
-    const tempLevel: CatalogItem = [];
+    const tempLevel: CatalogItem[] = [];
     const headings: undefined | HTMLHeadingElement[] = [].slice.call(
       viewerRef.current?.querySelectorAll("h1,h2,h3,h4,h5,h6")
     );
 
-    let lastItem: any;
+    let lastItemParent: CatalogItem; // 最后一项
+    let lastItem: CatalogItem; // 最后一项
 
     if (headings !== undefined && headings.length != 0) {
-      headings.reduce<CatalogItem>((acc, elem, index) => {
+      headings.reduce<CatalogItem[]>((acc, elem, index) => {
         const level = Number(elem.tagName[1]);
-        const item = {
+        const item: CatalogItem = {
           level: level,
           href: `${encodeURI(elem.innerText)}`,
           text: elem.innerText,
         };
 
-        if (!lastItem || level === 1) {
+        const isH1OrNonExistLastItem = !lastItem || level === 1;
+
+        if (isH1OrNonExistLastItem) {
           tempLevel.push(item);
           lastItem = item;
+          lastItemParent = item;
         } else {
-          if (!lastItem.children) {
-            lastItem.children = [];
+          if (item.level > lastItem.level) {
+            // 当前 level 大于之前的 level, 说明是子元素
+            if (lastItem.children === undefined) {
+              lastItem.children = [];
+            }
+            lastItem.children.push(item);
+            lastItemParent = lastItem;
+          } else {
+            if (lastItemParent.children === undefined) {
+              lastItemParent.children = [];
+            }
+            lastItemParent.children.push(item);
           }
-          lastItem.children.push(item);
         }
-
         lastItem = item;
+
         elem.setAttribute("id", `${encodeURI(elem.innerText)}`);
         return acc;
       }, tempLevel);
     }
     setLevel(tempLevel);
-    console.log(tempLevel);
+  }, []);
+
+  const handleHashChange = () => {
+    setActiveCatalog(window.location.hash);
+  };
+
+  useEffect(() => {
+    window.addEventListener("hashchange", handleHashChange);
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
   }, []);
 
   useEffect(() => {
-    window.addEventListener("hashchange", (e) => {});
+    setActiveCatalog(window.location.hash);
+  }, []);
+
+  const handleParentActive = useCallback((e: any) => {
+    const closestLi = (e.currentTarget as HTMLElement).closest("li");
+    const outermostUl = closestLi?.parentNode?.parentNode;
+    if (outermostUl?.nodeName === "DIV" && closestLi !== null) {
+      setParentCatalog(closestLi.querySelector("a")!.hash);
+    }
   }, []);
 
   // TODO: 当进入页面时, 激活对应目录样式
   // TODO: 目录组件独立
-  const renderItems = (items: CatalogItem) => {
-    return items.map((item) => (
-      <ArticleCatalogItem isActive={false} key={item.href}>
-        <ArticleCatalogItemLink href={`#${item.href}`}>
-          {item.text}
-        </ArticleCatalogItemLink>
-        {item.children && <ul>{renderItems(item.children)}</ul>}
-      </ArticleCatalogItem>
-    ));
+  const renderItems = (items: CatalogItem[]) => {
+    return items.map((item) => {
+      return (
+        <ArticleCatalogItem
+          parentHref={`${parentCatalog}`}
+          originHref={`#${item.href}`}
+          isH1={`${item.level === 1}`}
+          targetHref={activeCatalog}
+          key={item.href}
+          onClick={handleParentActive}
+        >
+          <ArticleCatalogItemLink
+            href={`#${item.href}`}
+            targetHref={activeCatalog}
+          >
+            {item.text}
+          </ArticleCatalogItemLink>
+          {item.children && (
+            <ArticleCatalogWrapper>
+              {renderItems(item.children)}
+            </ArticleCatalogWrapper>
+          )}
+        </ArticleCatalogItem>
+      );
+    });
   };
 
   return (
@@ -171,7 +252,7 @@ export default function ArticleViewer({ config, style }: ArticleViewerProps) {
         </ArticleViewerBody>
       </Card>
       <Card>
-        <ul>{renderItems(level)}</ul>
+        <ArticleCatalogWrapper>{renderItems(level)}</ArticleCatalogWrapper>
       </Card>
     </ArticleViewerWrapper>
   );
