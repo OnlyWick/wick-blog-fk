@@ -58,6 +58,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 style={{
                   maxWidth: "1280px",
                   overflow: "auto",
+                  padding: "6px",
                 }}
               >
                 <Component {...pageProps} />
