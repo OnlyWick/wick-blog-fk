@@ -23,7 +23,6 @@ const AvatarWrapper = styled.div`
   display: inline-block;
   margin: 0 auto;
   overflow: hidden;
-  border-radius: 50%;
 
   & {
     ::before {
@@ -76,6 +75,17 @@ const UserName = styled.h1`
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 `;
+
+const AuthorStatus = styled.div`
+  width: 34px;
+  height: 34px;
+  background-color: #57bd6a;
+  position: absolute;
+  right: 10px;
+  bottom: 0px;
+  border-radius: 50%;
+  border: 6px solid #fff;
+`;
 const Motto = styled.ul`
   color: var(--wick-gray);
   margin: 10px 0;
@@ -92,6 +102,7 @@ export default function Intro({ config }: IntroProps) {
           draggable={false}
           src="/freddie.jpg"
         />
+        <AuthorStatus />
       </AvatarWrapper>
       <UserName>OnlyWick</UserName>
       <Motto>

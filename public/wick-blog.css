@@ -1,6 +1,6 @@
 :root {
   --wick-gray: #c8c8c8;
-  background: #eee;
+  background: #f7f9fefb;
   scroll-behavior: smooth;
 }
 
@@ -26,4 +26,10 @@ body {
     padding-left: 378px;
     height: 100%;
   }
+}
+
+[data-theme="light"] {
+}
+
+[data-theme="dark"] {
 }

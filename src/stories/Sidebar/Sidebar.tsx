@@ -32,6 +32,7 @@ const SidebarWrapper = styled.div<SidebarWrapperProps>`
         `
       : `
         padding-top: 200px;
+        border-right: 1px solid #e3e8f7;
         width: 378px;
         position: static;`}
   background: #fff;
