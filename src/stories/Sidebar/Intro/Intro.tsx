@@ -35,7 +35,7 @@ const AvatarWrapper = styled.div`
     transform: scale(1.2);
   }
 
-  @keyframes float {
+  @keyframes floating {
     0% {
       transform: translate(0, -4px);
     }
@@ -78,7 +78,7 @@ const Motto = styled.ul`
 
 const LeftFloating = styled.div`
   width: 49%;
-  animation: 3s ease-in-out 0s infinite normal none running float;
+  animation: 3s ease-in-out infinite floating;
   text-align: right;
   float: left;
   &:before {
@@ -92,7 +92,7 @@ const LeftFloating = styled.div`
 
 const RightFloating = styled.div`
   width: 49%;
-  animation: 3s ease-in-out 0s infinite normal none running float;
+  animation: 3s ease-in-out infinite floating;
   text-align: left;
   float: right;
   &:before {
