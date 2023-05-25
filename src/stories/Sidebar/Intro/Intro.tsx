@@ -8,8 +8,9 @@ import styled from "styled-components";
 
 interface IntroProps {
   config?: {
-    username: string;
-    intro: string[];
+    username?: string;
+    intro?: string[];
+    fullscreen?: boolean;
   };
 }
 
@@ -23,44 +24,28 @@ const AvatarWrapper = styled.div`
   display: inline-block;
   margin: 0 auto;
   overflow: hidden;
+  height: 200px;
+  width: 100%;
+  font-size: 20px;
 
-  & {
-    ::before {
-      position: absolute;
-      transform: translate(-50%, -50%);
-      content: "";
-      left: 50%;
-      top: 50%;
-      width: 98%;
-      height: 98%;
-      border-radius: 50%;
-      overflow: hidden;
-      /* animation: halation 3s infinite ease-in-out; */
+  .ant-avatar img {
+    transition: all 0.6s;
+  }
+  .ant-avatar img:hover {
+    transform: scale(1.2);
+  }
+
+  @keyframes float {
+    0% {
+      transform: translate(0, -4px);
     }
 
-    @keyframes halation {
-      0% {
-        box-shadow: 0 0 10px #2517ea;
-      }
-      35% {
-        box-shadow: 0 0 30px #00ff1e;
-      }
-      50% {
-        box-shadow: 0 0 50px #d63aff;
-      }
-      65% {
-        box-shadow: 0 0 30px #9900ff;
-      }
-      100% {
-        box-shadow: 0 0 10px #2517ea;
-      }
+    50% {
+      transform: translate(0, 4px);
     }
 
-    .ant-avatar img {
-      transition: all 0.6s;
-    }
-    .ant-avatar img:hover {
-      transform: scale(1.2);
+    100% {
+      transform: translate(0, -4px);
     }
   }
 `;
@@ -91,22 +76,85 @@ const Motto = styled.ul`
   margin: 10px 0;
 `;
 
+const LeftFloating = styled.div`
+  width: 49%;
+  animation: 3s ease-in-out 0s infinite normal none running float;
+  text-align: right;
+  float: left;
+  &:before {
+    float: right;
+    shape-outside: circle(farthest-side at right);
+    content: "";
+    width: 110px;
+    height: 200px;
+  }
+`;
+
+const RightFloating = styled.div`
+  width: 49%;
+  animation: 3s ease-in-out 0s infinite normal none running float;
+  text-align: left;
+  float: right;
+  &:before {
+    float: left;
+    shape-outside: circle(farthest-side at left);
+    content: "";
+    width: 110px;
+    height: 200px;
+  }
+`;
+
 export default function Intro({ config }: IntroProps) {
+  console.log(config);
   return (
     <InfoWrapper>
       <AvatarWrapper>
+        {config?.fullscreen ? (
+          <LeftFloating>
+            🎵
+            <br />
+            <br />
+            🎹
+            <br />
+            <br />
+            🎸
+            <br />
+            <br />
+            🥁
+          </LeftFloating>
+        ) : null}
         <Avatar
           // TODO: Antd SSR BUG
           // size={{ xs: 48, sm: 64, md: 80, lg: 128, xl: 160, xxl: 200 }}
+          style={{
+            position: "absolute",
+            left: "50%",
+            marginLeft: "-100px",
+            zIndex: 100,
+          }}
           size={200}
           draggable={false}
           src="/freddie.jpg"
         />
-        <AuthorStatus />
+        {config?.fullscreen ? (
+          <RightFloating>
+            🎤
+            <br />
+            <br />
+            💥
+            <br />
+            <br />
+            🍺
+            <br />
+            <br />
+            🎵
+          </RightFloating>
+        ) : null}
+        {/* <AuthorStatus /> */}
       </AvatarWrapper>
       <UserName>OnlyWick</UserName>
       <Motto>
-        Fans of Queen~🎵
+        生活不能没有音乐, 就像西方不能失去耶路撒冷。
         {config &&
           config.intro &&
           config.intro.map((item, index) => {

@@ -61,7 +61,11 @@ const SidebarNav = styled.div<SidebarNavProps>`
 export default function Sidebar({ fullscreen, siteConfig }: SidebarProps) {
   return (
     <SidebarWrapper fullscreen={fullscreen}>
-      <Intro></Intro>
+      <Intro
+        config={{
+          fullscreen,
+        }}
+      ></Intro>
 
       <SidebarNav fullscreen={fullscreen}>
         <Link href="/blog">

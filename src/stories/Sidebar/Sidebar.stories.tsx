@@ -11,6 +11,6 @@ type Story = StoryObj<typeof Sidebar>;
 
 export const Common: Story = {
   render() {
-    return <Sidebar fullscreen={false} />;
+    return <Sidebar fullscreen={true} />;
   },
 };
