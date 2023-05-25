@@ -27,7 +27,7 @@ body {
   }
 }
 
-@media screen and (min-width: 769px) {
+@media screen and (min-width: 960px) {
   #__next {
     padding-left: 378px;
     height: 100%;

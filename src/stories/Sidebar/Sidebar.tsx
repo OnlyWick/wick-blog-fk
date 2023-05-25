@@ -42,7 +42,7 @@ const SidebarWrapper = styled.div<SidebarWrapperProps>`
   position: fixed;
   transition: all 0.35s;
   left: ${(props) => (props.fullscreen ? "0" : "-378px")};
-  @media screen and (min-width: 769px) {
+  @media screen and (min-width: 960px) {
     left: 0;
   }
 `;
