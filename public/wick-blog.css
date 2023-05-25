@@ -1,7 +1,13 @@
 :root {
-  --wick-gray: #c8c8c8;
   background: #f7f9fefb;
   scroll-behavior: smooth;
+
+  --wick-transition-time: 0.3s;
+
+  --wick-gray: #c8c8c8;
+  --wick-small-margin: 4px;
+  --wick-medium-margin: 8px;
+  --wick-large-margin: 16px;
 }
 
 :root,
@@ -29,6 +35,9 @@ body {
 }
 
 [data-theme="light"] {
+  --wick-white: #fff;
+  --wick-blue: #397fff;
+  --wick-green: #57bd6a;
 }
 
 [data-theme="dark"] {

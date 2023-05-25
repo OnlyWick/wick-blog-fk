@@ -45,7 +45,7 @@ export default class MyDocument extends Document {
   }
   render() {
     return (
-      <Html lang="zh">
+      <Html lang="zh" data-theme="light">
         <Head>
           <meta
             name="viewport"

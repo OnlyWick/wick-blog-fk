@@ -1,5 +1,7 @@
 import { MenuIcon } from "@/stories/Common/icon";
-import { Dropdown, Segmented } from "antd";
+import Overview from "@/stories/Overview";
+import { Button, Dropdown, Modal, Segmented } from "antd";
+import { useCallback, useState } from "react";
 import styled from "styled-components";
 
 const ArticleFilterWrapper = styled.div`
@@ -22,32 +24,67 @@ const MenuWrapper = styled.div`
 `;
 
 export default function ArticleFilter() {
-  return (
-    <ArticleFilterWrapper>
-      <Segmented
-        size="middle"
-        style={{
-          background: "rgb(208 208 208)",
-        }}
-        options={[
-          "最新",
-          "最热",
-          {
-            label: (
-              <div>
-                <Dropdown placement="bottom">
-                  <span>专栏</span>
-                </Dropdown>
-              </div>
-            ),
-            value: "专栏",
-          },
-        ]}
-      ></Segmented>
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-      <MenuWrapper>
-        <MenuIcon></MenuIcon>
-      </MenuWrapper>
-    </ArticleFilterWrapper>
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <ArticleFilterWrapper>
+        <Segmented
+          size="middle"
+          style={{
+            background: "rgb(208 208 208)",
+          }}
+          options={[
+            "最新",
+            "最热",
+            {
+              label: (
+                <div>
+                  <Dropdown placement="bottom">
+                    <span>专栏</span>
+                  </Dropdown>
+                </div>
+              ),
+              value: "专栏",
+            },
+          ]}
+        ></Segmented>
+
+        <MenuWrapper>
+          <Button onClick={showModal} style={{ padding: 0 }} type="link">
+            <MenuIcon></MenuIcon>
+          </Button>
+        </MenuWrapper>
+      </ArticleFilterWrapper>
+
+      <Modal
+        style={{
+          maxWidth: "1400px",
+        }}
+        bodyStyle={{
+          background: "transparent",
+          boxShadow: "none",
+        }}
+        width={"auto"}
+        closable={false}
+        maskStyle={{
+          background: "rgba(255, 255, 255, 0.65)",
+          backdropFilter: "saturate(180%) blur(20px)",
+        }}
+        onCancel={handleCancel}
+        open={isModalOpen}
+        footer={null}
+      >
+        <Overview></Overview>
+      </Modal>
+    </>
   );
 }

@@ -1,5 +1,6 @@
+import { Button, Modal } from "antd";
 import dynamic from "next/dynamic";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Sidebar = dynamic(() => import("@/stories/Sidebar/Sidebar"));
@@ -40,6 +41,7 @@ export default function Home({ siteConfig }: HomeProps) {
       { passive: false }
     );
   });
+
   return (
     <>
       <Sidebar fullscreen={true}></Sidebar>
