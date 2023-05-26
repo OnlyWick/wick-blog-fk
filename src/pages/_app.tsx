@@ -3,12 +3,14 @@ import styled, { createGlobalStyle } from "styled-components";
 import "../../public/reset.css";
 import "../../public/wick-blog.css";
 import "../../public/antd.min.css";
-import Sidebar from "@/stories/Sidebar/Sidebar";
 import { useRouter } from "next/router";
 import Layout from "@/stories/Layout";
 import Sider from "@/stories/Layout/Sider/Sider";
 import Content from "@/stories/Layout/Content/Content";
 import TopNav from "@/stories/Nav/TopNav/TopNav";
+import Sidebar from "@/stories/Nav/Sidebar/Sidebar";
+import Header from "@/stories/Layout/Header/Header";
+import { Affix } from "antd";
 // import { Layout } from "antd";
 
 // const { Content, Sider } = Layout;
@@ -24,6 +26,21 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+const HeaderWrapper = styled.div`
+  transition: all 0.35s;
+  & .ant-affix > header {
+    outline: 1px solid #eee;
+  }
+
+  & .ant-affix > header > div {
+    background-color: #fff;
+  }
+
+  @media screen and (min-width: 960px) {
+    display: none;
+  }
+`;
+
 const MainContainer = styled.div`
   width: 100%;
   box-sizing: border-box;
@@ -31,11 +48,11 @@ const MainContainer = styled.div`
   display: flex;
   justify-content: center;
 
-  @media screen and (min-width: 769px) {
+  @media screen and (min-width: 960px) {
     padding: 0 50px;
   }
 
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 959px) {
     padding: 0 10px;
   }
 `;
@@ -52,6 +69,17 @@ export default function App({ Component, pageProps }: AppProps) {
         <>
           <GlobalStyle />
           <Sidebar fullscreen={false}></Sidebar>
+          <HeaderWrapper>
+            <Affix
+              style={{
+                background: "#fff",
+              }}
+            >
+              <Header>
+                <TopNav></TopNav>
+              </Header>
+            </Affix>
+          </HeaderWrapper>
           <Layout style={{ width: "100%" }}>
             <MainContainer>
               <Content

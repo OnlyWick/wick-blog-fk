@@ -3,7 +3,7 @@ import { MenuIcon } from "@/stories/Common/icon";
 import Layout from "@/stories/Layout";
 import Header from "@/stories/Layout/Header/Header";
 import { SmileOutlined } from "@ant-design/icons";
-import { Card, Dropdown, Empty, MenuProps, Segmented } from "antd";
+import { Affix, Card, Dropdown, Empty, MenuProps, Segmented } from "antd";
 import dynamic from "next/dynamic";
 import styled from "styled-components";
 import useSWR from "swr";
