@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import styled, { CSSProperties } from "styled-components";
 
 interface SiderWrapperProps {
-  width: string;
+  width?: string;
 }
 
 const SiderWrapper = styled.aside<SiderWrapperProps>`
@@ -15,7 +15,7 @@ const SiderWrapper = styled.aside<SiderWrapperProps>`
 interface SiderProps {
   children?: ReactNode | ReactNode[];
   style?: CSSProperties;
-  width: string;
+  width?: string;
 }
 export default function Sider({ width, children, style }: SiderProps) {
   return (

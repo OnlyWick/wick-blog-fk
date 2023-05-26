@@ -4,7 +4,8 @@ import styled, { CSSProperties } from "styled-components";
 const HeaderWrapper = styled.header`
   height: 64px;
   box-sizing: border-box;
-  flex: 0 0 auto;
+  align-items: center;
+  display: flex;
 `;
 
 interface HeaderProps {
