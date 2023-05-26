@@ -23,7 +23,6 @@ const AvatarWrapper = styled.div`
   position: relative;
   display: inline-block;
   margin: 0 auto;
-  overflow: hidden;
   height: 200px;
   width: 100%;
   font-size: 20px;
@@ -33,20 +32,6 @@ const AvatarWrapper = styled.div`
   }
   .ant-avatar img:hover {
     transform: scale(1.2);
-  }
-
-  @keyframes floating {
-    0% {
-      transform: translate(0, -4px);
-    }
-
-    50% {
-      transform: translate(0, 4px);
-    }
-
-    100% {
-      transform: translate(0, -4px);
-    }
   }
 `;
 
