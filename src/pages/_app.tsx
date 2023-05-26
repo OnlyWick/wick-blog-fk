@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import Layout from "@/stories/Layout";
 import Sider from "@/stories/Layout/Sider/Sider";
 import Content from "@/stories/Layout/Content/Content";
-import TopNav from "@/stories/TopNav/TopNav";
+import TopNav from "@/stories/Nav/TopNav/TopNav";
 // import { Layout } from "antd";
 
 // const { Content, Sider } = Layout;

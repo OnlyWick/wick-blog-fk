@@ -2,7 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import TopNav from "./TopNav";
 
 const meta: Meta<typeof TopNav> = {
-  title: "TopNav/TopNav",
+  title: "Nav/TopNav/TopNav",
   component: TopNav,
 };
 export default meta;

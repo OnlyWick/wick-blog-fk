@@ -1,8 +1,8 @@
 import { Button } from "antd";
 import Intro from "./Intro";
-import SiteConfig from "../SiteConfig";
 import styled from "styled-components";
 import Link from "next/link";
+import SiteConfig from "@/stories/SiteConfig";
 
 interface SidebarProps {
   fullscreen: boolean;
