@@ -9,6 +9,8 @@ const ArticleFilterWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   padding-right: 4px;
+  /* margin-bottom: var(--wick-medium-margin); */
+  width: 100%;
 `;
 
 const MenuWrapper = styled.div`
@@ -17,6 +19,10 @@ const MenuWrapper = styled.div`
   transform-origin: center;
   display: flex;
   align-items: center;
+
+  @media screen and (max-width: 960px) {
+    display: none;
+  }
 
   &:hover {
     transform: rotate(180deg);
@@ -42,20 +48,7 @@ export default function ArticleFilter() {
           style={{
             background: "rgb(208 208 208)",
           }}
-          options={[
-            "最新",
-            "最热",
-            {
-              label: (
-                <div>
-                  <Dropdown placement="bottom">
-                    <span>专栏</span>
-                  </Dropdown>
-                </div>
-              ),
-              value: "专栏",
-            },
-          ]}
+          options={["最新", "最热"]}
         ></Segmented>
 
         <MenuWrapper>
@@ -67,7 +60,8 @@ export default function ArticleFilter() {
 
       <Modal
         style={{
-          maxWidth: "1400px",
+          maxWidth: "1000px",
+          minWidth: "500px",
         }}
         bodyStyle={{
           background: "transparent",
