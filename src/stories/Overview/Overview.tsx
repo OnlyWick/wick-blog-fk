@@ -54,13 +54,25 @@ const BadgeItem = styled.span`
 const ArchiveWrapper = styled.ul`
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   user-select: none;
+
+  & > li:nth-child(4n) {
+    margin-left: 12px;
+  }
+  & > li:nth-child(4n + 1) {
+    margin-right: 12px;
+  }
+
+  & > li:not(:nth-child(4n + 1)):not(:nth-child(4n)) {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
 `;
 
 const ArchiveItem = styled.li`
-  flex: 0 0 24%;
-  margin-top: 8px;
+  flex: 0 0 calc(25% - 18px);
+  box-sizing: border-box;
+  margin-top: var(--wick-medium-margin);
   cursor: pointer;
 
   .ant-card {
@@ -90,6 +102,8 @@ const ArchiveItemArticleCountUnit = styled.span`
   font-size: 14px;
   font-weight: bold;
 `;
+
+const ColumnWrapper = styled.h2``;
 
 export default function Overview() {
   return (
@@ -131,7 +145,38 @@ export default function Overview() {
           </TagListWrapper>
         </Card>
       </MainTagMenuWrapper>
+      <Card hoverable>
+        <ColumnWrapper>专栏直通车</ColumnWrapper>
+      </Card>
       <ArchiveWrapper>
+        <ArchiveItem>
+          <Card
+            bodyStyle={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <ArchiveItemYear>2023</ArchiveItemYear>
+            <ArchiveItemArticleCount>
+              999
+              <ArchiveItemArticleCountUnit>篇</ArchiveItemArticleCountUnit>
+            </ArchiveItemArticleCount>
+          </Card>
+        </ArchiveItem>
+        <ArchiveItem>
+          <Card
+            bodyStyle={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <ArchiveItemYear>2023</ArchiveItemYear>
+            <ArchiveItemArticleCount>
+              999
+              <ArchiveItemArticleCountUnit>篇</ArchiveItemArticleCountUnit>
+            </ArchiveItemArticleCount>
+          </Card>
+        </ArchiveItem>
         <ArchiveItem>
           <Card
             bodyStyle={{
