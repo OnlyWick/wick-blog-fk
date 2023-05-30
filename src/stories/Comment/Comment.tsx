@@ -2,6 +2,8 @@ import styled from "styled-components";
 import CommentHeader from "./Header/CommentHeader";
 import CommentItem from "./Item/CommentItem";
 import { Card } from "antd";
+import { useContext } from "react";
+import { ArticleContext } from "@/pages/blog/ArticleContext";
 
 const CommentWrapper = styled.div`
   width: 100%;
@@ -10,6 +12,8 @@ const CommentListWrapper = styled.div`
   margin-top: 32px;
 `;
 export default function Comment() {
+  const article = useContext(ArticleContext);
+  console.log(article, "fksw");
   return (
     <CommentWrapper>
       <Card>

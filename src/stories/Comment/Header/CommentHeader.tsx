@@ -1,9 +1,10 @@
 import { Avatar, Button, Divider } from "antd";
 import styled from "styled-components";
 import { Input } from "antd";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import EmojiIcon from "@/stories/Common/icon/EmojiIcon";
 import EmojiSelector from "@/stories/Common/EmojiSelector/EmojiSelector";
+import { ArticleContext } from "@/pages/blog/ArticleContext";
 
 const { TextArea } = Input;
 
@@ -77,6 +78,8 @@ const CommentWordsLeft = styled.div`
 `;
 
 export default function CommentHeader() {
+  const article = useContext(ArticleContext);
+  console.log(article, "cohear");
   const [count, setCount] = useState(0);
   const [maxLength, setMaxLength] = useState(0);
   const [showEmojiSelector, setShowEmojiSelector] = useState(false);
@@ -105,13 +108,27 @@ export default function CommentHeader() {
     };
   }, [showEmojiSelector]);
 
+  const handleLogin = () => {
+    window.open(
+      `${window.location.origin}/oauth/?platform=github`,
+      "_blank",
+      "toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=800, height=600"
+    );
+  };
+  const handlePublishComment = async () => {
+    const res = await fetch(`http://localhost:9396/article/703400588868952123`);
+    console.log(await res.json());
+  };
+
   return (
     <>
       <CommentHeaderWrapper>
         <CommentHeaderHeader>
           <CommentCount>79 条评论</CommentCount>
           <CommentLogin>
-            <Button type="link">登录</Button>
+            <Button type="link" onClick={handleLogin}>
+              登录
+            </Button>
           </CommentLogin>
         </CommentHeaderHeader>
         <CommentHeaderBody>
@@ -144,7 +161,9 @@ export default function CommentHeader() {
                 {count > 15 && (
                   <CommentWordsLeft>剩余 {maxLength - count}</CommentWordsLeft>
                 )}
-                <Button type="primary">发表评论</Button>
+                <Button type="primary" onClick={handlePublishComment}>
+                  发表评论
+                </Button>
               </CommentActionRight>
             </CommentActions>
           </CommentHeaderRight>

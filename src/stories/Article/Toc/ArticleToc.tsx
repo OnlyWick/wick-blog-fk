@@ -54,7 +54,7 @@ interface ArticleCatalogItemLinkProps {
 const ArticleCatalogItemLink = styled.a<ArticleCatalogItemLinkProps>`
   color: #2c3e50;
   ${(props) => {
-    console.log(props.href, 222, props.targetHref, 123);
+    // console.log(props.href, 222, props.targetHref, 123);
     return props.href === props.targetHref
       ? `
         color:#3eaf7c;
@@ -151,7 +151,7 @@ export default function ArticleToc({ source }: ArticleTocProps) {
     const closestLi = (e.currentTarget as HTMLElement).closest("li");
     const outermostUl = closestLi?.parentNode?.parentNode;
     if (outermostUl?.nodeName === "DIV" && closestLi !== null) {
-      console.log(closestLi.querySelector("a")!.hash);
+      // console.log(closestLi.querySelector("a")!.hash);
       setParentCatalog(closestLi.querySelector("a")!.hash);
     }
   }, []);
