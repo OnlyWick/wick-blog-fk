@@ -3,14 +3,10 @@ import { ConfigConsumerProps } from "antd/es/config-provider";
 import Link from "next/link";
 import styled from "styled-components";
 
-// const url =
-//   "https://avatars.githubusercontent.com/u/53461157?s=400&u=cf8e8ca53bb3533ef721587ee5e61ae1965ba316&v=4";
-
-interface IntroProps {
+interface UserInfoProps {
   config?: {
     username?: string;
     intro?: string[];
-    fullscreen?: boolean;
   };
 }
 
@@ -89,25 +85,22 @@ const RightFloating = styled.div`
   }
 `;
 
-export default function Intro({ config }: IntroProps) {
-  console.log(config);
+export default function UserInfo({ config }: UserInfoProps) {
   return (
     <InfoWrapper>
       <AvatarWrapper>
-        {config?.fullscreen ? (
-          <LeftFloating>
-            🎵
-            <br />
-            <br />
-            🎹
-            <br />
-            <br />
-            🎸
-            <br />
-            <br />
-            🥁
-          </LeftFloating>
-        ) : null}
+        <LeftFloating>
+          🎵
+          <br />
+          <br />
+          🎹
+          <br />
+          <br />
+          🎸
+          <br />
+          <br />
+          🥁
+        </LeftFloating>
         <Avatar
           // TODO: Antd SSR BUG
           // size={{ xs: 48, sm: 64, md: 80, lg: 128, xl: 160, xxl: 200 }}
@@ -121,20 +114,18 @@ export default function Intro({ config }: IntroProps) {
           draggable={false}
           src="/freddie.jpg"
         />
-        {config?.fullscreen ? (
-          <RightFloating>
-            🎤
-            <br />
-            <br />
-            💥
-            <br />
-            <br />
-            🍺
-            <br />
-            <br />
-            🎵
-          </RightFloating>
-        ) : null}
+        <RightFloating>
+          🎤
+          <br />
+          <br />
+          💥
+          <br />
+          <br />
+          🍺
+          <br />
+          <br />
+          🎵
+        </RightFloating>
         {/* <AuthorStatus /> */}
       </AvatarWrapper>
       <UserName>OnlyWick</UserName>

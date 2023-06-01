@@ -1,11 +1,10 @@
 import { Button } from "antd";
-import Intro from "./Intro";
+import Intro from "../../Sidebar/UserWidget/Info";
 import styled from "styled-components";
 import Link from "next/link";
 import SiteConfig from "@/stories/SiteConfig";
 
-interface SidebarProps {
-  fullscreen: boolean;
+interface HomeProps {
   username?: string;
   avatar?: string;
   motto?: string[];
@@ -15,59 +14,41 @@ interface SidebarProps {
   };
 }
 
-interface SidebarWrapperProps {
+interface HomeWrapperProps {
   fullscreen?: boolean;
 }
-const SidebarWrapper = styled.div<SidebarWrapperProps>`
-  ${(props) =>
-    props.fullscreen
-      ? `left: 0;
-         top: 0;
-         right: 0;
-         bottom: 0;
-         position: fixed;
-         display: flex;
-         justify-content: center;
-         flex-direction: column;
-        `
-      : `
-        padding-top: 200px;
-        border-right: 1px solid #e3e8f7;
-        width: 378px;
-        position: static;`}
+const HomeWrapper = styled.div<HomeWrapperProps>`
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
   background: #fff;
   height: 100%;
   align-items: center;
   box-sizing: border-box;
   position: fixed;
   transition: all 0.35s;
-  left: ${(props) => (props.fullscreen ? "0" : "-378px")};
-  @media screen and (min-width: 960px) {
-    left: 0;
-  }
 `;
 
-interface SidebarNavProps {
+interface HomeNavProps {
   fullscreen?: boolean;
 }
 
-const SidebarNav = styled.div<SidebarNavProps>`
+const HomeNav = styled.div<HomeNavProps>`
   display: flex;
-  flex-direction: ${(props) => (props.fullscreen ? "row" : "column")};
   align-items: center;
   justify-content: center;
 `;
 
-export default function Sidebar({ fullscreen, siteConfig }: SidebarProps) {
+export default function Home({ siteConfig }: HomeProps) {
   return (
-    <SidebarWrapper fullscreen={fullscreen}>
-      <Intro
-        config={{
-          fullscreen,
-        }}
-      ></Intro>
-
-      <SidebarNav fullscreen={fullscreen}>
+    <HomeWrapper>
+      <Intro></Intro>
+      <HomeNav>
         <Link href="/blog">
           <Button
             type="primary"
@@ -111,13 +92,13 @@ export default function Sidebar({ fullscreen, siteConfig }: SidebarProps) {
             关于
           </Button>
         </Link>
-      </SidebarNav>
+      </HomeNav>
       <SiteConfig
         config={{
           approve: siteConfig?.approve,
           copyright: siteConfig?.copyright,
         }}
       ></SiteConfig>
-    </SidebarWrapper>
+    </HomeWrapper>
   );
 }

@@ -2,7 +2,7 @@ import { MenuProps, Menu, Drawer, Button } from "antd";
 import Link from "next/link";
 import { useState } from "react";
 import styled from "styled-components";
-import DrawerContent from "../DrawerContent";
+import DrawerContent from "../DrawerContentNav";
 
 const TopNavWrapper = styled.div`
   transition: all 0.35s;
