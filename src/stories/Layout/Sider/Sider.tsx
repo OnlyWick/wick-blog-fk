@@ -6,9 +6,10 @@ interface SiderWrapperProps {
 }
 
 const SiderWrapper = styled.aside<SiderWrapperProps>`
-  flex: 0 0 ${(props) => props.width};
-  width: ${(props) => props.width};
-  min-width: ${(props) => props.width};
+  flex: 0 0 ${(props) => (props.width ? props.width : "378px")};
+  width: ${(props) => (props.width ? props.width : "378px")};
+  /* min-width: ${(props) => (props.width ? props.width : "378px")}; */
+  min-width: 0;
   position: relative;
 `;
 

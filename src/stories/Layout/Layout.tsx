@@ -9,8 +9,19 @@ interface LayoutWrapperProps {
 const LayoutWrapper = styled.section<LayoutWrapperProps>`
   display: flex;
   flex-direction: ${(props) => (props.hasSider ? "row" : "column")};
+  ${(props) =>
+    props.hasSider
+      ? `
+  
+    & > main {
+      width: 0;
+    }
+  
+  `
+      : null}
   flex: auto;
   box-sizing: border-box;
+  min-height: 0;
 
   & {
     > section {

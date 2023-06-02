@@ -1,9 +1,12 @@
 import { CSSProperties, ReactNode } from "react";
 import styled from "styled-components";
 
-const ContentWrapper = styled.div`
+const ContentWrapper = styled.main`
   flex: auto;
   box-sizing: border-box;
+  min-height: 0;
+  /* width: 0;
+  min-width: 0; */
 `;
 
 interface ContentProps {
