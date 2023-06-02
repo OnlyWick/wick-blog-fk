@@ -4,6 +4,7 @@ import styled from "styled-components";
 const OverviewWrapper = styled.div`
   & .ant-card {
     background: rgba(255, 255, 255, 0.6);
+    margin-bottom: var(--wick-medium-margin);
   }
 `;
 
@@ -147,6 +148,9 @@ export default function Overview() {
       </MainTagMenuWrapper>
       <Card hoverable>
         <ColumnWrapper>专栏直通车</ColumnWrapper>
+      </Card>
+      <Card hoverable>
+        <ColumnWrapper>站点地图</ColumnWrapper>
       </Card>
       <ArchiveWrapper>
         <ArchiveItem>
