@@ -1,9 +1,8 @@
+import HomeNav from "@/stories/Nav/HomeNav";
 import { Button, Modal } from "antd";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-
-const Sidebar = dynamic(() => import("@/stories/Nav/Sidebar/Sidebar"));
 
 export async function getStaticProps(context: any) {
   const res = await fetch("http://localhost:9396/site-config");
@@ -44,7 +43,7 @@ export default function Home({ siteConfig }: HomeProps) {
 
   return (
     <>
-      <Sidebar fullscreen={true}></Sidebar>
+      <HomeNav></HomeNav>
     </>
   );
 }

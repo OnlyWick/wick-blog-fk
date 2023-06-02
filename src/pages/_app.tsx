@@ -8,12 +8,10 @@ import Layout from "@/stories/Layout";
 import Sider from "@/stories/Layout/Sider/Sider";
 import Content from "@/stories/Layout/Content/Content";
 import TopNav from "@/stories/Nav/TopNav/TopNav";
-import Sidebar from "@/stories/Nav/Sidebar/Sidebar";
 import Header from "@/stories/Layout/Header/Header";
 import { Affix } from "antd";
-// import { Layout } from "antd";
-
-// const { Content, Sider } = Layout;
+import HomeNav from "@/stories/Nav/HomeNav";
+// import { Header } from "antd/es/layout/layout";
 
 const GlobalStyle = createGlobalStyle`
     :root, body {
@@ -49,7 +47,7 @@ const MainContainer = styled.div`
   justify-content: center;
 
   @media screen and (min-width: 960px) {
-    padding: 0 50px;
+    padding: 0 10px;
   }
 
   @media screen and (max-width: 959px) {
@@ -68,7 +66,6 @@ export default function App({ Component, pageProps }: AppProps) {
       ) : (
         <>
           <GlobalStyle />
-          <Sidebar fullscreen={false}></Sidebar>
           <HeaderWrapper>
             <Affix
               style={{
@@ -85,7 +82,7 @@ export default function App({ Component, pageProps }: AppProps) {
               <Content
                 style={{
                   maxWidth: "1280px",
-                  overflow: "auto",
+                  // overflow: "auto",
                   padding: "6px",
                 }}
               >

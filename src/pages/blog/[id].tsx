@@ -9,6 +9,8 @@ import dynamic from "next/dynamic";
 import { createContext, useContext } from "react";
 import styled from "styled-components";
 import { ArticleContext } from "./ArticleContext";
+import HomeNav from "@/stories/Nav/HomeNav";
+import UserWidget from "@/stories/Sidebar/UserWidget";
 
 type Data = {
   id: string;
@@ -24,16 +26,12 @@ const ArticleToc = dynamic(() => import("@/stories/Article/Toc/ArticleToc"), {
 });
 
 const ArticleActionWrapper = styled.div`
-  @media screen and (max-width: 1337px) {
+  @media screen and (min-width: 1279px) {
     display: none;
   }
 `;
 
-const ArticleTocWrapper = styled.div`
-  @media screen and (max-width: 1600px) {
-    display: none;
-  }
-`;
+const ArticleTocWrapper = styled.div``;
 
 export const getServerSideProps: GetServerSideProps<{
   article: Data | null;
@@ -60,19 +58,24 @@ export const getServerSideProps: GetServerSideProps<{
 export default function Id({ article }: any) {
   return (
     <ArticleContext.Provider value={article.data}>
-      <Layout style={{ marginTop: "24px", width: "100%" }}>
-        <Sider width="auto">
-          <ArticleActionWrapper style={{ marginRight: "24px" }}>
-            <Affix offsetTop={24}>
-              <ArticleAction></ArticleAction>
-            </Affix>
-          </ArticleActionWrapper>
-        </Sider>
-        <Content
+      <Layout>
+        <Sider
           style={{
-            overflow: "auto",
+            marginRight: "var(--wick-large-margin)",
           }}
         >
+          <UserWidget></UserWidget>
+          <ArticleTocWrapper
+            style={{
+              margin: "var(--wick-large-margin) 0 0",
+            }}
+          >
+            <Affix offsetTop={24}>
+              <ArticleToc source=".markdown-body"></ArticleToc>
+            </Affix>
+          </ArticleTocWrapper>
+        </Sider>
+        <Content>
           <ArticleViewer
             style={{
               marginBottom: "24px",
@@ -81,14 +84,15 @@ export default function Id({ article }: any) {
           />
           <Comment></Comment>
         </Content>
-
-        <ArticleTocWrapper>
-          <Sider width="15rem" style={{ marginLeft: "24px" }}>
-            <Affix offsetTop={24}>
-              <ArticleToc source=".markdown-body"></ArticleToc>
-            </Affix>
-          </Sider>
-        </ArticleTocWrapper>
+        <ArticleActionWrapper
+          style={{
+            marginLeft: "var(--wick-medium-margin)",
+          }}
+        >
+          <Affix offsetTop={24}>
+            <ArticleAction></ArticleAction>
+          </Affix>
+        </ArticleActionWrapper>
       </Layout>
     </ArticleContext.Provider>
   );
