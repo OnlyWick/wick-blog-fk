@@ -11,6 +11,10 @@ const ArticleActionWrapper = styled.div`
   flex-direction: column;
   color: #aaa;
   text-align: center;
+
+  @media screen and (max-width: 960px) {
+    display: none;
+  }
 `;
 
 const ArticleActionItem = styled.div`
@@ -44,10 +48,11 @@ const ArticleActionQRCode = styled.div<ArticleActionQRCodeProps>`
   position: absolute;
   width: 200px;
   height: 200px;
-  left: 100%;
+  right: 100%;
   z-index: 100;
   top: 0;
 `;
+
 export default function ArticleAction() {
   const [showQRCode, setShowQRCode] = useState(false);
   const handleGenerateQrCode = useCallback(

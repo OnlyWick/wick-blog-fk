@@ -64,7 +64,6 @@ export default function ArticleFilter() {
           minWidth: "500px",
         }}
         bodyStyle={{
-          background: "transparent",
           boxShadow: "none",
         }}
         width={"auto"}
