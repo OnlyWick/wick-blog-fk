@@ -54,7 +54,7 @@ const AuthorStatus = styled.div`
 `;
 const Motto = styled.ul`
   color: var(--wick-gray);
-  margin: 10px 0;
+  margin: var(--wick-medium-margin) 0;
 `;
 
 const LeftFloating = styled.div`

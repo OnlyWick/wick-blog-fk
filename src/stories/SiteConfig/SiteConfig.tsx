@@ -11,10 +11,7 @@ interface Props {
 
 const SiteConfigWrapper = styled.ul`
   display: flex;
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  color: #8a919f;
 `;
 
 export default function SiteConfig({ children, config }: Partial<Props>) {

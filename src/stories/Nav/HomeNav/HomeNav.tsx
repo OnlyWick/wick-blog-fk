@@ -14,10 +14,7 @@ interface HomeProps {
   };
 }
 
-interface HomeWrapperProps {
-  fullscreen?: boolean;
-}
-const HomeWrapper = styled.div<HomeWrapperProps>`
+const HomeNavWrapper = styled.div`
   left: 0;
   top: 0;
   right: 0;
@@ -34,21 +31,17 @@ const HomeWrapper = styled.div<HomeWrapperProps>`
   transition: all 0.35s;
 `;
 
-interface HomeNavProps {
-  fullscreen?: boolean;
-}
-
-const HomeNav = styled.div<HomeNavProps>`
+const HomeContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
-export default function Home({ siteConfig }: HomeProps) {
+export default function HomeNav({ siteConfig }: HomeProps) {
   return (
-    <HomeWrapper>
+    <HomeNavWrapper>
       <Intro></Intro>
-      <HomeNav>
+      <HomeContent>
         <Link href="/blog">
           <Button
             type="primary"
@@ -92,13 +85,13 @@ export default function Home({ siteConfig }: HomeProps) {
             关于
           </Button>
         </Link>
-      </HomeNav>
+      </HomeContent>
       <SiteConfig
         config={{
           approve: siteConfig?.approve,
           copyright: siteConfig?.copyright,
         }}
       ></SiteConfig>
-    </HomeWrapper>
+    </HomeNavWrapper>
   );
 }
