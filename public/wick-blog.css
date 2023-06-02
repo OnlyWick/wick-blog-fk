@@ -34,13 +34,6 @@ body {
   }
 }
 
-@media screen and (min-width: 960px) {
-  #__next {
-    padding-left: 378px;
-    height: 100%;
-  }
-}
-
 [data-theme="light"] {
   --wick-bg: #f7f9fefb;
   --wick-white: #fff;
