@@ -11,10 +11,6 @@ const ArticleActionWrapper = styled.div`
   flex-direction: column;
   color: #aaa;
   text-align: center;
-
-  @media screen and (max-width: 960px) {
-    display: none;
-  }
 `;
 
 const ArticleActionItem = styled.div`

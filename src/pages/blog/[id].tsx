@@ -6,7 +6,7 @@ import { Affix } from "antd";
 import { GetServerSidePropsContext } from "next";
 import dynamic from "next/dynamic";
 import styled from "styled-components";
-import { ArticleContext, IArticleContext } from "./ArticleContext";
+import ArticleContext, { IArticleContext } from "../../Context/ArticleContext";
 import UserWidget from "@/stories/Sidebar/UserWidget";
 import useSWR, { mutate, useSWRConfig } from "swr";
 import ArticleType from "@/interfaces/IArticleType";
@@ -34,8 +34,10 @@ const ArticleToc = dynamic(() => import("@/stories/Article/Toc/ArticleToc"), {
 });
 
 const ArticleActionWrapper = styled.div`
-  @media screen and (min-width: 1279px) {
-    display: none;
+  display: none;
+
+  @media screen and (min-width: 960px) {
+    display: block;
   }
 `;
 

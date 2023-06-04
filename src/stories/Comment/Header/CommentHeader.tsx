@@ -4,7 +4,7 @@ import { Input } from "antd";
 import { useContext, useEffect, useState } from "react";
 import EmojiIcon from "@/stories/Common/icon/EmojiIcon";
 import EmojiSelector from "@/stories/Common/EmojiSelector/EmojiSelector";
-import { ArticleContext } from "@/pages/blog/ArticleContext";
+import ArticleContext from "@/Context/ArticleContext";
 
 const { TextArea } = Input;
 
@@ -78,7 +78,6 @@ const CommentWordsLeft = styled.div`
 `;
 
 export default function CommentHeader() {
-  const article = useContext(ArticleContext);
   const [count, setCount] = useState(0);
   const [maxLength, setMaxLength] = useState(0);
   const [showEmojiSelector, setShowEmojiSelector] = useState(false);

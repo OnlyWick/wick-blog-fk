@@ -2,10 +2,7 @@ import styled from "styled-components";
 import CommentHeader from "./Header/CommentHeader";
 import CommentItem from "./Item/CommentItem";
 import { Card } from "antd";
-import { useContext, useEffect } from "react";
-import { ArticleContext } from "@/pages/blog/ArticleContext";
-import useSWR from "swr";
-import IArticleType from "@/interfaces/IArticleType";
+import { useEffect } from "react";
 import IComments from "@/interfaces/IComments";
 
 const CommentWrapper = styled.div`

@@ -1,7 +1,7 @@
+import ArticleContext from "@/Context/ArticleContext";
 import IComments from "@/interfaces/IComments";
 import IReplies from "@/interfaces/IReplies";
 import ISubReply from "@/interfaces/ISubReply";
-import { ArticleContext } from "@/pages/blog/ArticleContext";
 import { ArrowUpIcon, CommentIcon } from "@/stories/Common/icon";
 import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
 // import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";

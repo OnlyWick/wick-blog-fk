@@ -25,6 +25,8 @@ const ArticleCatalogItem = styled.li<ArticleCatalogItemProps>`
   white-space: nowrap;
 
   & > a {
+    display: inline-block;
+    width: 100%;
     border-left: 4px solid transparent;
     ${(props) =>
       props.originHref === props.targetHref ||
@@ -41,6 +43,7 @@ const ArticleCatalogItem = styled.li<ArticleCatalogItemProps>`
     font-weight: normal;
     padding: 0px 0 4px 16px;
     & a {
+      width: 100%;
       border: none;
     }
   }

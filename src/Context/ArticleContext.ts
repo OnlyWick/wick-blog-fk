@@ -8,4 +8,4 @@ export interface IArticleContext {
   getMoreSubReply: Function;
 }
 
-export const ArticleContext = createContext<IArticleContext | null>(null);
+export default createContext<IArticleContext | null>(null);

@@ -62,8 +62,6 @@ export default function UserConnect({ connectList }: UserConnectProps) {
         }}
       >
         <svg
-          t="1685629500662"
-          class="icon"
           viewBox="0 0 1024 1024"
           version="1.1"
           xmlns="http://www.w3.org/2000/svg"
@@ -88,8 +86,6 @@ export default function UserConnect({ connectList }: UserConnectProps) {
         }}
       >
         <svg
-          t="1685629590838"
-          class="icon"
           viewBox="0 0 1024 1024"
           version="1.1"
           xmlns="http://www.w3.org/2000/svg"
@@ -112,8 +108,6 @@ export default function UserConnect({ connectList }: UserConnectProps) {
         }}
       >
         <svg
-          t="1685629636958"
-          class="icon"
           viewBox="0 0 1024 1024"
           version="1.1"
           xmlns="http://www.w3.org/2000/svg"
@@ -134,8 +128,6 @@ export default function UserConnect({ connectList }: UserConnectProps) {
         }}
       >
         <svg
-          t="1685629666002"
-          class="icon"
           viewBox="0 0 1024 1024"
           version="1.1"
           xmlns="http://www.w3.org/2000/svg"
