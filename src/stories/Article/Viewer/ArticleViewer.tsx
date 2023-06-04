@@ -7,6 +7,7 @@ import highlight from "@bytemd/plugin-highlight";
 import highlightSSR from "@bytemd/plugin-highlight-ssr";
 import "highlight.js/styles/vs2015.css";
 import "juejin-markdown-themes/dist/vuepress.min.css";
+import ArticleType from "@/pages/blog/ArticleType";
 
 const ArticleViewerWrapper = styled.div``;
 
@@ -21,32 +22,25 @@ const ArticleViewerTitle = styled.h1`
 `;
 const ArticleViewerBody = styled.div``;
 interface ArticleViewerProps {
-  config: {
-    title?: string;
-    tags?: { id: string; name: string; color: string | null }[];
-    keywords?: string[];
-    readCount?: number;
-    updatedAt?: string;
-    content: string;
-  };
+  article: ArticleType;
   style?: CSSProperties;
 }
 
 const plugins = [highlight(), highlightSSR()];
 
-export default function ArticleViewer({ config, style }: ArticleViewerProps) {
+export default function ArticleViewer({ article, style }: ArticleViewerProps) {
   return (
     <ArticleViewerWrapper style={style}>
       <Card>
         <ArticleViewerHeader>
-          <ArticleViewerTitle>{config.title}</ArticleViewerTitle>
+          <ArticleViewerTitle>{article.title}</ArticleViewerTitle>
           <ArticleViewerBaseInfo>
-            <span>{config.updatedAt}</span>
+            <span>{article.updatedAt}</span>
             <Divider type="vertical"></Divider>
-            <span>{config.readCount}</span>
+            <span>{article.readCount}</span>
             <Divider type="vertical"></Divider>
-            {config.tags &&
-              config.tags.map((tag) => {
+            {article.tags &&
+              article.tags.map((tag) => {
                 return (
                   <Tag key={tag.id} color={tag.color ? tag.color : "orange"}>
                     {tag.name}
@@ -56,7 +50,7 @@ export default function ArticleViewer({ config, style }: ArticleViewerProps) {
           </ArticleViewerBaseInfo>
         </ArticleViewerHeader>
         <ArticleViewerBody>
-          <Viewer plugins={plugins} value={config.content}></Viewer>
+          <Viewer plugins={plugins} value={article.content}></Viewer>
         </ArticleViewerBody>
       </Card>
     </ArticleViewerWrapper>

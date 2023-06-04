@@ -1,4 +1,3 @@
-console.log(`${process.env.SERVER_BASEURL}/${process.env.SERVER_GITHUB_LOGIN}`);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
