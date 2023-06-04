@@ -2,8 +2,11 @@ import styled from "styled-components";
 import CommentHeader from "./Header/CommentHeader";
 import CommentItem from "./Item/CommentItem";
 import { Card } from "antd";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ArticleContext } from "@/pages/blog/ArticleContext";
+import useSWR from "swr";
+import IArticleType from "@/interfaces/IArticleType";
+import IComments from "@/interfaces/IComments";
 
 const CommentWrapper = styled.div`
   width: 100%;
@@ -11,55 +14,22 @@ const CommentWrapper = styled.div`
 const CommentListWrapper = styled.div`
   margin-top: 32px;
 `;
-export default function Comment() {
-  const article = useContext(ArticleContext);
-  console.log(article, "fksw");
+interface CommentProps {
+  commentData?: IComments[];
+}
+export default function Comment({ commentData }: CommentProps) {
+  useEffect(() => {
+    console.log("给老子变", commentData);
+  }, [commentData]);
   return (
     <CommentWrapper>
       <Card>
         <CommentHeader></CommentHeader>
         <CommentListWrapper>
-          <CommentItem
-            comment={{
-              commentId: "12345",
-              content: "Hi Wick",
-              userInfo: {
-                avatarUrl: "/freddie.jpg",
-                username: "Wick",
-              },
-              subComment: [
-                {
-                  commentId: "6666",
-                  parentId: "12345",
-                  userInfo: {
-                    avatarUrl: "/freddie.jpg",
-                    username: "OnlyWick",
-                  },
-                  content: "来自 OnlyWick 的回复",
-                  replyUser: {
-                    avatarUrl: "/freddie.jpg",
-                    username: "Wick",
-                  },
-                },
-                {
-                  commentId: "6666",
-                  parentId: "12345",
-                  userInfo: {
-                    avatarUrl: "/freddie.jpg",
-                    username: "OnlyWick",
-                  },
-                  content: "你在教我做事",
-                  parentReply: {
-                    content: `Ant Design, a design language for background applications, is refined by Ant UED Team. Ant Design, a design language for background applications, is refined by Ant UED Team. Ant Design, a design language for background applications, is refined by Ant UED Team. Ant Design, a design language for background applications, is refined by Ant UED Team. Ant Design, a design language for background applications, is refined by Ant UED Team. Ant Design, a design language for background applications, is refined by Ant UED Team. `,
-                  },
-                  replyUser: {
-                    avatarUrl: "/freddie.jpg",
-                    username: "Wick",
-                  },
-                },
-              ],
-            }}
-          ></CommentItem>
+          {Array.isArray(commentData) &&
+            commentData.map((comment) => (
+              <CommentItem key={comment.id} comment={comment}></CommentItem>
+            ))}
         </CommentListWrapper>
       </Card>
     </CommentWrapper>

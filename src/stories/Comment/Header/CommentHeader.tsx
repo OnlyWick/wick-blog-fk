@@ -79,7 +79,6 @@ const CommentWordsLeft = styled.div`
 
 export default function CommentHeader() {
   const article = useContext(ArticleContext);
-  console.log(article, "cohear");
   const [count, setCount] = useState(0);
   const [maxLength, setMaxLength] = useState(0);
   const [showEmojiSelector, setShowEmojiSelector] = useState(false);

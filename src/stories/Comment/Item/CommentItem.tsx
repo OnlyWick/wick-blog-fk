@@ -1,9 +1,13 @@
+import IComments from "@/interfaces/IComments";
+import IReplies from "@/interfaces/IReplies";
+import ISubReply from "@/interfaces/ISubReply";
+import { ArticleContext } from "@/pages/blog/ArticleContext";
 import { ArrowUpIcon, CommentIcon } from "@/stories/Common/icon";
+import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
 // import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
 import { Avatar, Button, Typography, Card } from "antd";
+import { useCallback, useContext, useEffect } from "react";
 import styled from "styled-components";
-
-const { Paragraph } = Typography;
 
 interface CommentItemWrapperProps {
   sub?: boolean;
@@ -26,7 +30,7 @@ const CommentItemHeader = styled.div`
   color: #252933;
   align-items: center;
 `;
-const CommentItemUsername = styled.div``;
+const CommentItemUsername = styled.a``;
 const CommentItemTime = styled.div`
   font-size: 14px;
   color: #8a919f;
@@ -35,8 +39,6 @@ const CommentItemTime = styled.div`
 
 const CommentItemMain = styled.div`
   overflow: hidden;
-  /* display: flex;
-  flex-direction: column; */
 `;
 
 const CommentItemContent = styled.div`
@@ -76,33 +78,12 @@ const CommentItemSub = styled.div`
   }
 `;
 
-interface UserInfoProps {
-  username: string;
-  avatarUrl: string;
-}
-
 interface SubCommentProps {
-  comment: {
-    parentId: string;
-    commentId: string;
-    userInfo: UserInfoProps;
-    replyUser?: UserInfoProps;
-    parentReply?: {
-      content: string;
-    };
-    content: string;
-  };
-}
-
-interface CommentProps {
-  commentId: string;
-  userInfo: UserInfoProps;
-  content: string;
-  subComment?: Array<SubCommentProps["comment"]>;
+  replies: IReplies;
 }
 
 interface CommentItemProps {
-  comment: CommentProps;
+  comment?: IComments;
   sub?: boolean;
 }
 
@@ -143,41 +124,33 @@ const SubCommentItemWrapper = styled.div<CommentItemWrapperProps>`
   margin-top: 16px;
 `;
 
-function CommentItemInternal({ comment }: SubCommentProps) {
+function CommentItemInternal({ replies }: SubCommentProps) {
+  const articleContext = useContext(ArticleContext);
+
+  const handleGetMoreReply = useCallback(
+    (root_reply_id: string) => {
+      articleContext?.getMoreSubReply(root_reply_id);
+    },
+    [articleContext]
+  );
+
   return (
     <SubCommentItemWrapper>
       <CommentItemLeft>
-        <Avatar size="large" src="/freddie.jpg"></Avatar>
+        <Avatar size="large" src={replies.from_user.avatar_url}></Avatar>
       </CommentItemLeft>
       <CommentItemRight>
         <CommentItemHeader>
           <CommentItemUserBox>
-            <CommentItemUsername>
-              {comment.userInfo.username}
+            <CommentItemUsername href={replies.from_user.github_home}>
+              {replies.from_user.name}
             </CommentItemUsername>
-            {comment.parentReply && (
-              <>
-                <CommentItemReplyBox>回复</CommentItemReplyBox>
-                <CommentItemUsername>
-                  {comment.replyUser?.username}
-                </CommentItemUsername>
-              </>
-            )}
           </CommentItemUserBox>
-          <CommentItemTime>8 天前</CommentItemTime>
+          <CommentItemTime>{replies.updatedAt}</CommentItemTime>
         </CommentItemHeader>
         <CommentItemMain>
           <CommentItemContent>
-            {comment.parentReply && (
-              <CommentItemParentReplyWrapper>
-                &quot;
-                <Paragraph ellipsis={{ rows: 1 }}>
-                  {comment.parentReply.content}
-                </Paragraph>
-                &quot;
-              </CommentItemParentReplyWrapper>
-            )}
-            {/* <MarkdownPreview>{comment.content}</MarkdownPreview> */}
+            <MarkdownPreview>{replies.content}</MarkdownPreview>
           </CommentItemContent>
           <CommentItemActions>
             <CommentItemActionItem>
@@ -189,6 +162,75 @@ function CommentItemInternal({ comment }: SubCommentProps) {
               <CommentItemActionItemCounter>888</CommentItemActionItemCounter>
             </CommentItemActionItem>
           </CommentItemActions>
+          {replies.sub_reply.map((sub) => {
+            console.log(sub, "@@@@@@@@@@jk");
+            return (
+              <SubCommentItemWrapper key={sub.id}>
+                <CommentItemLeft>
+                  <Avatar size="large" src={sub.from_user.avatar_url}></Avatar>
+                </CommentItemLeft>
+                <CommentItemRight>
+                  <CommentItemHeader>
+                    <CommentItemUserBox>
+                      <CommentItemUsername href={sub.from_user.github_home}>
+                        {sub.from_user.name}
+                      </CommentItemUsername>
+                      {sub.to_user && (
+                        <>
+                          <CommentItemReplyBox>回复</CommentItemReplyBox>
+                          <CommentItemUsername href={sub.to_user.github_home}>
+                            {sub.to_user.name}
+                          </CommentItemUsername>
+                        </>
+                      )}
+                    </CommentItemUserBox>
+                    <CommentItemTime>{sub.updatedAt}</CommentItemTime>
+                  </CommentItemHeader>
+                  <CommentItemMain>
+                    <CommentItemContent>
+                      <MarkdownPreview>{sub.content}</MarkdownPreview>
+                    </CommentItemContent>
+                    <CommentItemActions>
+                      <CommentItemActionItem>
+                        <Button type="link" icon={<ArrowUpIcon />}></Button>
+                        <CommentItemActionItemCounter>
+                          888
+                        </CommentItemActionItemCounter>
+                      </CommentItemActionItem>
+                      <CommentItemActionItem>
+                        <Button
+                          type="link"
+                          icon={<CommentIcon></CommentIcon>}
+                        ></Button>
+                        <CommentItemActionItemCounter>
+                          888
+                        </CommentItemActionItemCounter>
+                      </CommentItemActionItem>
+                    </CommentItemActions>
+                  </CommentItemMain>
+                </CommentItemRight>
+              </SubCommentItemWrapper>
+            );
+          })}
+          {replies.sub_reply_count > 2 ? (
+            <SubCommentItemWrapper>
+              <CommentItemLeft style={{ width: "40px" }}></CommentItemLeft>
+              <CommentItemRight>
+                <Button
+                  type="link"
+                  style={{
+                    marginTop: "var(--wick-medium-margin)",
+                    padding: 0,
+                  }}
+                  onClick={() => {
+                    handleGetMoreReply(replies.id);
+                  }}
+                >
+                  查看更多回复
+                </Button>
+              </CommentItemRight>
+            </SubCommentItemWrapper>
+          ) : null}
         </CommentItemMain>
       </CommentItemRight>
     </SubCommentItemWrapper>
@@ -196,21 +238,21 @@ function CommentItemInternal({ comment }: SubCommentProps) {
 }
 
 export default function CommentItem({ comment, sub }: CommentItemProps) {
-  return (
+  return comment ? (
     <CommentItemWrapper sub={sub}>
       <CommentItemLeft>
-        <Avatar size={52} src="/freddie.jpg"></Avatar>
+        <Avatar size={52} src={comment.user.avatar_url}></Avatar>
       </CommentItemLeft>
       <CommentItemRight>
         <CommentItemHeader>
-          <CommentItemUsername>
-            {comment && comment.userInfo.username}
+          <CommentItemUsername href={comment.user.github_home}>
+            {comment && comment.user && comment.user.name}
           </CommentItemUsername>
-          <CommentItemTime>8 天前</CommentItemTime>
+          <CommentItemTime>{comment && comment.updatedAt}</CommentItemTime>
         </CommentItemHeader>
         <CommentItemMain>
           <CommentItemContent>
-            {/* <MarkdownPreview>{comment.content}</MarkdownPreview> */}
+            <MarkdownPreview>{comment.content}</MarkdownPreview>
           </CommentItemContent>
           <CommentItemActions>
             <CommentItemActionItem>
@@ -223,23 +265,26 @@ export default function CommentItem({ comment, sub }: CommentItemProps) {
             </CommentItemActionItem>
           </CommentItemActions>
         </CommentItemMain>
-        {comment.subComment && (
+        {comment.replies.length !== 0 && (
           <CommentItemSub>
             <Card
               style={{
                 backgroundColor: "rgba(233,233,233,.5)",
               }}
             >
-              {/* {comment.subComment?.map((sub, index) => (
-                <CommentItemInternal
-                  key={sub.commentId}
-                  comment={{}}
-                ></CommentItemInternal>
-              ))} */}
+              {comment.replies?.map((reply) => {
+                console.log(reply, "FFFFF");
+                return (
+                  <CommentItemInternal
+                    key={reply.id}
+                    replies={reply}
+                  ></CommentItemInternal>
+                );
+              })}
             </Card>
           </CommentItemSub>
         )}
       </CommentItemRight>
     </CommentItemWrapper>
-  );
+  ) : null;
 }
