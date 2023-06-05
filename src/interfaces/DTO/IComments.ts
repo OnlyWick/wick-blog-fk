@@ -7,6 +7,8 @@ export default interface IComments {
   author_id: string;
   content: string;
   article_id: string;
+  voteUpCount: number;
+  voteDownCount: number;
   updatedAt: string;
   replies: IReplies[];
   user: IUser;

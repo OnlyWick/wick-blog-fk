@@ -77,7 +77,11 @@ const CommentWordsLeft = styled.div`
   margin: 0 16px;
 `;
 
-export default function CommentHeader() {
+interface CommentHeaderProps {
+  commentCount?: number;
+}
+
+export default function CommentHeader({ commentCount }: CommentHeaderProps) {
   const [count, setCount] = useState(0);
   const [maxLength, setMaxLength] = useState(0);
   const [showEmojiSelector, setShowEmojiSelector] = useState(false);
@@ -107,11 +111,19 @@ export default function CommentHeader() {
   }, [showEmojiSelector]);
 
   const handleLogin = () => {
-    window.open(
+    const childWindow = window.open(
       `${window.location.origin}/oauth/?platform=github`,
       "_blank",
       "toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=800, height=600"
     );
+
+    const timerId = setInterval(() => {
+      console.log("1");
+      if (childWindow?.close) {
+        alert("子窗口关闭");
+        clearInterval(timerId);
+      }
+    }, 500);
   };
   const handlePublishComment = async () => {
     const res = await fetch(`http://localhost:9396/article/703400588868952123`);
@@ -122,7 +134,11 @@ export default function CommentHeader() {
     <>
       <CommentHeaderWrapper>
         <CommentHeaderHeader>
-          <CommentCount>79 条评论</CommentCount>
+          <CommentCount>
+            {Number.isInteger(commentCount) && commentCount !== 0
+              ? `${commentCount} 条评论`
+              : "暂无评论"}
+          </CommentCount>
           <CommentLogin>
             <Button type="link" onClick={handleLogin}>
               登录

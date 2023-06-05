@@ -1,8 +1,8 @@
 import ArticleContext from "@/Context/ArticleContext";
-import IComments from "@/interfaces/IComments";
-import IReplies from "@/interfaces/IReplies";
-import ISubReply from "@/interfaces/ISubReply";
+import IComments from "@/interfaces/DTO/IComments";
+import IReplies from "@/interfaces/DTO/IReplies";
 import { ArrowUpIcon, CommentIcon } from "@/stories/Common/icon";
+import ArrowDownIcon from "@/stories/Common/icon/ArrowDownIcon";
 import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
 // import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
 import { Avatar, Button, Typography, Card } from "antd";
@@ -15,12 +15,25 @@ interface CommentItemWrapperProps {
 const CommentItemWrapper = styled.div<CommentItemWrapperProps>`
   display: flex;
   overflow: hidden;
+  margin-bottom: var(--wick-medium-margin);
+
+  & .ant-avatar {
+    @media screen and (max-width: 600px) {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
 `;
+
 const CommentItemLeft = styled.div``;
 const CommentItemRight = styled.div`
   margin-left: 16px;
   flex: 1;
   min-width: 0;
+
+  @media screen and (max-width: 600px) {
+    margin-left: 0.8rem;
+  }
 `;
 const CommentItemHeader = styled.div`
   display: flex;
@@ -30,7 +43,11 @@ const CommentItemHeader = styled.div`
   color: #252933;
   align-items: center;
 `;
-const CommentItemUsername = styled.a``;
+const CommentItemUsername = styled.a`
+  @media screen and (max-width: 600px) {
+    font-size: 0.8rem;
+  }
+`;
 const CommentItemTime = styled.div`
   font-size: 14px;
   color: #8a919f;
@@ -66,7 +83,7 @@ const CommentItemActionItem = styled.div`
 `;
 const CommentItemActionItemCounter = styled.span`
   user-select: none;
-  margin-left: 6px;
+  margin: 0 var(--wick-medium-margin);
 `;
 
 const CommentItemSub = styled.div`
@@ -96,6 +113,9 @@ const CommentItemReplyBox = styled.div`
   font-size: 14px;
   line-height: 22px;
   color: #8a919f;
+  @media screen and (max-width: 600px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const CommentItemParentReplyWrapper = styled.div`
@@ -122,6 +142,13 @@ const SubCommentItemWrapper = styled.div<CommentItemWrapperProps>`
   display: flex;
   overflow: hidden;
   margin-top: 16px;
+
+  & .ant-avatar {
+    @media screen and (max-width: 600px) {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
 `;
 
 function CommentItemInternal({ replies }: SubCommentProps) {
@@ -154,12 +181,32 @@ function CommentItemInternal({ replies }: SubCommentProps) {
           </CommentItemContent>
           <CommentItemActions>
             <CommentItemActionItem>
-              <Button type="link" icon={<ArrowUpIcon />}></Button>
-              <CommentItemActionItemCounter>888</CommentItemActionItemCounter>
+              <Button
+                type="link"
+                style={{
+                  width: "auto",
+                }}
+                icon={<ArrowUpIcon size={16} />}
+              ></Button>
+              <CommentItemActionItemCounter>
+                {replies.voteUpCount - replies.voteDownCount}
+              </CommentItemActionItemCounter>
+              <Button
+                type="link"
+                style={{
+                  width: "auto",
+                }}
+                icon={<ArrowDownIcon size={16} />}
+              ></Button>
             </CommentItemActionItem>
             <CommentItemActionItem>
-              <Button type="link" icon={<CommentIcon></CommentIcon>}></Button>
-              <CommentItemActionItemCounter>888</CommentItemActionItemCounter>
+              <Button
+                type="link"
+                style={{
+                  width: "auto",
+                }}
+                icon={<CommentIcon size={16}></CommentIcon>}
+              ></Button>
             </CommentItemActionItem>
           </CommentItemActions>
           {replies.sub_reply.map((sub) => {
@@ -192,19 +239,32 @@ function CommentItemInternal({ replies }: SubCommentProps) {
                     </CommentItemContent>
                     <CommentItemActions>
                       <CommentItemActionItem>
-                        <Button type="link" icon={<ArrowUpIcon />}></Button>
+                        <Button
+                          type="link"
+                          style={{
+                            width: "auto",
+                          }}
+                          icon={<ArrowUpIcon size={16} />}
+                        ></Button>
                         <CommentItemActionItemCounter>
-                          888
+                          {sub.voteUpCount - sub.voteDownCount}
                         </CommentItemActionItemCounter>
+                        <Button
+                          type="link"
+                          style={{
+                            width: "auto",
+                          }}
+                          icon={<ArrowDownIcon size={16} />}
+                        ></Button>
                       </CommentItemActionItem>
                       <CommentItemActionItem>
                         <Button
                           type="link"
-                          icon={<CommentIcon></CommentIcon>}
+                          style={{
+                            width: "auto",
+                          }}
+                          icon={<CommentIcon size={16}></CommentIcon>}
                         ></Button>
-                        <CommentItemActionItemCounter>
-                          888
-                        </CommentItemActionItemCounter>
                       </CommentItemActionItem>
                     </CommentItemActions>
                   </CommentItemMain>
@@ -241,7 +301,7 @@ export default function CommentItem({ comment, sub }: CommentItemProps) {
   return comment ? (
     <CommentItemWrapper sub={sub}>
       <CommentItemLeft>
-        <Avatar size={52} src={comment.user.avatar_url}></Avatar>
+        <Avatar size={"default"} src={comment.user.avatar_url}></Avatar>
       </CommentItemLeft>
       <CommentItemRight>
         <CommentItemHeader>
@@ -256,12 +316,32 @@ export default function CommentItem({ comment, sub }: CommentItemProps) {
           </CommentItemContent>
           <CommentItemActions>
             <CommentItemActionItem>
-              <Button type="link" icon={<ArrowUpIcon />}></Button>
-              <CommentItemActionItemCounter>888</CommentItemActionItemCounter>
+              <Button
+                type="link"
+                style={{
+                  width: "auto",
+                }}
+                icon={<ArrowUpIcon size={16} />}
+              ></Button>
+              <CommentItemActionItemCounter>
+                {comment.voteUpCount - comment.voteDownCount}
+              </CommentItemActionItemCounter>
+              <Button
+                type="link"
+                style={{
+                  width: "auto",
+                }}
+                icon={<ArrowDownIcon size={16} />}
+              ></Button>
             </CommentItemActionItem>
             <CommentItemActionItem>
-              <Button type="link" icon={<CommentIcon></CommentIcon>}></Button>
-              <CommentItemActionItemCounter>888</CommentItemActionItemCounter>
+              <Button
+                type="link"
+                style={{
+                  width: "auto",
+                }}
+                icon={<CommentIcon size={16}></CommentIcon>}
+              ></Button>
             </CommentItemActionItem>
           </CommentItemActions>
         </CommentItemMain>

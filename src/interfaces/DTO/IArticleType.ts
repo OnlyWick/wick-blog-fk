@@ -9,4 +9,6 @@ export default interface ArticleType {
   updatedAt: string;
   // TODO: 提供 tags 类型
   tags: Array<any>;
+  voteUpCount: number;
+  voteDownCount: number;
 }

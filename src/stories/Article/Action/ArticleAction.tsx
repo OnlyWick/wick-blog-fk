@@ -49,8 +49,13 @@ const ArticleActionQRCode = styled.div<ArticleActionQRCodeProps>`
   top: 0;
 `;
 
-export default function ArticleAction() {
+interface ArticleActionProps {
+  voteCount?: number;
+}
+
+export default function ArticleAction({ voteCount = 0 }: ArticleActionProps) {
   const [showQRCode, setShowQRCode] = useState(false);
+  const [href, setHref] = useState("");
   const handleGenerateQrCode = useCallback(
     (e: BaseSyntheticEvent) => {
       e.stopPropagation();
@@ -60,6 +65,7 @@ export default function ArticleAction() {
   );
 
   useEffect(() => {
+    setHref(window.location.href);
     const cancelShowQRCode = () => {
       setShowQRCode(false);
     };
@@ -75,7 +81,7 @@ export default function ArticleAction() {
       <ArticleActionItem>
         <ArrowUpIcon />
       </ArticleActionItem>
-      <ArticleActionVoteCount>9</ArticleActionVoteCount>
+      <ArticleActionVoteCount>{voteCount}</ArticleActionVoteCount>
       <ArticleActionItem>
         <ArrowDownIcon />
       </ArticleActionItem>
@@ -96,7 +102,7 @@ export default function ArticleAction() {
             e.stopPropagation();
           }}
         >
-          <QRCode value={window.location.href}></QRCode>
+          <QRCode value={href}></QRCode>
         </ArticleActionQRCode>
       </ArticleActionItem>
     </ArticleActionWrapper>

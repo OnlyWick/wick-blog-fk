@@ -25,9 +25,7 @@ export default function Blog() {
     data: articles,
     error,
     isLoading,
-  } = useSWR("http://192.168.31.86:9396/article", fetcher, {
-    // revalidateOnFocus: false,
-  });
+  } = useSWR("http://192.168.31.86:9396/article", fetcher);
 
   return (
     <Layout style={{ width: "100%", marginTop: "var(--wick-large-margin)" }}>

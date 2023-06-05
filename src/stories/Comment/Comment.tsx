@@ -3,7 +3,8 @@ import CommentHeader from "./Header/CommentHeader";
 import CommentItem from "./Item/CommentItem";
 import { Card } from "antd";
 import { useEffect } from "react";
-import IComments from "@/interfaces/IComments";
+import IComments from "@/interfaces/DTO/IComments";
+import IReturnComments from "@/interfaces/DTO/IReturnComments";
 
 const CommentWrapper = styled.div`
   width: 100%;
@@ -12,19 +13,16 @@ const CommentListWrapper = styled.div`
   margin-top: 32px;
 `;
 interface CommentProps {
-  commentData?: IComments[];
+  commentData?: IReturnComments;
 }
 export default function Comment({ commentData }: CommentProps) {
-  useEffect(() => {
-    console.log("给老子变", commentData);
-  }, [commentData]);
   return (
     <CommentWrapper>
       <Card>
-        <CommentHeader></CommentHeader>
+        <CommentHeader commentCount={commentData?.count}></CommentHeader>
         <CommentListWrapper>
-          {Array.isArray(commentData) &&
-            commentData.map((comment) => (
+          {Array.isArray(commentData?.data) &&
+            commentData?.data.map((comment) => (
               <CommentItem key={comment.id} comment={comment}></CommentItem>
             ))}
         </CommentListWrapper>
