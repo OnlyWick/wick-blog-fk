@@ -5,6 +5,7 @@ import { Card } from "antd";
 import { useEffect } from "react";
 import IComments from "@/interfaces/DTO/IComments";
 import IReturnComments from "@/interfaces/DTO/IReturnComments";
+import { VoteCategoryType } from "@/interfaces/DTO/IVoteCommentOrReply";
 
 const CommentWrapper = styled.div`
   width: 100%;
@@ -14,8 +15,10 @@ const CommentListWrapper = styled.div`
 `;
 interface CommentProps {
   commentData?: IReturnComments;
+  onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
+  onVoteDown?: (id: string) => void;
 }
-export default function Comment({ commentData }: CommentProps) {
+export default function Comment({ commentData, onVoteUp }: CommentProps) {
   return (
     <CommentWrapper>
       <Card>
@@ -23,7 +26,11 @@ export default function Comment({ commentData }: CommentProps) {
         <CommentListWrapper>
           {Array.isArray(commentData?.data) &&
             commentData?.data.map((comment) => (
-              <CommentItem key={comment.id} comment={comment}></CommentItem>
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                onVoteUp={onVoteUp}
+              ></CommentItem>
             ))}
         </CommentListWrapper>
       </Card>

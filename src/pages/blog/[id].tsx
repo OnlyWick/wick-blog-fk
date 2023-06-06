@@ -2,7 +2,7 @@ import ArticleViewer from "@/stories/Article/Viewer";
 // import Layout from "@/stories/Layout";
 // import Content from "@/stories/Layout/Content/Content";
 // import Sider from "@/stories/Layout/Sider/Sider";
-import { Affix, Layout } from "antd";
+import { Affix, Layout, notification } from "antd";
 import { GetServerSidePropsContext } from "next";
 import dynamic from "next/dynamic";
 import styled from "styled-components";
@@ -16,6 +16,11 @@ import Response from "@/interfaces/Response";
 import IReturnComments from "@/interfaces/DTO/IReturnComments";
 import IArticleType from "@/interfaces/DTO/IArticleType";
 import IReplies from "@/interfaces/DTO/IReplies";
+import { useCallback, useEffect } from "react";
+import {
+  VoteCategoryType,
+  VoteType,
+} from "@/interfaces/DTO/IVoteCommentOrReply";
 
 const { Sider, Content } = Layout;
 
@@ -101,9 +106,8 @@ export default function Id({ article }: ArticleIdProps) {
         draft.map((comment) => {
           return comment.replies.map((reply) => {
             if (root_reply_id === reply.id) {
-              // console.log(reply.sub_reply, data.sub_reply, "JOHN");
+              // TODO: push
               reply.sub_reply = data.sub_reply;
-              // reply.sub_reply.push(...data.sub_reply);
             }
           });
         });
@@ -126,6 +130,48 @@ export default function Id({ article }: ArticleIdProps) {
     const result = await data.json();
     mutate(url, updateCommentData(root_reply_id, result), false);
   };
+  const handleVoteUp = useCallback(
+    async (voteId: string, voteCategory: VoteCategoryType) => {
+      try {
+        console.log(voteId);
+        const response = await fetch(`http://localhost:9396/comment/vote`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            vote_id: voteId,
+            category: voteCategory,
+            vote_type: VoteType.UP,
+          }),
+          credentials: "include",
+        });
+        if (response.status == 401) {
+          notification.warning({
+            message: "您没登录呢",
+            placement: "top",
+          });
+        } else {
+          const data = await response.json();
+          const message = data.message;
+          if (data.success) {
+            notification.success({
+              message,
+              placement: "top",
+            });
+          } else {
+            notification.warning({
+              message,
+              placement: "top",
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    []
+  );
 
   const context: IArticleContext = {
     articleData: article,
@@ -166,7 +212,10 @@ export default function Id({ article }: ArticleIdProps) {
               }}
               article={article}
             />
-            <Comment commentData={commentData?.data}></Comment>
+            <Comment
+              commentData={commentData?.data}
+              onVoteUp={handleVoteUp}
+            ></Comment>
           </Content>
           <ArticleActionWrapper>
             <Affix offsetTop={24}>

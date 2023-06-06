@@ -1,6 +1,8 @@
 import ArticleContext from "@/Context/ArticleContext";
 import IComments from "@/interfaces/DTO/IComments";
 import IReplies from "@/interfaces/DTO/IReplies";
+import ISubReply from "@/interfaces/DTO/ISubReply";
+import { VoteCategoryType } from "@/interfaces/DTO/IVoteCommentOrReply";
 import { ArrowUpIcon, CommentIcon } from "@/stories/Common/icon";
 import ArrowDownIcon from "@/stories/Common/icon/ArrowDownIcon";
 import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
@@ -9,10 +11,7 @@ import { Avatar, Button, Typography, Card } from "antd";
 import { useCallback, useContext, useEffect } from "react";
 import styled from "styled-components";
 
-interface CommentItemWrapperProps {
-  sub?: boolean;
-}
-const CommentItemWrapper = styled.div<CommentItemWrapperProps>`
+const CommentItemWrapper = styled.div`
   display: flex;
   overflow: hidden;
   margin-bottom: var(--wick-medium-margin);
@@ -86,7 +85,7 @@ const CommentItemActionItemCounter = styled.span`
   margin: 0 var(--wick-medium-margin);
 `;
 
-const CommentItemSub = styled.div`
+const CommentItemReplies = styled.div`
   overflow: hidden;
   margin-top: 16px;
 
@@ -94,15 +93,6 @@ const CommentItemSub = styled.div`
     margin-top: 0;
   }
 `;
-
-interface SubCommentProps {
-  replies: IReplies;
-}
-
-interface CommentItemProps {
-  comment?: IComments;
-  sub?: boolean;
-}
 
 const CommentItemUserBox = styled.div`
   display: flex;
@@ -138,7 +128,7 @@ const CommentItemParentReplyWrapper = styled.div`
   }
 `;
 
-const SubCommentItemWrapper = styled.div<CommentItemWrapperProps>`
+const SubCommentItemWrapper = styled.div`
   display: flex;
   overflow: hidden;
   margin-top: 16px;
@@ -151,8 +141,94 @@ const SubCommentItemWrapper = styled.div<CommentItemWrapperProps>`
   }
 `;
 
-function CommentItemInternal({ replies }: SubCommentProps) {
+interface CommentItemProps {
+  comment?: IComments;
+  onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
+}
+
+interface CommentRepliesProps {
+  replies: IReplies;
+  onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
+}
+
+interface CommentSubRepliesProps {
+  subReply: ISubReply;
+  onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
+}
+
+function CommentSubRepliesItem({ subReply, onVoteUp }: CommentSubRepliesProps) {
+  const handleVoteUp = useCallback(() => {
+    onVoteUp && onVoteUp(subReply!.id, VoteCategoryType.REPLY);
+  }, [onVoteUp, subReply]);
+
+  return (
+    <SubCommentItemWrapper>
+      <CommentItemLeft>
+        <Avatar size="large" src={subReply.from_user.avatar_url}></Avatar>
+      </CommentItemLeft>
+      <CommentItemRight>
+        <CommentItemHeader>
+          <CommentItemUserBox>
+            <CommentItemUsername href={subReply.from_user.github_home}>
+              {subReply.from_user.name}
+            </CommentItemUsername>
+            {subReply.to_user && (
+              <CommentItemUserBox>
+                <CommentItemReplyBox>回复</CommentItemReplyBox>
+                <CommentItemUsername href={subReply.to_user.github_home}>
+                  {subReply.to_user.name}
+                </CommentItemUsername>
+              </CommentItemUserBox>
+            )}
+          </CommentItemUserBox>
+          <CommentItemTime>{subReply.updatedAt}</CommentItemTime>
+        </CommentItemHeader>
+        <CommentItemMain>
+          <CommentItemContent>
+            <MarkdownPreview>{subReply.content}</MarkdownPreview>
+          </CommentItemContent>
+          <CommentItemActions>
+            <CommentItemActionItem>
+              <Button
+                type="link"
+                style={{
+                  width: "auto",
+                }}
+                onClick={handleVoteUp}
+                icon={<ArrowUpIcon size={16} />}
+              ></Button>
+              <CommentItemActionItemCounter>
+                {subReply.voteUpCount - subReply.voteDownCount}
+              </CommentItemActionItemCounter>
+              <Button
+                type="link"
+                style={{
+                  width: "auto",
+                }}
+                icon={<ArrowDownIcon size={16} />}
+              ></Button>
+            </CommentItemActionItem>
+            <CommentItemActionItem>
+              <Button
+                type="link"
+                style={{
+                  width: "auto",
+                }}
+                icon={<CommentIcon size={16}></CommentIcon>}
+              ></Button>
+            </CommentItemActionItem>
+          </CommentItemActions>
+        </CommentItemMain>
+      </CommentItemRight>
+    </SubCommentItemWrapper>
+  );
+}
+
+function CommentRepliesItem({ replies, onVoteUp }: CommentRepliesProps) {
   const articleContext = useContext(ArticleContext);
+  const handleVoteUp = useCallback(() => {
+    onVoteUp && onVoteUp(replies!.id, VoteCategoryType.REPLY);
+  }, [onVoteUp, replies]);
 
   const handleGetMoreReply = useCallback(
     (root_reply_id: string) => {
@@ -186,6 +262,7 @@ function CommentItemInternal({ replies }: SubCommentProps) {
                 style={{
                   width: "auto",
                 }}
+                onClick={handleVoteUp}
                 icon={<ArrowUpIcon size={16} />}
               ></Button>
               <CommentItemActionItemCounter>
@@ -210,66 +287,12 @@ function CommentItemInternal({ replies }: SubCommentProps) {
             </CommentItemActionItem>
           </CommentItemActions>
           {replies.sub_reply.map((sub) => {
-            console.log(sub, "@@@@@@@@@@jk");
             return (
-              <SubCommentItemWrapper key={sub.id}>
-                <CommentItemLeft>
-                  <Avatar size="large" src={sub.from_user.avatar_url}></Avatar>
-                </CommentItemLeft>
-                <CommentItemRight>
-                  <CommentItemHeader>
-                    <CommentItemUserBox>
-                      <CommentItemUsername href={sub.from_user.github_home}>
-                        {sub.from_user.name}
-                      </CommentItemUsername>
-                      {sub.to_user && (
-                        <>
-                          <CommentItemReplyBox>回复</CommentItemReplyBox>
-                          <CommentItemUsername href={sub.to_user.github_home}>
-                            {sub.to_user.name}
-                          </CommentItemUsername>
-                        </>
-                      )}
-                    </CommentItemUserBox>
-                    <CommentItemTime>{sub.updatedAt}</CommentItemTime>
-                  </CommentItemHeader>
-                  <CommentItemMain>
-                    <CommentItemContent>
-                      <MarkdownPreview>{sub.content}</MarkdownPreview>
-                    </CommentItemContent>
-                    <CommentItemActions>
-                      <CommentItemActionItem>
-                        <Button
-                          type="link"
-                          style={{
-                            width: "auto",
-                          }}
-                          icon={<ArrowUpIcon size={16} />}
-                        ></Button>
-                        <CommentItemActionItemCounter>
-                          {sub.voteUpCount - sub.voteDownCount}
-                        </CommentItemActionItemCounter>
-                        <Button
-                          type="link"
-                          style={{
-                            width: "auto",
-                          }}
-                          icon={<ArrowDownIcon size={16} />}
-                        ></Button>
-                      </CommentItemActionItem>
-                      <CommentItemActionItem>
-                        <Button
-                          type="link"
-                          style={{
-                            width: "auto",
-                          }}
-                          icon={<CommentIcon size={16}></CommentIcon>}
-                        ></Button>
-                      </CommentItemActionItem>
-                    </CommentItemActions>
-                  </CommentItemMain>
-                </CommentItemRight>
-              </SubCommentItemWrapper>
+              <CommentSubRepliesItem
+                key={sub.id}
+                subReply={sub}
+                onVoteUp={onVoteUp}
+              ></CommentSubRepliesItem>
             );
           })}
           {replies.sub_reply_count > 2 ? (
@@ -297,9 +320,13 @@ function CommentItemInternal({ replies }: SubCommentProps) {
   );
 }
 
-export default function CommentItem({ comment, sub }: CommentItemProps) {
+export default function CommentItem({ comment, onVoteUp }: CommentItemProps) {
+  const handleVoteUp = useCallback(() => {
+    onVoteUp && onVoteUp(comment!.id, VoteCategoryType.COMMENT);
+  }, [onVoteUp, comment]);
+
   return comment ? (
-    <CommentItemWrapper sub={sub}>
+    <CommentItemWrapper>
       <CommentItemLeft>
         <Avatar size={"default"} src={comment.user.avatar_url}></Avatar>
       </CommentItemLeft>
@@ -321,6 +348,7 @@ export default function CommentItem({ comment, sub }: CommentItemProps) {
                 style={{
                   width: "auto",
                 }}
+                onClick={handleVoteUp}
                 icon={<ArrowUpIcon size={16} />}
               ></Button>
               <CommentItemActionItemCounter>
@@ -346,23 +374,23 @@ export default function CommentItem({ comment, sub }: CommentItemProps) {
           </CommentItemActions>
         </CommentItemMain>
         {comment.replies.length !== 0 && (
-          <CommentItemSub>
+          <CommentItemReplies>
             <Card
               style={{
                 backgroundColor: "rgba(233,233,233,.5)",
               }}
             >
               {comment.replies?.map((reply) => {
-                console.log(reply, "FFFFF");
                 return (
-                  <CommentItemInternal
+                  <CommentRepliesItem
                     key={reply.id}
                     replies={reply}
-                  ></CommentItemInternal>
+                    onVoteUp={onVoteUp}
+                  ></CommentRepliesItem>
                 );
               })}
             </Card>
-          </CommentItemSub>
+          </CommentItemReplies>
         )}
       </CommentItemRight>
     </CommentItemWrapper>

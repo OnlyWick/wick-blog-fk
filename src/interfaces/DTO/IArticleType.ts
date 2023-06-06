@@ -1,4 +1,4 @@
-export default interface ArticleType {
+export default interface IArticleType {
   id: string;
   title: string;
   description: string;

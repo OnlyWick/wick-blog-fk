@@ -1,10 +1,8 @@
-import ArticleType from "@/interfaces/IArticleType";
-import IComments from "@/interfaces/IComments";
+import IArticleType from "@/interfaces/DTO/IArticleType";
 import { createContext } from "react";
 
 export interface IArticleContext {
-  articleData: ArticleType;
-  // commentData: IComments;
+  articleData: IArticleType;
   getMoreSubReply: Function;
 }
 
