@@ -46,7 +46,7 @@ const LayoutWrapper = styled.div`
 `;
 
 const ArticleActionWrapper = styled.div`
-  margin: 0 var(--wick-medium-margin);
+  margin: 0 0 0 var(--wick-medium-margin);
   display: none;
 
   @media screen and (min-width: 960px) {

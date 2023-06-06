@@ -47,12 +47,10 @@ const MainContainer = styled.div`
   justify-content: center;
 
   @media screen and (min-width: 960px) {
-    margin: var(--wick-large-margin);
     padding: 0 10px;
   }
 
   @media screen and (max-width: 959px) {
-    /* margin: 0 var(--wick-medium-margin); */
     padding: 0;
   }
 `;
@@ -84,6 +82,7 @@ export default function App({ Component, pageProps }: AppProps) {
               <Content
                 style={{
                   maxWidth: "1280px",
+                  margin: "var(--wick-large-margin)",
                 }}
               >
                 <Component {...pageProps} />

@@ -117,14 +117,18 @@ export default function CommentHeader({ commentCount }: CommentHeaderProps) {
       "toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=800, height=600"
     );
 
-    const timerId = setInterval(() => {
-      console.log("1");
-      if (childWindow?.close) {
-        alert("子窗口关闭");
-        clearInterval(timerId);
+    // 授权页面关闭后后刷新父窗口
+    const timerId = window.setInterval(function () {
+      console.log("关闭", childWindow?.closed);
+      if (!(childWindow && !childWindow.closed)) {
+        window.clearInterval(timerId);
+        setTimeout(function () {
+          window.location.reload();
+        }, 100);
       }
-    }, 500);
+    }, 300);
   };
+
   const handlePublishComment = async () => {
     const res = await fetch(`http://localhost:9396/article/703400588868952123`);
     console.log(await res.json());
