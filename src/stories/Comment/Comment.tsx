@@ -2,10 +2,10 @@ import styled from "styled-components";
 import CommentHeader from "./Header/CommentHeader";
 import CommentItem from "./Item/CommentItem";
 import { Card } from "antd";
-import { useContext, useEffect } from "react";
+import { ChangeEvent, FocusEventHandler, useContext, useEffect } from "react";
 import IReturnComments from "@/interfaces/DTO/IReturnComments";
 import { VoteCategoryType } from "@/interfaces/DTO/IVoteCommentOrReply";
-import { EmojiArray } from "../Common/EmojiSelector/EmojiSelector";
+import { EmojiArrayType } from "../Common/EmojiSelector/EmojiSelector";
 import { CommentContext } from "./CommentContext";
 
 const CommentWrapper = styled.div`
@@ -16,12 +16,18 @@ const CommentListWrapper = styled.div`
 `;
 interface CommentProps {
   commentData?: IReturnComments;
+  value?: string;
+  onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onBlur?: FocusEventHandler<HTMLTextAreaElement>;
   onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
   onVoteDown?: (id: string, categoryType: VoteCategoryType) => void;
 }
-// TODO: 数据传递全部改成 Context
+// TODO: 组件内部使用 context 还差不多, 但是用户不需要传递 context
 export default function Comment({
   commentData,
+  value,
+  onChange,
+  onBlur,
   onVoteUp,
   onVoteDown,
 }: CommentProps) {
@@ -29,7 +35,12 @@ export default function Comment({
   return (
     <CommentWrapper>
       <Card>
-        <CommentHeader commentCount={commentData?.count}></CommentHeader>
+        <CommentHeader
+          value={value}
+          onChange={onChange}
+          onBlur={onBlur}
+          commentCount={commentData?.count}
+        ></CommentHeader>
         <CommentListWrapper>
           {Array.isArray(commentData?.data) &&
             commentData?.data.map((comment) => (

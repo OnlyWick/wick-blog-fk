@@ -1,11 +1,13 @@
 import { Avatar, Button, Divider } from "antd";
 import styled from "styled-components";
 import { Input } from "antd";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import EmojiIcon from "@/stories/Common/icon/EmojiIcon";
 import EmojiSelector from "@/stories/Common/EmojiSelector/EmojiSelector";
 import ArticleContext from "@/Context/ArticleContext";
 import { CommentContext } from "../CommentContext";
+import { ChangeEvent } from "react";
+import { FocusEventHandler } from "react";
 
 const { TextArea } = Input;
 
@@ -80,9 +82,17 @@ const CommentWordsLeft = styled.div`
 
 interface CommentHeaderProps {
   commentCount?: number;
+  value?: string;
+  onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onBlur?: FocusEventHandler<HTMLTextAreaElement>;
 }
 
-export default function CommentHeader({ commentCount }: CommentHeaderProps) {
+export default function CommentHeader({
+  commentCount,
+  value,
+  onChange,
+  onBlur,
+}: CommentHeaderProps) {
   const commentContext = useContext(CommentContext);
   const [count, setCount] = useState(0);
   const [maxLength, setMaxLength] = useState(0);
@@ -131,9 +141,18 @@ export default function CommentHeader({ commentCount }: CommentHeaderProps) {
     }, 300);
   };
 
+  // TODO: 父元素传递进来
   const handlePublishComment = async () => {
     const res = await fetch(`http://localhost:9396/article/703400588868952123`);
     console.log(await res.json());
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    onChange && onChange(e);
+  };
+
+  const handleBlur: FocusEventHandler<HTMLTextAreaElement> = (e) => {
+    onBlur && onBlur(e);
   };
 
   return (
@@ -157,6 +176,10 @@ export default function CommentHeader({ commentCount }: CommentHeaderProps) {
           </CommentHeaderLeft>
           <CommentHeaderRight>
             <TextArea
+              size={"large"}
+              value={value}
+              onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="快来发表一条友善的评论吧"
               autoSize
               maxLength={500}

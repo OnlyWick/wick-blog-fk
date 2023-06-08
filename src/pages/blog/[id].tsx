@@ -16,7 +16,13 @@ import Response from "@/interfaces/Response";
 import IReturnComments from "@/interfaces/DTO/IReturnComments";
 import IArticle from "@/interfaces/DTO/IArticle";
 import IReplies from "@/interfaces/DTO/IReplies";
-import { useCallback, useEffect } from "react";
+import {
+  ChangeEvent,
+  FocusEventHandler,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import {
   VoteCategoryType,
   VoteCommentOrReplyType,
@@ -93,6 +99,8 @@ interface ArticleIdProps {
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
 export default function Id({ article }: ArticleIdProps) {
+  const [curPointPosition, setCurPointPosition] = useState(0);
+  const [textareaValue, setTextareaValue] = useState("");
   const commentURL = `http://192.168.31.86:9396/comment/list?article_id=${article.id}`;
   const { data: commentData } = useSWR<Response<IReturnComments>>(
     commentURL,
@@ -297,10 +305,22 @@ export default function Id({ article }: ArticleIdProps) {
     },
     [article]
   );
-
-  const handleGetEmoji = useCallback((data: string) => {
-    console.log(data);
-  }, []);
+  const handleGetEmoji = (emoji: string) => {
+    const newValue = `${textareaValue.slice(
+      0,
+      curPointPosition
+    )}${emoji}${textareaValue.slice(curPointPosition)}`;
+    console.log(newValue);
+    setTextareaValue(newValue);
+  };
+  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const elem = e.target;
+    setTextareaValue(elem.value);
+  };
+  const handleInputBlur: FocusEventHandler<HTMLTextAreaElement> = (e) => {
+    const elem = e.target;
+    setCurPointPosition(elem.selectionStart);
+  };
 
   const { data: emojiList } = useSWR<Response<EmojiArrayType>>(
     `http://localhost:9396/emoji`,
@@ -354,6 +374,9 @@ export default function Id({ article }: ArticleIdProps) {
               }}
             >
               <Comment
+                value={textareaValue}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
                 commentData={commentData?.data}
                 onVoteUp={handleCommentOrReplyVoteUp}
                 onVoteDown={handleCommentOrReplyVoteDown}

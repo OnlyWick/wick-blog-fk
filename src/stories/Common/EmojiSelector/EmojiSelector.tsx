@@ -61,7 +61,7 @@ export type EmojiType = { content: string; id: string };
 export type EmojiArrayType = (EmojiType | undefined)[];
 interface EmojiSelectorProps {
   emojiList: EmojiArrayType;
-  onEmojiSelect: (data?: string) => void;
+  onEmojiSelect?: (data?: string) => void;
   numPerRows?: number;
 }
 
