@@ -1,4 +1,4 @@
-export enum VoteType {
+export enum VoteCommentOrReplyType {
   DOWN,
   UP,
 }
@@ -13,5 +13,5 @@ export interface IVoteCommentOrReplyDto {
 
   category: VoteCategoryType;
 
-  vote_type: VoteType;
+  vote_type: VoteCommentOrReplyType;
 }

@@ -14,19 +14,20 @@ import { produce } from "immer";
 import ArticleAction from "@/stories/Article/Action/ArticleAction";
 import Response from "@/interfaces/Response";
 import IReturnComments from "@/interfaces/DTO/IReturnComments";
-import IArticleType from "@/interfaces/DTO/IArticleType";
+import IArticle from "@/interfaces/DTO/IArticle";
 import IReplies from "@/interfaces/DTO/IReplies";
 import { useCallback, useEffect } from "react";
 import {
   VoteCategoryType,
-  VoteType,
+  VoteCommentOrReplyType,
 } from "@/interfaces/DTO/IVoteCommentOrReply";
+import { VoteArticleType } from "@/interfaces/DTO/IVoteArticle";
 
 const { Sider, Content } = Layout;
 
 type Data = {
   id: string;
-  data: IArticleType;
+  data: IArticle;
 };
 
 // const ArticleAction = dynamic(
@@ -84,7 +85,7 @@ export const getServerSideProps = async (
 };
 
 interface ArticleIdProps {
-  article: IArticleType;
+  article: IArticle;
 }
 
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
@@ -130,10 +131,9 @@ export default function Id({ article }: ArticleIdProps) {
     const result = await data.json();
     mutate(url, updateCommentData(root_reply_id, result), false);
   };
-  const handleVoteUp = useCallback(
+  const handleCommentOrReplyVoteUp = useCallback(
     async (voteId: string, voteCategory: VoteCategoryType) => {
       try {
-        console.log(voteId);
         const response = await fetch(`http://localhost:9396/comment/vote`, {
           method: "POST",
           headers: {
@@ -142,7 +142,7 @@ export default function Id({ article }: ArticleIdProps) {
           body: JSON.stringify({
             vote_id: voteId,
             category: voteCategory,
-            vote_type: VoteType.UP,
+            vote_type: VoteCommentOrReplyType.UP,
           }),
           credentials: "include",
         });
@@ -173,6 +173,132 @@ export default function Id({ article }: ArticleIdProps) {
     []
   );
 
+  const handleCommentOrReplyVoteDown = useCallback(
+    async (voteId: string, voteCategory: VoteCategoryType) => {
+      try {
+        const response = await fetch(`http://localhost:9396/comment/vote`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            vote_id: voteId,
+            category: voteCategory,
+            vote_type: VoteCommentOrReplyType.DOWN,
+          }),
+          credentials: "include",
+        });
+        if (response.status == 401) {
+          notification.warning({
+            message: "您没登录呢",
+            placement: "top",
+          });
+        } else {
+          const data = await response.json();
+          const message = data.message;
+          if (data.success) {
+            notification.success({
+              message,
+              placement: "top",
+            });
+          } else {
+            notification.warning({
+              message,
+              placement: "top",
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    []
+  );
+
+  const handleArticleVoteUp = useCallback(
+    async (voteId: string) => {
+      try {
+        console.log(voteId);
+        const response = await fetch(`http://localhost:9396/article/vote`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            vote_id: article.id,
+            vote_type: VoteArticleType.UP,
+          }),
+          credentials: "include",
+        });
+        if (response.status == 401) {
+          notification.warning({
+            message: "您没登录呢",
+            placement: "top",
+          });
+        } else {
+          const data = await response.json();
+          const message = data.message;
+          if (data.success) {
+            notification.success({
+              message,
+              placement: "top",
+            });
+          } else {
+            notification.warning({
+              message,
+              placement: "top",
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [article]
+  );
+
+  const handleArticleVoteDown = useCallback(
+    async (voteId: string) => {
+      try {
+        const response = await fetch(`http://localhost:9396/article/vote`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            vote_id: article.id,
+            vote_type: VoteArticleType.DOWN,
+          }),
+          credentials: "include",
+        });
+        if (response.status == 401) {
+          notification.warning({
+            message: "您没登录呢",
+            placement: "top",
+          });
+        } else {
+          const data = await response.json();
+          const message = data.message;
+          if (data.success) {
+            notification.success({
+              message,
+              placement: "top",
+            });
+          } else {
+            notification.warning({
+              message,
+              placement: "top",
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [article]
+  );
+
+  // TODO: 不应该使用 context
   const context: IArticleContext = {
     articleData: article,
     getMoreSubReply: handleGetMoreSubReply,
@@ -214,12 +340,15 @@ export default function Id({ article }: ArticleIdProps) {
             />
             <Comment
               commentData={commentData?.data}
-              onVoteUp={handleVoteUp}
+              onVoteUp={handleCommentOrReplyVoteUp}
+              onVoteDown={handleCommentOrReplyVoteDown}
             ></Comment>
           </Content>
           <ArticleActionWrapper>
             <Affix offsetTop={24}>
               <ArticleAction
+                onVoteUp={handleArticleVoteUp}
+                onVoteDown={handleArticleVoteDown}
                 voteCount={article.voteUpCount - article.voteDownCount}
               ></ArticleAction>
             </Affix>

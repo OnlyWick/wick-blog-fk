@@ -1,8 +1,8 @@
-import IArticleType from "@/interfaces/DTO/IArticleType";
+import IArticle from "@/interfaces/DTO/IArticle";
 import { createContext } from "react";
 
 export interface IArticleContext {
-  articleData: IArticleType;
+  articleData: IArticle;
   getMoreSubReply: Function;
 }
 

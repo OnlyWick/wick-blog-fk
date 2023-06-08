@@ -7,7 +7,7 @@ import highlight from "@bytemd/plugin-highlight";
 import highlightSSR from "@bytemd/plugin-highlight-ssr";
 import "highlight.js/styles/vs2015.css";
 import "juejin-markdown-themes/dist/vuepress.min.css";
-import ArticleType from "@/interfaces/IArticleType";
+import IArticle from "@/interfaces/DTO/IArticle";
 
 const ArticleViewerWrapper = styled.div``;
 
@@ -22,7 +22,7 @@ const ArticleViewerTitle = styled.h1`
 `;
 const ArticleViewerBody = styled.div``;
 interface ArticleViewerProps {
-  article: ArticleType;
+  article: IArticle;
   style?: CSSProperties;
 }
 

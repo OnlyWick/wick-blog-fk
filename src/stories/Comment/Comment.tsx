@@ -16,9 +16,13 @@ const CommentListWrapper = styled.div`
 interface CommentProps {
   commentData?: IReturnComments;
   onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
-  onVoteDown?: (id: string) => void;
+  onVoteDown?: (id: string, categoryType: VoteCategoryType) => void;
 }
-export default function Comment({ commentData, onVoteUp }: CommentProps) {
+export default function Comment({
+  commentData,
+  onVoteUp,
+  onVoteDown,
+}: CommentProps) {
   return (
     <CommentWrapper>
       <Card>
@@ -30,6 +34,7 @@ export default function Comment({ commentData, onVoteUp }: CommentProps) {
                 key={comment.id}
                 comment={comment}
                 onVoteUp={onVoteUp}
+                onVoteDown={onVoteDown}
               ></CommentItem>
             ))}
         </CommentListWrapper>

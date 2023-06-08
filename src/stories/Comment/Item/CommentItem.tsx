@@ -144,22 +144,33 @@ const SubCommentItemWrapper = styled.div`
 interface CommentItemProps {
   comment?: IComments;
   onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
+  onVoteDown?: (id: string, categoryType: VoteCategoryType) => void;
 }
 
 interface CommentRepliesProps {
   replies: IReplies;
   onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
+  onVoteDown?: (id: string, categoryType: VoteCategoryType) => void;
 }
 
 interface CommentSubRepliesProps {
   subReply: ISubReply;
   onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
+  onVoteDown?: (id: string, categoryType: VoteCategoryType) => void;
 }
 
-function CommentSubRepliesItem({ subReply, onVoteUp }: CommentSubRepliesProps) {
+function CommentSubRepliesItem({
+  subReply,
+  onVoteUp,
+  onVoteDown,
+}: CommentSubRepliesProps) {
   const handleVoteUp = useCallback(() => {
     onVoteUp && onVoteUp(subReply!.id, VoteCategoryType.REPLY);
   }, [onVoteUp, subReply]);
+
+  const handleVoteDown = useCallback(() => {
+    onVoteDown && onVoteDown(subReply!.id, VoteCategoryType.REPLY);
+  }, [onVoteDown, subReply]);
 
   return (
     <SubCommentItemWrapper>
@@ -205,6 +216,7 @@ function CommentSubRepliesItem({ subReply, onVoteUp }: CommentSubRepliesProps) {
                 style={{
                   width: "auto",
                 }}
+                onClick={handleVoteDown}
                 icon={<ArrowDownIcon size={16} />}
               ></Button>
             </CommentItemActionItem>
@@ -224,11 +236,19 @@ function CommentSubRepliesItem({ subReply, onVoteUp }: CommentSubRepliesProps) {
   );
 }
 
-function CommentRepliesItem({ replies, onVoteUp }: CommentRepliesProps) {
+function CommentRepliesItem({
+  replies,
+  onVoteUp,
+  onVoteDown,
+}: CommentRepliesProps) {
   const articleContext = useContext(ArticleContext);
   const handleVoteUp = useCallback(() => {
     onVoteUp && onVoteUp(replies!.id, VoteCategoryType.REPLY);
   }, [onVoteUp, replies]);
+
+  const handleVoteDown = useCallback(() => {
+    onVoteDown && onVoteDown(replies!.id, VoteCategoryType.REPLY);
+  }, [onVoteDown, replies]);
 
   const handleGetMoreReply = useCallback(
     (root_reply_id: string) => {
@@ -273,6 +293,7 @@ function CommentRepliesItem({ replies, onVoteUp }: CommentRepliesProps) {
                 style={{
                   width: "auto",
                 }}
+                onClick={handleVoteDown}
                 icon={<ArrowDownIcon size={16} />}
               ></Button>
             </CommentItemActionItem>
@@ -292,6 +313,7 @@ function CommentRepliesItem({ replies, onVoteUp }: CommentRepliesProps) {
                 key={sub.id}
                 subReply={sub}
                 onVoteUp={onVoteUp}
+                onVoteDown={onVoteDown}
               ></CommentSubRepliesItem>
             );
           })}
@@ -320,10 +342,18 @@ function CommentRepliesItem({ replies, onVoteUp }: CommentRepliesProps) {
   );
 }
 
-export default function CommentItem({ comment, onVoteUp }: CommentItemProps) {
+export default function CommentItem({
+  comment,
+  onVoteUp,
+  onVoteDown,
+}: CommentItemProps) {
   const handleVoteUp = useCallback(() => {
     onVoteUp && onVoteUp(comment!.id, VoteCategoryType.COMMENT);
   }, [onVoteUp, comment]);
+
+  const handleVoteDown = useCallback(() => {
+    onVoteDown && onVoteDown(comment!.id, VoteCategoryType.COMMENT);
+  }, [onVoteDown, comment]);
 
   return comment ? (
     <CommentItemWrapper>
@@ -359,6 +389,7 @@ export default function CommentItem({ comment, onVoteUp }: CommentItemProps) {
                 style={{
                   width: "auto",
                 }}
+                onClick={handleVoteDown}
                 icon={<ArrowDownIcon size={16} />}
               ></Button>
             </CommentItemActionItem>
@@ -386,6 +417,7 @@ export default function CommentItem({ comment, onVoteUp }: CommentItemProps) {
                     key={reply.id}
                     replies={reply}
                     onVoteUp={onVoteUp}
+                    onVoteDown={onVoteDown}
                   ></CommentRepliesItem>
                 );
               })}

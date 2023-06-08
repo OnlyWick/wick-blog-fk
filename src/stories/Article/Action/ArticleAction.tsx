@@ -1,7 +1,7 @@
 import { ArrowUpIcon, CommentIcon } from "@/stories/Common/icon";
 import ArrowDownIcon from "@/stories/Common/icon/ArrowDownIcon";
 import Share from "@/stories/Common/icon/Share";
-import { Divider, QRCode } from "antd";
+import { Button, Divider, QRCode } from "antd";
 import { BaseSyntheticEvent, useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 
@@ -51,9 +51,15 @@ const ArticleActionQRCode = styled.div<ArticleActionQRCodeProps>`
 
 interface ArticleActionProps {
   voteCount?: number;
+  onVoteUp?: (id: string) => void;
+  onVoteDown?: (id: string) => void;
 }
 
-export default function ArticleAction({ voteCount = 0 }: ArticleActionProps) {
+export default function ArticleAction({
+  voteCount = 0,
+  onVoteUp,
+  onVoteDown,
+}: ArticleActionProps) {
   const [showQRCode, setShowQRCode] = useState(false);
   const [href, setHref] = useState("");
   const handleGenerateQrCode = useCallback(
@@ -63,6 +69,14 @@ export default function ArticleAction({ voteCount = 0 }: ArticleActionProps) {
     },
     [showQRCode]
   );
+
+  const handleVoteUp = () => {
+    onVoteUp && onVoteUp("");
+  };
+
+  const handleVoteDown = () => {
+    onVoteDown && onVoteDown("");
+  };
 
   useEffect(() => {
     setHref(window.location.href);
@@ -79,11 +93,19 @@ export default function ArticleAction({ voteCount = 0 }: ArticleActionProps) {
   return (
     <ArticleActionWrapper>
       <ArticleActionItem>
-        <ArrowUpIcon />
+        <Button
+          type="link"
+          onClick={handleVoteUp}
+          icon={<ArrowUpIcon />}
+        ></Button>
       </ArticleActionItem>
       <ArticleActionVoteCount>{voteCount}</ArticleActionVoteCount>
       <ArticleActionItem>
-        <ArrowDownIcon />
+        <Button
+          type="link"
+          onClick={handleVoteDown}
+          icon={<ArrowDownIcon />}
+        ></Button>
       </ArticleActionItem>
       <ArticleActionItem>
         <CommentIcon></CommentIcon>
