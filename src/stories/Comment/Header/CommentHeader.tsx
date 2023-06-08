@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import EmojiIcon from "@/stories/Common/icon/EmojiIcon";
 import EmojiSelector from "@/stories/Common/EmojiSelector/EmojiSelector";
 import ArticleContext from "@/Context/ArticleContext";
+import { CommentContext } from "../CommentContext";
 
 const { TextArea } = Input;
 
@@ -82,6 +83,7 @@ interface CommentHeaderProps {
 }
 
 export default function CommentHeader({ commentCount }: CommentHeaderProps) {
+  const commentContext = useContext(CommentContext);
   const [count, setCount] = useState(0);
   const [maxLength, setMaxLength] = useState(0);
   const [showEmojiSelector, setShowEmojiSelector] = useState(false);
@@ -172,7 +174,13 @@ export default function CommentHeader({ commentCount }: CommentHeaderProps) {
                   表情
                 </Button>
                 <EmojiSelectorWrapper show={showEmojiSelector}>
-                  <EmojiSelector />
+                  <EmojiSelector
+                    emojiList={
+                      commentContext && commentContext.emojiList
+                        ? commentContext.emojiList
+                        : []
+                    }
+                  />
                 </EmojiSelectorWrapper>
               </CommentActionLeft>
               <CommentActionRight>

@@ -22,6 +22,8 @@ import {
   VoteCommentOrReplyType,
 } from "@/interfaces/DTO/IVoteCommentOrReply";
 import { VoteArticleType } from "@/interfaces/DTO/IVoteArticle";
+import { CommentContext } from "@/stories/Comment/CommentContext";
+import { EmojiArrayType } from "@/stories/Common/EmojiSelector/EmojiSelector";
 
 const { Sider, Content } = Layout;
 
@@ -91,9 +93,11 @@ interface ArticleIdProps {
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
 export default function Id({ article }: ArticleIdProps) {
-  const url = `http://192.168.31.86:9396/comment/list?article_id=${article.id}`;
-  const { data: commentData } = useSWR<Response<IReturnComments>>(url, fetcher);
-  console.log(commentData?.data?.data, "FKWICK");
+  const commentURL = `http://192.168.31.86:9396/comment/list?article_id=${article.id}`;
+  const { data: commentData } = useSWR<Response<IReturnComments>>(
+    commentURL,
+    fetcher
+  );
 
   const updateCommentData = (
     root_reply_id: string,
@@ -123,13 +127,12 @@ export default function Id({ article }: ArticleIdProps) {
       },
     };
   };
-
   const handleGetMoreSubReply = async (root_reply_id: string) => {
     const data = await fetch(
       `http://192.168.31.86:9396/comment/getMoreSubReply?reply_id=${root_reply_id}`
     );
     const result = await data.json();
-    mutate(url, updateCommentData(root_reply_id, result), false);
+    mutate(commentURL, updateCommentData(root_reply_id, result), false);
   };
   const handleCommentOrReplyVoteUp = useCallback(
     async (voteId: string, voteCategory: VoteCategoryType) => {
@@ -172,7 +175,6 @@ export default function Id({ article }: ArticleIdProps) {
     },
     []
   );
-
   const handleCommentOrReplyVoteDown = useCallback(
     async (voteId: string, voteCategory: VoteCategoryType) => {
       try {
@@ -214,7 +216,6 @@ export default function Id({ article }: ArticleIdProps) {
     },
     []
   );
-
   const handleArticleVoteUp = useCallback(
     async (voteId: string) => {
       try {
@@ -256,7 +257,6 @@ export default function Id({ article }: ArticleIdProps) {
     },
     [article]
   );
-
   const handleArticleVoteDown = useCallback(
     async (voteId: string) => {
       try {
@@ -296,6 +296,15 @@ export default function Id({ article }: ArticleIdProps) {
       }
     },
     [article]
+  );
+
+  const handleGetEmoji = useCallback((data: string) => {
+    console.log(data);
+  }, []);
+
+  const { data: emojiList } = useSWR<Response<EmojiArrayType>>(
+    `http://localhost:9396/emoji`,
+    fetcher
   );
 
   // TODO: 不应该使用 context
@@ -338,11 +347,18 @@ export default function Id({ article }: ArticleIdProps) {
               }}
               article={article}
             />
-            <Comment
-              commentData={commentData?.data}
-              onVoteUp={handleCommentOrReplyVoteUp}
-              onVoteDown={handleCommentOrReplyVoteDown}
-            ></Comment>
+            <CommentContext.Provider
+              value={{
+                onEmojiSelect: handleGetEmoji,
+                emojiList: (emojiList && emojiList.data) || [],
+              }}
+            >
+              <Comment
+                commentData={commentData?.data}
+                onVoteUp={handleCommentOrReplyVoteUp}
+                onVoteDown={handleCommentOrReplyVoteDown}
+              ></Comment>
+            </CommentContext.Provider>
           </Content>
           <ArticleActionWrapper>
             <Affix offsetTop={24}>

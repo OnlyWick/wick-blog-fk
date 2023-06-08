@@ -1,4 +1,7 @@
+import { CommentContext } from "@/stories/Comment/CommentContext";
+import { useCallback, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+import { isWeakMap } from "util/types";
 
 const EmojiSelectorWrapper = styled.ul`
   display: inline-block;
@@ -8,6 +11,11 @@ const EmojiSelectorWrapper = styled.ul`
   border: 1px solid #f0f0f0;
   box-sizing: border-box;
   background-color: #fff;
+  min-width: 225px;
+
+  /* @media screen and (max-width: 768px) {
+    width: 225px;
+  } */
 `;
 
 const EmojiContentWrapper = styled.li`
@@ -28,116 +36,46 @@ const EmojiWrapper = styled.div`
   }
 `;
 
-const EmojiContent = styled.span`
-  font-size: 1.5em;
+const EmojiContent = styled.span<{ hoverable?: boolean }>`
+  font-size: 1.8em;
   border-radius: 4px;
-  cursor: pointer;
   width: 1.5em;
   height: 1.5em;
   text-align: center;
   line-height: 1.5em;
+  transition: var(--wick-transition-time);
 
-  &:hover {
-    background-color: #ccc;
-  }
+  ${(props) =>
+    props.hoverable
+      ? `
+        cursor: pointer;
+        &:hover {
+          background-color: #ccc;
+          transform: scale(1.2);
+        }
+        `
+      : null}
 `;
 
-const EmojiContentEmpty = styled.span``;
-
-type EmojiArray = ({ emoji: string } | undefined)[];
-// TODO: 添加唯一 id
-const builtinEmoji: EmojiArray = [
-  {
-    emoji: "😀",
-  },
-  {
-    emoji: "😃",
-  },
-  {
-    emoji: "😄",
-  },
-  {
-    emoji: "😁",
-  },
-  {
-    emoji: "😆",
-  },
-  {
-    emoji: "😅",
-  },
-  {
-    emoji: "🤣",
-  },
-  {
-    emoji: "🙂",
-  },
-  {
-    emoji: "🙃",
-  },
-  {
-    emoji: "😉",
-  },
-  {
-    emoji: "🤩",
-  },
-  {
-    emoji: "😘",
-  },
-  {
-    emoji: "😗",
-  },
-  {
-    emoji: "😛",
-  },
-  {
-    emoji: "😑",
-  },
-  {
-    emoji: "😶",
-  },
-  {
-    emoji: "😏",
-  },
-  {
-    emoji: "😵",
-  },
-  {
-    emoji: "😈",
-  },
-  {
-    emoji: "👿",
-  },
-  {
-    emoji: "👋",
-  },
-  {
-    emoji: "🖐",
-  },
-  {
-    emoji: "👌",
-  },
-  {
-    emoji: "🤏",
-  },
-  {
-    emoji: "👍",
-  },
-  {
-    emoji: "👎",
-  },
-  {
-    emoji: "👊",
-  },
-  { emoji: "👏" },
-  {
-    emoji: "👂",
-  },
-];
-
+export type EmojiType = { content: string; id: string };
+export type EmojiArrayType = (EmojiType | undefined)[];
 interface EmojiSelectorProps {
+  emojiList: EmojiArrayType;
+  onEmojiSelect: (data?: string) => void;
   numPerRows?: number;
 }
-export default function EmojiSelector({ numPerRows = 8 }: EmojiSelectorProps) {
+
+export default function EmojiSelector({
+  numPerRows = 8,
+  emojiList,
+}: EmojiSelectorProps) {
+  const storageItemName = "emoji-queue";
+  const [recentUseEmoji, setRecentUseEmoji] = useState<
+    Required<EmojiArrayType> | []
+  >([]);
+
+  const context = useContext(CommentContext);
+
   if (numPerRows < 0 || numPerRows > 8) {
     numPerRows = 8;
   }
@@ -146,54 +84,114 @@ export default function EmojiSelector({ numPerRows = 8 }: EmojiSelectorProps) {
     event.stopPropagation();
   };
 
-  const renderEmojiArray = builtinEmoji.reduce<EmojiArray[]>((acc, _, i) => {
-    if (i % numPerRows === 0) {
-      const arr = builtinEmoji.slice(i, i + numPerRows);
-      while (arr.length < numPerRows) {
-        arr.push(undefined);
+  const renderEmojiArray =
+    emojiList &&
+    emojiList.reduce<EmojiArrayType[]>((acc, _, i) => {
+      if (i % numPerRows === 0) {
+        const arr = emojiList.slice(i, i + numPerRows);
+        while (arr.length < numPerRows) {
+          arr.push(undefined);
+        }
+        acc.push(arr);
       }
-      acc.push(arr);
-    }
 
-    return acc;
+      return acc;
+    }, []);
+
+  useEffect(() => {
+    const queue = localStorage.getItem(storageItemName);
+    setRecentUseEmoji(queue === null ? [] : JSON.parse(queue));
   }, []);
+
+  const handleEmojiClick = useCallback(
+    (emoji: EmojiType) => {
+      const handlePushEmojiToQueue = (emoji: EmojiType) => {
+        let isExistQueue = localStorage.getItem(storageItemName);
+        let queue: Required<EmojiArrayType>;
+
+        if (isExistQueue === null) {
+          queue = [];
+          queue.push(emoji);
+          localStorage.setItem(storageItemName, JSON.stringify(queue));
+          setRecentUseEmoji((preArray) => [...preArray, emoji]);
+          return;
+        }
+
+        queue = JSON.parse(isExistQueue);
+        if (queue.length > numPerRows - 1) {
+          let isSwap = true;
+          for (let i = 0; i < queue.length; i++) {
+            if (queue[i]?.id === emoji.id) {
+              const temp = queue[0];
+              queue[0] = queue[i];
+              queue[i] = temp;
+              isSwap = false;
+            }
+          }
+
+          if (isSwap) {
+            queue.unshift(emoji);
+            queue.pop();
+          }
+        } else {
+          queue.push(emoji);
+        }
+
+        localStorage.setItem(storageItemName, JSON.stringify(queue));
+        setRecentUseEmoji(queue);
+      };
+      handlePushEmojiToQueue(emoji);
+      context && context.onEmojiSelect && context.onEmojiSelect(emoji.content);
+    },
+    [context, numPerRows]
+  );
 
   return (
     <EmojiSelectorWrapper onClick={handleCloseEmojiSelector}>
-      <EmojiContentWrapper>
-        <EmojiContentTitle>最近使用</EmojiContentTitle>
-        <EmojiWrapper>
-          {/* {renderEmojiArray.map((_, index) => {
-            return (
-              <EmojiContent key={index}>
-                {
-                  builtinEmoji[
-                    Math.floor(Math.random() * (builtinEmoji.length + 1))
-                  ]?.emoji
-                }
-              </EmojiContent>
-            );
-          })} */}
-        </EmojiWrapper>
-      </EmojiContentWrapper>
+      {recentUseEmoji && recentUseEmoji.length !== 0 && (
+        <EmojiContentWrapper>
+          <EmojiContentTitle>最近使用</EmojiContentTitle>
+          <EmojiWrapper>
+            {recentUseEmoji.map((emoji, index) => {
+              return (
+                <EmojiContent
+                  hoverable={true}
+                  onClick={() =>
+                    context &&
+                    context.onEmojiSelect &&
+                    context.onEmojiSelect(emoji.content)
+                  }
+                  key={`${emoji!.id}`}
+                >
+                  {emoji!.content}
+                </EmojiContent>
+              );
+            })}
+          </EmojiWrapper>
+        </EmojiContentWrapper>
+      )}
       <EmojiContentWrapper>
         <EmojiContentTitle>所有表情</EmojiContentTitle>
-        {/* {renderEmojiArray.map((emojiArray, index) => {
+        {renderEmojiArray.map((emojiArray, index) => {
           return (
-            <EmojiWrapper key={index}>
-              {emojiArray.map((item, index) => {
-                return item ? (
+            <EmojiWrapper key={`all-emoji-${emojiArray[index]!.id}`}>
+              {emojiArray.map((emoji, index) => {
+                return (
                   <EmojiContent
-                    dangerouslySetInnerHTML={{ __html: item?.emoji }}
-                    key={index}
+                    key={`${emoji === undefined ? index : emoji.id}`}
+                    hoverable={emoji !== undefined}
+                    dangerouslySetInnerHTML={{
+                      __html: emoji === undefined ? "" : emoji.content,
+                    }}
+                    onClick={() =>
+                      emoji !== undefined && handleEmojiClick(emoji)
+                    }
                   ></EmojiContent>
-                ) : (
-                  <EmojiContentEmpty></EmojiContentEmpty>
                 );
               })}
             </EmojiWrapper>
           );
-        })} */}
+        })}
       </EmojiContentWrapper>
     </EmojiSelectorWrapper>
   );
