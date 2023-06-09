@@ -83,6 +83,7 @@ const CommentWordsLeft = styled.div`
 interface CommentHeaderProps {
   commentCount?: number;
   value?: string;
+  onPublish: () => void;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
 }
@@ -90,6 +91,7 @@ interface CommentHeaderProps {
 export default function CommentHeader({
   commentCount,
   value,
+  onPublish,
   onChange,
   onBlur,
 }: CommentHeaderProps) {
@@ -141,10 +143,8 @@ export default function CommentHeader({
     }, 300);
   };
 
-  // TODO: 父元素传递进来
   const handlePublishComment = async () => {
-    const res = await fetch(`http://localhost:9396/article/703400588868952123`);
-    console.log(await res.json());
+    onPublish && onPublish();
   };
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {

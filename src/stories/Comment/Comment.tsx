@@ -17,6 +17,7 @@ const CommentListWrapper = styled.div`
 interface CommentProps {
   commentData?: IReturnComments;
   value?: string;
+  onPublish: () => void;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
   onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
@@ -26,6 +27,7 @@ interface CommentProps {
 export default function Comment({
   commentData,
   value,
+  onPublish,
   onChange,
   onBlur,
   onVoteUp,
@@ -36,6 +38,7 @@ export default function Comment({
     <CommentWrapper>
       <Card>
         <CommentHeader
+          onPublish={onPublish}
           value={value}
           onChange={onChange}
           onBlur={onBlur}

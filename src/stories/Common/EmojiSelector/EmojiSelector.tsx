@@ -118,6 +118,7 @@ export default function EmojiSelector({
         }
 
         queue = JSON.parse(isExistQueue);
+        // FIXME: 有 bug
         if (queue.length > numPerRows - 1) {
           let isSwap = true;
           for (let i = 0; i < queue.length; i++) {

@@ -11,6 +11,7 @@ import TopNav from "@/stories/Nav/TopNav/TopNav";
 import Header from "@/stories/Layout/Header/Header";
 import { Affix } from "antd";
 import HomeNav from "@/stories/Nav/HomeNav";
+import { useEffect } from "react";
 // import { Header } from "antd/es/layout/layout";
 
 const GlobalStyle = createGlobalStyle`
@@ -58,6 +59,11 @@ const MainContainer = styled.div`
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const isRoot = router.pathname === "/";
+
+  useEffect(() => {
+    // TODO: 全局错误处理
+    window.onerror = function (message, source, lineno, colno, error) {};
+  });
 
   return (
     <>

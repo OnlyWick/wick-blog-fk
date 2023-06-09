@@ -11,7 +11,7 @@ import UserWidget from "@/stories/Sidebar/UserWidget";
 import useSWR, { mutate, useSWRConfig } from "swr";
 
 import { produce } from "immer";
-import ArticleAction from "@/stories/Article/Action/ArticleAction";
+// import ArticleAction from "@/stories/Article/Action/ArticleAction";
 import Response from "@/interfaces/Response";
 import IReturnComments from "@/interfaces/DTO/IReturnComments";
 import IArticle from "@/interfaces/DTO/IArticle";
@@ -30,6 +30,7 @@ import {
 import { VoteArticleType } from "@/interfaces/DTO/IVoteArticle";
 import { CommentContext } from "@/stories/Comment/CommentContext";
 import { EmojiArrayType } from "@/stories/Common/EmojiSelector/EmojiSelector";
+import ArticleAction from "@/stories/Article/Action/ArticleAction";
 
 const { Sider, Content } = Layout;
 
@@ -38,6 +39,7 @@ type Data = {
   data: IArticle;
 };
 
+// TODO: 不需要 SSR
 // const ArticleAction = dynamic(
 //   () => import("@/stories/Article/Action/ArticleAction"),
 //   { ssr: false }
@@ -321,6 +323,22 @@ export default function Id({ article }: ArticleIdProps) {
     const elem = e.target;
     setCurPointPosition(elem.selectionStart);
   };
+  const handlePublishComment = async () => {
+    const response = await fetch(`http://localhost:9396/comment/publish`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        content: textareaValue,
+        article_id: article.id,
+      }),
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    console.log(data);
+  };
 
   const { data: emojiList } = useSWR<Response<EmojiArrayType>>(
     `http://localhost:9396/emoji`,
@@ -374,6 +392,7 @@ export default function Id({ article }: ArticleIdProps) {
               }}
             >
               <Comment
+                onPublish={handlePublishComment}
                 value={textareaValue}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
