@@ -8,12 +8,15 @@ import ArrowDownIcon from "@/stories/Common/icon/ArrowDownIcon";
 import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
 // import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
 import { Avatar, Button, Typography, Card } from "antd";
-import { useCallback, useContext, useEffect } from "react";
+import TextArea from "antd/es/input/TextArea";
+import { useCallback, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+import { CommentContext } from "../CommentContext";
+import { CommentTextarea } from "../Textarea/CommentTextarea";
+import { ICreateReply } from "@/interfaces/DTO/ICreateReply";
 
 const CommentItemWrapper = styled.div`
   display: flex;
-  overflow: hidden;
   margin-bottom: var(--wick-medium-margin);
 
   & .ant-avatar {
@@ -53,9 +56,7 @@ const CommentItemTime = styled.div`
   line-height: 22px;
 `;
 
-const CommentItemMain = styled.div`
-  overflow: hidden;
-`;
+const CommentItemMain = styled.div``;
 
 const CommentItemContent = styled.div`
   width: 100%;
@@ -86,7 +87,6 @@ const CommentItemActionItemCounter = styled.span`
 `;
 
 const CommentItemReplies = styled.div`
-  overflow: hidden;
   margin-top: 16px;
 
   & .ant-card-body > div:first-child {
@@ -130,7 +130,6 @@ const CommentItemParentReplyWrapper = styled.div`
 
 const SubCommentItemWrapper = styled.div`
   display: flex;
-  overflow: hidden;
   margin-top: 16px;
 
   & .ant-avatar {
@@ -141,29 +140,33 @@ const SubCommentItemWrapper = styled.div`
   }
 `;
 
-interface CommentItemProps {
-  comment?: IComments;
+interface CommentItemBase {
   onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
   onVoteDown?: (id: string, categoryType: VoteCategoryType) => void;
+  onPublish?: Function;
+  onReply?: (payload: ICreateReply) => void;
 }
 
-interface CommentRepliesProps {
+interface CommentItemProps extends CommentItemBase {
+  comment: IComments;
+}
+
+interface CommentRepliesProps extends CommentItemBase {
   replies: IReplies;
-  onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
-  onVoteDown?: (id: string, categoryType: VoteCategoryType) => void;
 }
 
-interface CommentSubRepliesProps {
+interface CommentSubRepliesProps extends CommentItemBase {
   subReply: ISubReply;
-  onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
-  onVoteDown?: (id: string, categoryType: VoteCategoryType) => void;
 }
 
 function CommentSubRepliesItem({
   subReply,
+  onReply,
   onVoteUp,
   onVoteDown,
 }: CommentSubRepliesProps) {
+  const commentContext = useContext(CommentContext);
+  const showTextarea = commentContext?.activeTextarea === subReply.id;
   const handleVoteUp = useCallback(() => {
     onVoteUp && onVoteUp(subReply!.id, VoteCategoryType.REPLY);
   }, [onVoteUp, subReply]);
@@ -171,6 +174,15 @@ function CommentSubRepliesItem({
   const handleVoteDown = useCallback(() => {
     onVoteDown && onVoteDown(subReply!.id, VoteCategoryType.REPLY);
   }, [onVoteDown, subReply]);
+
+  const handlePublish = () => {
+    if (onReply) {
+      // TODO: 修改参数
+      // onReply(subReply.id);
+    } else {
+      commentContext?.onPublish?.(subReply.id);
+    }
+  };
 
   return (
     <SubCommentItemWrapper>
@@ -226,10 +238,19 @@ function CommentSubRepliesItem({
                 style={{
                   width: "auto",
                 }}
+                onClick={() => {
+                  commentContext?.onShowTextarea(subReply.id);
+                }}
                 icon={<CommentIcon size={16}></CommentIcon>}
               ></Button>
             </CommentItemActionItem>
           </CommentItemActions>
+          {showTextarea && (
+            <CommentTextarea
+              onPublish={handlePublish}
+              placeholder={`回复 ${subReply.from_user.name}: `}
+            ></CommentTextarea>
+          )}
         </CommentItemMain>
       </CommentItemRight>
     </SubCommentItemWrapper>
@@ -238,16 +259,19 @@ function CommentSubRepliesItem({
 
 function CommentRepliesItem({
   replies,
+  onReply,
   onVoteUp,
   onVoteDown,
 }: CommentRepliesProps) {
   const articleContext = useContext(ArticleContext);
+  const commentContext = useContext(CommentContext);
+  const showTextarea = commentContext?.activeTextarea === replies.from_user.id;
   const handleVoteUp = useCallback(() => {
-    onVoteUp && onVoteUp(replies!.id, VoteCategoryType.REPLY);
+    onVoteUp && onVoteUp(replies.id, VoteCategoryType.REPLY);
   }, [onVoteUp, replies]);
 
   const handleVoteDown = useCallback(() => {
-    onVoteDown && onVoteDown(replies!.id, VoteCategoryType.REPLY);
+    onVoteDown && onVoteDown(replies.id, VoteCategoryType.REPLY);
   }, [onVoteDown, replies]);
 
   const handleGetMoreReply = useCallback(
@@ -256,6 +280,15 @@ function CommentRepliesItem({
     },
     [articleContext]
   );
+
+  const handlePublish = () => {
+    if (onReply) {
+      // TODO: 修改参数
+      // onReply(replies.id);
+    } else {
+      commentContext?.onPublish?.(replies.id);
+    }
+  };
 
   return (
     <SubCommentItemWrapper>
@@ -303,10 +336,21 @@ function CommentRepliesItem({
                 style={{
                   width: "auto",
                 }}
+                onClick={() => {
+                  console.log("回复", replies.from_user.name);
+                  commentContext?.onShowTextarea(replies.from_user.id);
+                  console.log(showTextarea, "mot");
+                }}
                 icon={<CommentIcon size={16}></CommentIcon>}
               ></Button>
             </CommentItemActionItem>
           </CommentItemActions>
+          {showTextarea && (
+            <CommentTextarea
+              onPublish={handlePublish}
+              placeholder={`回复 ${replies.from_user.name}: `}
+            ></CommentTextarea>
+          )}
           {replies.sub_reply.map((sub) => {
             return (
               <CommentSubRepliesItem
@@ -344,16 +388,29 @@ function CommentRepliesItem({
 
 export default function CommentItem({
   comment,
+  onPublish,
+  onReply,
   onVoteUp,
   onVoteDown,
 }: CommentItemProps) {
+  const commentContext = useContext(CommentContext);
+  const showTextarea = commentContext?.activeTextarea === comment.id;
+
   const handleVoteUp = useCallback(() => {
-    onVoteUp && onVoteUp(comment!.id, VoteCategoryType.COMMENT);
+    onVoteUp && onVoteUp(comment.id, VoteCategoryType.COMMENT);
   }, [onVoteUp, comment]);
 
   const handleVoteDown = useCallback(() => {
-    onVoteDown && onVoteDown(comment!.id, VoteCategoryType.COMMENT);
+    onVoteDown && onVoteDown(comment.id, VoteCategoryType.COMMENT);
   }, [onVoteDown, comment]);
+
+  const handlePublish = () => {
+    if (onPublish) {
+      onPublish();
+    } else {
+      commentContext?.onPublish?.(comment.id);
+    }
+  };
 
   return comment ? (
     <CommentItemWrapper>
@@ -399,10 +456,19 @@ export default function CommentItem({
                 style={{
                   width: "auto",
                 }}
+                onClick={() => {
+                  commentContext?.onShowTextarea(comment.id);
+                }}
                 icon={<CommentIcon size={16}></CommentIcon>}
               ></Button>
             </CommentItemActionItem>
           </CommentItemActions>
+          {showTextarea && (
+            <CommentTextarea
+              onPublish={handlePublish}
+              placeholder={`回复 ${comment.user.name}: `}
+            ></CommentTextarea>
+          )}
         </CommentItemMain>
         {comment.replies.length !== 0 && (
           <CommentItemReplies>
@@ -411,11 +477,12 @@ export default function CommentItem({
                 backgroundColor: "rgba(233,233,233,.5)",
               }}
             >
-              {comment.replies?.map((reply) => {
+              {comment.replies?.map((reply, index) => {
                 return (
                   <CommentRepliesItem
                     key={reply.id}
                     replies={reply}
+                    onReply={onReply}
                     onVoteUp={onVoteUp}
                     onVoteDown={onVoteDown}
                   ></CommentRepliesItem>

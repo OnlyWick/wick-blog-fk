@@ -61,12 +61,13 @@ export type EmojiType = { content: string; id: string };
 export type EmojiArrayType = (EmojiType | undefined)[];
 interface EmojiSelectorProps {
   emojiList: EmojiArrayType;
-  onEmojiSelect?: (data?: string) => void;
+  onEmojiSelect?: (data: string) => void;
   numPerRows?: number;
 }
 
 export default function EmojiSelector({
   numPerRows = 8,
+  onEmojiSelect,
   emojiList,
 }: EmojiSelectorProps) {
   const storageItemName = "emoji-queue";
@@ -74,7 +75,7 @@ export default function EmojiSelector({
     Required<EmojiArrayType> | []
   >([]);
 
-  const context = useContext(CommentContext);
+  const commentContext = useContext(CommentContext);
 
   if (numPerRows < 0 || numPerRows > 8) {
     numPerRows = 8;
@@ -82,6 +83,14 @@ export default function EmojiSelector({
 
   const handleCloseEmojiSelector = (event: any) => {
     event.stopPropagation();
+  };
+
+  const handleEmojiSelect = (emoji: string) => {
+    if (onEmojiSelect) {
+      onEmojiSelect(emoji);
+    } else {
+      commentContext?.onEmojiSelect?.(emoji);
+    }
   };
 
   const renderEmojiArray =
@@ -142,9 +151,9 @@ export default function EmojiSelector({
         setRecentUseEmoji(queue);
       };
       handlePushEmojiToQueue(emoji);
-      context && context.onEmojiSelect && context.onEmojiSelect(emoji.content);
+      handleEmojiSelect(emoji.content);
     },
-    [context, numPerRows]
+    [handleEmojiSelect, numPerRows]
   );
 
   return (
@@ -157,11 +166,7 @@ export default function EmojiSelector({
               return (
                 <EmojiContent
                   hoverable={true}
-                  onClick={() =>
-                    context &&
-                    context.onEmojiSelect &&
-                    context.onEmojiSelect(emoji.content)
-                  }
+                  onClick={() => handleEmojiSelect(emoji.content)}
                   key={`${emoji!.id}`}
                 >
                   {emoji!.content}

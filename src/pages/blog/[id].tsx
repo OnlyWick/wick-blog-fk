@@ -31,6 +31,12 @@ import { VoteArticleType } from "@/interfaces/DTO/IVoteArticle";
 import { CommentContext } from "@/stories/Comment/CommentContext";
 import { EmojiArrayType } from "@/stories/Common/EmojiSelector/EmojiSelector";
 import ArticleAction from "@/stories/Article/Action/ArticleAction";
+import {
+  replyComment,
+  publishComment,
+  voteCommentOrReply,
+} from "@/api/comment.api";
+import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 
 const { Sider, Content } = Layout;
 
@@ -101,8 +107,6 @@ interface ArticleIdProps {
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
 export default function Id({ article }: ArticleIdProps) {
-  const [curPointPosition, setCurPointPosition] = useState(0);
-  const [textareaValue, setTextareaValue] = useState("");
   const commentURL = `http://192.168.31.86:9396/comment/list?article_id=${article.id}`;
   const { data: commentData } = useSWR<Response<IReturnComments>>(
     commentURL,
@@ -144,88 +148,54 @@ export default function Id({ article }: ArticleIdProps) {
     const result = await data.json();
     mutate(commentURL, updateCommentData(root_reply_id, result), false);
   };
-  const handleCommentOrReplyVoteUp = useCallback(
-    async (voteId: string, voteCategory: VoteCategoryType) => {
-      try {
-        const response = await fetch(`http://localhost:9396/comment/vote`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            vote_id: voteId,
-            category: voteCategory,
-            vote_type: VoteCommentOrReplyType.UP,
-          }),
-          credentials: "include",
+  const handleCommentOrReplyVoteUp = async (
+    voteId: string,
+    voteCategory: VoteCategoryType
+  ) => {
+    const response = await voteCommentOrReply(
+      voteId,
+      voteCategory,
+      VoteCommentOrReplyType.UP
+    );
+    const data = response.data;
+    if (response.status === 201) {
+      if (data.success === true) {
+        notification.success({
+          message: data.message,
+          placement: "top",
         });
-        if (response.status == 401) {
-          notification.warning({
-            message: "您没登录呢",
-            placement: "top",
-          });
-        } else {
-          const data = await response.json();
-          const message = data.message;
-          if (data.success) {
-            notification.success({
-              message,
-              placement: "top",
-            });
-          } else {
-            notification.warning({
-              message,
-              placement: "top",
-            });
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    []
-  );
-  const handleCommentOrReplyVoteDown = useCallback(
-    async (voteId: string, voteCategory: VoteCategoryType) => {
-      try {
-        const response = await fetch(`http://localhost:9396/comment/vote`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            vote_id: voteId,
-            category: voteCategory,
-            vote_type: VoteCommentOrReplyType.DOWN,
-          }),
-          credentials: "include",
+      } else {
+        notification.warning({
+          message: data.message,
+          placement: "top",
         });
-        if (response.status == 401) {
-          notification.warning({
-            message: "您没登录呢",
-            placement: "top",
-          });
-        } else {
-          const data = await response.json();
-          const message = data.message;
-          if (data.success) {
-            notification.success({
-              message,
-              placement: "top",
-            });
-          } else {
-            notification.warning({
-              message,
-              placement: "top",
-            });
-          }
-        }
-      } catch (error) {
-        console.log(error);
       }
-    },
-    []
-  );
+    }
+  };
+  const handleCommentOrReplyVoteDown = async (
+    voteId: string,
+    voteCategory: VoteCategoryType
+  ) => {
+    const response = await voteCommentOrReply(
+      voteId,
+      voteCategory,
+      VoteCommentOrReplyType.DOWN
+    );
+    const data = response.data;
+    if (response.status === 201) {
+      if (data.success === true) {
+        notification.success({
+          message: data.message,
+          placement: "top",
+        });
+      } else {
+        notification.warning({
+          message: data.message,
+          placement: "top",
+        });
+      }
+    }
+  };
   const handleArticleVoteUp = useCallback(
     async (voteId: string) => {
       try {
@@ -267,79 +237,69 @@ export default function Id({ article }: ArticleIdProps) {
     },
     [article]
   );
-  const handleArticleVoteDown = useCallback(
-    async (voteId: string) => {
-      try {
-        const response = await fetch(`http://localhost:9396/article/vote`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            vote_id: article.id,
-            vote_type: VoteArticleType.DOWN,
-          }),
-          credentials: "include",
+  const handleArticleVoteDown = useCallback(async () => {
+    try {
+      const response = await fetch(`http://localhost:9396/article/vote`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          vote_id: article.id,
+          vote_type: VoteArticleType.DOWN,
+        }),
+        credentials: "include",
+      });
+      if (response.status == 401) {
+        notification.warning({
+          message: "您没登录呢",
+          placement: "top",
         });
-        if (response.status == 401) {
-          notification.warning({
-            message: "您没登录呢",
+      } else {
+        const data = await response.json();
+        const message = data.message;
+        if (data.success) {
+          notification.success({
+            message,
             placement: "top",
           });
         } else {
-          const data = await response.json();
-          const message = data.message;
-          if (data.success) {
-            notification.success({
-              message,
-              placement: "top",
-            });
-          } else {
-            notification.warning({
-              message,
-              placement: "top",
-            });
-          }
+          notification.warning({
+            message,
+            placement: "top",
+          });
         }
-      } catch (error) {
-        console.log(error);
       }
-    },
-    [article]
-  );
-  const handleGetEmoji = (emoji: string) => {
-    const newValue = `${textareaValue.slice(
-      0,
-      curPointPosition
-    )}${emoji}${textareaValue.slice(curPointPosition)}`;
-    console.log(newValue);
-    setTextareaValue(newValue);
-  };
+    } catch (error) {
+      console.log(error);
+    }
+  }, [article]);
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const elem = e.target;
-    setTextareaValue(elem.value);
   };
   const handleInputBlur: FocusEventHandler<HTMLTextAreaElement> = (e) => {
     const elem = e.target;
-    setCurPointPosition(elem.selectionStart);
   };
-  const handlePublishComment = async () => {
-    const response = await fetch(`http://localhost:9396/comment/publish`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        content: textareaValue,
-        article_id: article.id,
-      }),
-      credentials: "include",
-    });
-
-    const data = await response.json();
-    console.log(data);
+  const handlePublishComment = async (content: string) => {
+    const response = await publishComment(content, article.id);
+    const data = response.data;
+    if (data.success == true) {
+      notification.success({
+        message: data.message,
+        placement: "top",
+      });
+    }
   };
-
+  const handleReplyComment = async (payload: ICreateReply) => {
+    const response = await replyComment(payload, article.id);
+    const data = response.data;
+    if (data.success == true) {
+      notification.success({
+        message: data.message,
+        placement: "top",
+      });
+    }
+  };
   const { data: emojiList } = useSWR<Response<EmojiArrayType>>(
     `http://localhost:9396/emoji`,
     fetcher
@@ -385,22 +345,16 @@ export default function Id({ article }: ArticleIdProps) {
               }}
               article={article}
             />
-            <CommentContext.Provider
-              value={{
-                onEmojiSelect: handleGetEmoji,
-                emojiList: (emojiList && emojiList.data) || [],
-              }}
-            >
-              <Comment
-                onPublish={handlePublishComment}
-                value={textareaValue}
-                onChange={handleInputChange}
-                onBlur={handleInputBlur}
-                commentData={commentData?.data}
-                onVoteUp={handleCommentOrReplyVoteUp}
-                onVoteDown={handleCommentOrReplyVoteDown}
-              ></Comment>
-            </CommentContext.Provider>
+            <Comment
+              emojiList={emojiList?.data}
+              onPublish={handlePublishComment}
+              onReply={handleReplyComment}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              commentData={commentData?.data}
+              onVoteUp={handleCommentOrReplyVoteUp}
+              onVoteDown={handleCommentOrReplyVoteDown}
+            ></Comment>
           </Content>
           <ArticleActionWrapper>
             <Affix offsetTop={24}>

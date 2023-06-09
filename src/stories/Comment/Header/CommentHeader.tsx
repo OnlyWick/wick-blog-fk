@@ -8,8 +8,7 @@ import ArticleContext from "@/Context/ArticleContext";
 import { CommentContext } from "../CommentContext";
 import { ChangeEvent } from "react";
 import { FocusEventHandler } from "react";
-
-const { TextArea } = Input;
+import { CommentTextarea } from "../Textarea/CommentTextarea";
 
 const CommentHeaderWrapper = styled.div``;
 
@@ -46,44 +45,10 @@ const CommentHeaderRight = styled.div`
   flex: 1;
 `;
 
-const CommentActions = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 8px;
-`;
-
-const CommentActionLeft = styled.div`
-  position: relative;
-
-  & > .ant-btn:first-child {
-    padding: 0;
-  }
-`;
-
-interface EmojiSelectorWrapperProps {
-  show?: boolean;
-}
-const EmojiSelectorWrapper = styled.div<EmojiSelectorWrapperProps>`
-  position: absolute;
-  display: ${(props) => (props.show ? "block" : "none")};
-  z-index: 1;
-`;
-
-const CommentActionRight = styled.div`
-  display: flex;
-  align-items: center;
-`;
-const CommentWordsLeft = styled.div`
-  color: #7d7d7d;
-  font-size: 12px;
-  margin: 0 16px;
-`;
-
 interface CommentHeaderProps {
   commentCount?: number;
   value?: string;
-  onPublish: () => void;
+  onPublish: (content: string) => void;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
 }
@@ -96,33 +61,6 @@ export default function CommentHeader({
   onBlur,
 }: CommentHeaderProps) {
   const commentContext = useContext(CommentContext);
-  const [count, setCount] = useState(0);
-  const [maxLength, setMaxLength] = useState(0);
-  const [showEmojiSelector, setShowEmojiSelector] = useState(false);
-
-  // FIXME: setTimeout 可以, 但是记得修复(感觉不优雅, 临时解决)
-  const handleFormatter = (info: any) => {
-    setTimeout(() => {
-      setCount(info.count);
-      setMaxLength(info.maxLength);
-    });
-    return false;
-  };
-
-  const handleShowEmojiSelector = (event: any) => {
-    event.stopPropagation();
-    setShowEmojiSelector(true);
-  };
-  const handleCloseEmojiSelector = () => {
-    setShowEmojiSelector(false);
-  };
-
-  useEffect(() => {
-    document.body.addEventListener("click", handleCloseEmojiSelector);
-    return () => {
-      document.body.removeEventListener("click", handleCloseEmojiSelector);
-    };
-  }, [showEmojiSelector]);
 
   const handleLogin = () => {
     const childWindow = window.open(
@@ -141,18 +79,6 @@ export default function CommentHeader({
         }, 100);
       }
     }, 300);
-  };
-
-  const handlePublishComment = async () => {
-    onPublish && onPublish();
-  };
-
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    onChange && onChange(e);
-  };
-
-  const handleBlur: FocusEventHandler<HTMLTextAreaElement> = (e) => {
-    onBlur && onBlur(e);
   };
 
   return (
@@ -175,46 +101,7 @@ export default function CommentHeader({
             <Avatar src="/freddie.jpg" size={52}></Avatar>
           </CommentHeaderLeft>
           <CommentHeaderRight>
-            <TextArea
-              size={"large"}
-              value={value}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="快来发表一条友善的评论吧"
-              autoSize
-              maxLength={500}
-              showCount={{
-                formatter: (info) => handleFormatter(info),
-              }}
-            />
-            <CommentActions>
-              <CommentActionLeft>
-                <Button
-                  type="link"
-                  icon={<EmojiIcon />}
-                  onClick={handleShowEmojiSelector}
-                >
-                  表情
-                </Button>
-                <EmojiSelectorWrapper show={showEmojiSelector}>
-                  <EmojiSelector
-                    emojiList={
-                      commentContext && commentContext.emojiList
-                        ? commentContext.emojiList
-                        : []
-                    }
-                  />
-                </EmojiSelectorWrapper>
-              </CommentActionLeft>
-              <CommentActionRight>
-                {count > 15 && (
-                  <CommentWordsLeft>剩余 {maxLength - count}</CommentWordsLeft>
-                )}
-                <Button type="primary" onClick={handlePublishComment}>
-                  发表评论
-                </Button>
-              </CommentActionRight>
-            </CommentActions>
+            <CommentTextarea></CommentTextarea>
           </CommentHeaderRight>
         </CommentHeaderBody>
       </CommentHeaderWrapper>
