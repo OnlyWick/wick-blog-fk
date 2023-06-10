@@ -1,5 +1,6 @@
-import IFromUser from "./IFromUser";
-import IToUser from "./IToUser";
+import IFromUser from "../IFromUser";
+import IToUser from "../IToUser";
+import IParentReply from "./IParentReply";
 
 export default interface ISubReply {
   id: string;
@@ -11,4 +12,5 @@ export default interface ISubReply {
   root_comment_id: null;
   from_user: IFromUser;
   to_user: IToUser;
+  parent_reply: IParentReply;
 }

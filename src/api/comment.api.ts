@@ -29,11 +29,7 @@ export const replyComment = async (
     method: "post",
     url: "/comment/reply",
     data: {
-      article_id: articleId,
-      content: payload.content,
-      to_user_id: payload.to_user_id,
-      reply_type: payload.reply_type,
-      [source_key]: payload[source_key],
+      ...payload,
     },
   };
   return await axios(config);

@@ -48,7 +48,7 @@ const CommentHeaderRight = styled.div`
 interface CommentHeaderProps {
   commentCount?: number;
   value?: string;
-  onPublish: (content: string) => void;
+  onPublish?: (content: string) => void;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
 }
@@ -101,7 +101,7 @@ export default function CommentHeader({
             <Avatar src="/freddie.jpg" size={52}></Avatar>
           </CommentHeaderLeft>
           <CommentHeaderRight>
-            <CommentTextarea></CommentTextarea>
+            <CommentTextarea onPublish={onPublish}></CommentTextarea>
           </CommentHeaderRight>
         </CommentHeaderBody>
       </CommentHeaderWrapper>

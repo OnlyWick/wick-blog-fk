@@ -1,5 +1,5 @@
 import IFromUser from "./IFromUser";
-import ISubReply from "./ISubReply";
+import ISubReply from "./Comment/ISubReply";
 
 export default interface IReplies {
   id: string;

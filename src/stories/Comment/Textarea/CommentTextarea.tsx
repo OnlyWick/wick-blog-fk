@@ -10,6 +10,7 @@ import {
 } from "react";
 import styled from "styled-components";
 import { CommentContext } from "../CommentContext";
+import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 
 const { TextArea } = Input;
 
@@ -50,7 +51,8 @@ interface CommentTextareaProps {
   value?: string;
   placeholder?: string;
   onEmojiSelect?: (data: string) => void;
-  onPublish?: () => void;
+  onPublish?: (content: string) => void; // 只留一个发布, 发布评论或者回复
+  onReply?: (content: string) => void;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
 }
@@ -58,6 +60,7 @@ export function CommentTextarea({
   value,
   placeholder,
   onEmojiSelect,
+  onReply,
   onPublish,
   onChange,
   onBlur,
@@ -85,8 +88,22 @@ export function CommentTextarea({
   const handleCloseEmojiSelector = () => {
     setShowEmojiSelector(false);
   };
-  const handlePublishComment = async () => {
-    onPublish && onPublish();
+  // TODO: 拿不到值
+  // const handlePublishComment = async () => {
+  //   onPublish && onPublish();
+  // };
+  const handleReplyComment = async (content: string) => {
+    console.log("mlgb", onReply);
+    onReply && onReply(content);
+  };
+  const handlePublish = (content: string) => {
+    // 优先 publish
+    if (onPublish) {
+      onPublish(content);
+    } else if (onReply) {
+      // 没有就 reply
+      onReply(content);
+    }
   };
   const handleGetEmoji = (emoji: string) => {
     onEmojiSelect?.(emoji);
@@ -162,9 +179,10 @@ export function CommentTextarea({
           {count > 15 && (
             <CommentWordsLeft>剩余 {maxLength - count}</CommentWordsLeft>
           )}
-          <Button type="primary" onClick={handlePublishComment}>
+          <Button type="primary" onClick={() => handlePublish(internalValue)}>
             发表评论
           </Button>
+          {/* <Button type="primary">发表评论</Button> */}
         </CommentActionRight>
       </CommentActions>
     </>

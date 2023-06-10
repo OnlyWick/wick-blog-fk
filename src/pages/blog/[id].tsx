@@ -290,15 +290,25 @@ export default function Id({ article }: ArticleIdProps) {
       });
     }
   };
-  const handleReplyComment = async (payload: ICreateReply) => {
-    const response = await replyComment(payload, article.id);
+  const handleReplyComment = async (
+    payload: Omit<ICreateReply, "article_id">
+  ) => {
+    const response = await replyComment(
+      {
+        ...payload,
+        article_id: article.id,
+      },
+      article.id
+    );
     const data = response.data;
     if (data.success == true) {
       notification.success({
         message: data.message,
         placement: "top",
       });
+      return true;
     }
+    return false;
   };
   const { data: emojiList } = useSWR<Response<EmojiArrayType>>(
     `http://localhost:9396/emoji`,

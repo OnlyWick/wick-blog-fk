@@ -26,7 +26,7 @@ interface CommentProps {
   value?: string;
   onEmojiSelect?: (data: string) => void;
   onPublish?: (content: string) => void;
-  onReply?: (payload: ICreateReply) => void;
+  onReply?: (payload: Omit<ICreateReply, "article_id">) => Promise<boolean>;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
   onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
@@ -73,7 +73,7 @@ export default function Comment({
       <CommentWrapper>
         <Card>
           <CommentHeader
-            onPublish={() => onPublish && onPublish("")}
+            onPublish={onPublish}
             value={value}
             onChange={onChange}
             onBlur={onBlur}

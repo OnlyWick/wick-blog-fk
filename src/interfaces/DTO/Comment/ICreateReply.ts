@@ -12,4 +12,6 @@ export interface ICreateReply {
   to_user_id: string;
 
   reply_type: ReplyTypeEnum;
+
+  parent_id?: string;
 }

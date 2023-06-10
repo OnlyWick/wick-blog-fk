@@ -1,5 +1,5 @@
 import IReplies from "./IReplies";
-import ISubReply from "./ISubReply";
+import ISubReply from "./Comment/ISubReply";
 import IUser from "./IUser";
 
 export default interface IComments {

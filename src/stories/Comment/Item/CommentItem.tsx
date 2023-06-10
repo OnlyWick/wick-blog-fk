@@ -1,7 +1,7 @@
 import ArticleContext from "@/Context/ArticleContext";
 import IComments from "@/interfaces/DTO/IComments";
 import IReplies from "@/interfaces/DTO/IReplies";
-import ISubReply from "@/interfaces/DTO/ISubReply";
+import ISubReply from "@/interfaces/DTO/Comment/ISubReply";
 import { VoteCategoryType } from "@/interfaces/DTO/IVoteCommentOrReply";
 import { ArrowUpIcon, CommentIcon } from "@/stories/Common/icon";
 import ArrowDownIcon from "@/stories/Common/icon/ArrowDownIcon";
@@ -13,7 +13,9 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { CommentContext } from "../CommentContext";
 import { CommentTextarea } from "../Textarea/CommentTextarea";
-import { ICreateReply } from "@/interfaces/DTO/ICreateReply";
+import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
+import { ReplyTypeEnum } from "@/interfaces/DTO/IReplyType";
+const { Paragraph } = Typography;
 
 const CommentItemWrapper = styled.div`
   display: flex;
@@ -143,8 +145,8 @@ const SubCommentItemWrapper = styled.div`
 interface CommentItemBase {
   onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
   onVoteDown?: (id: string, categoryType: VoteCategoryType) => void;
-  onPublish?: Function;
-  onReply?: (payload: ICreateReply) => void;
+  onPublish?: (content: string) => void;
+  onReply?: (payload: Omit<ICreateReply, "article_id">) => Promise<boolean>;
 }
 
 interface CommentItemProps extends CommentItemBase {
@@ -157,10 +159,12 @@ interface CommentRepliesProps extends CommentItemBase {
 
 interface CommentSubRepliesProps extends CommentItemBase {
   subReply: ISubReply;
+  parentId: string;
 }
 
 function CommentSubRepliesItem({
   subReply,
+  parentId,
   onReply,
   onVoteUp,
   onVoteDown,
@@ -175,12 +179,27 @@ function CommentSubRepliesItem({
     onVoteDown && onVoteDown(subReply!.id, VoteCategoryType.REPLY);
   }, [onVoteDown, subReply]);
 
-  const handlePublish = () => {
+  const handleReply = async (content: string) => {
     if (onReply) {
       // TODO: 修改参数
-      // onReply(subReply.id);
+      console.log(subReply, "666");
+      const result = await onReply({
+        content,
+        reply_type: ReplyTypeEnum.REPLY_TYPE,
+        to_user_id: subReply.from_user.id,
+        root_reply_id: parentId,
+        parent_id: subReply.id,
+      });
+      if (result) {
+        commentContext?.onHideTextarea();
+      }
     } else {
-      commentContext?.onPublish?.(subReply.id);
+      // commentContext?.onReply?.({
+      //   content,
+      //   reply_type: ReplyTypeEnum.REPLY_TYPE,
+      //   to_user_id: subReply.from_user.id,
+      //   root_reply_id: subReply.id,
+      // });
     }
   };
 
@@ -195,19 +214,27 @@ function CommentSubRepliesItem({
             <CommentItemUsername href={subReply.from_user.github_home}>
               {subReply.from_user.name}
             </CommentItemUsername>
-            {subReply.to_user && (
-              <CommentItemUserBox>
-                <CommentItemReplyBox>回复</CommentItemReplyBox>
-                <CommentItemUsername href={subReply.to_user.github_home}>
-                  {subReply.to_user.name}
-                </CommentItemUsername>
-              </CommentItemUserBox>
-            )}
+            {subReply.parent_reply &&
+              subReply.from_user.id !== subReply.to_user.id && (
+                <CommentItemUserBox>
+                  <CommentItemReplyBox>回复</CommentItemReplyBox>
+                  <CommentItemUsername href={subReply.to_user.github_home}>
+                    {subReply.to_user.name}
+                  </CommentItemUsername>
+                </CommentItemUserBox>
+              )}
           </CommentItemUserBox>
           <CommentItemTime>{subReply.updatedAt}</CommentItemTime>
         </CommentItemHeader>
         <CommentItemMain>
           <CommentItemContent>
+            {subReply.parent_reply && (
+              <CommentItemParentReplyWrapper>
+                <Paragraph ellipsis={true}>
+                  {subReply.parent_reply?.content}
+                </Paragraph>
+              </CommentItemParentReplyWrapper>
+            )}
             <MarkdownPreview>{subReply.content}</MarkdownPreview>
           </CommentItemContent>
           <CommentItemActions>
@@ -247,7 +274,7 @@ function CommentSubRepliesItem({
           </CommentItemActions>
           {showTextarea && (
             <CommentTextarea
-              onPublish={handlePublish}
+              onReply={handleReply}
               placeholder={`回复 ${subReply.from_user.name}: `}
             ></CommentTextarea>
           )}
@@ -263,7 +290,7 @@ function CommentRepliesItem({
   onVoteUp,
   onVoteDown,
 }: CommentRepliesProps) {
-  const articleContext = useContext(ArticleContext);
+  const articleContext = useContext(ArticleContext); // FIXME: 不应该出现这个 context
   const commentContext = useContext(CommentContext);
   const showTextarea = commentContext?.activeTextarea === replies.from_user.id;
   const handleVoteUp = useCallback(() => {
@@ -281,12 +308,25 @@ function CommentRepliesItem({
     [articleContext]
   );
 
-  const handlePublish = () => {
+  const handleReply = async (content: string) => {
     if (onReply) {
-      // TODO: 修改参数
-      // onReply(replies.id);
+      const isClose = await onReply({
+        content,
+        reply_type: ReplyTypeEnum.REPLY_TYPE,
+        to_user_id: replies.from_user.id,
+        root_reply_id: replies.id,
+        parent_id: replies.id,
+      });
+      if (isClose) {
+        commentContext?.onHideTextarea();
+      }
     } else {
-      commentContext?.onPublish?.(replies.id);
+      commentContext?.onReply?.({
+        content,
+        reply_type: ReplyTypeEnum.REPLY_TYPE,
+        to_user_id: replies.from_user.id,
+        root_reply_id: replies.id,
+      });
     }
   };
 
@@ -337,9 +377,7 @@ function CommentRepliesItem({
                   width: "auto",
                 }}
                 onClick={() => {
-                  console.log("回复", replies.from_user.name);
                   commentContext?.onShowTextarea(replies.from_user.id);
-                  console.log(showTextarea, "mot");
                 }}
                 icon={<CommentIcon size={16}></CommentIcon>}
               ></Button>
@@ -347,7 +385,7 @@ function CommentRepliesItem({
           </CommentItemActions>
           {showTextarea && (
             <CommentTextarea
-              onPublish={handlePublish}
+              onReply={handleReply}
               placeholder={`回复 ${replies.from_user.name}: `}
             ></CommentTextarea>
           )}
@@ -356,6 +394,8 @@ function CommentRepliesItem({
               <CommentSubRepliesItem
                 key={sub.id}
                 subReply={sub}
+                parentId={replies.id}
+                onReply={onReply}
                 onVoteUp={onVoteUp}
                 onVoteDown={onVoteDown}
               ></CommentSubRepliesItem>
@@ -404,11 +444,18 @@ export default function CommentItem({
     onVoteDown && onVoteDown(comment.id, VoteCategoryType.COMMENT);
   }, [onVoteDown, comment]);
 
-  const handlePublish = () => {
-    if (onPublish) {
-      onPublish();
-    } else {
-      commentContext?.onPublish?.(comment.id);
+  const handleReply = async (content: string) => {
+    if (onReply) {
+      const isClose = await onReply({
+        content,
+        root_comment_id: comment.id,
+        reply_type: ReplyTypeEnum.COMMENT_TYPE,
+        to_user_id: comment.author_id,
+      });
+
+      if (isClose) {
+        commentContext?.onHideTextarea();
+      }
     }
   };
 
@@ -465,7 +512,7 @@ export default function CommentItem({
           </CommentItemActions>
           {showTextarea && (
             <CommentTextarea
-              onPublish={handlePublish}
+              onReply={handleReply}
               placeholder={`回复 ${comment.user.name}: `}
             ></CommentTextarea>
           )}

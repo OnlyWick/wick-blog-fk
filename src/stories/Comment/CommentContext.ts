@@ -1,6 +1,6 @@
 import { ChangeEvent, FocusEventHandler, createContext } from "react";
 import { EmojiArrayType } from "../Common/EmojiSelector/EmojiSelector";
-import { ICreateReply } from "@/interfaces/DTO/ICreateReply";
+import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 
 type CommentContextType = {
   value?: string;
@@ -9,8 +9,8 @@ type CommentContextType = {
   onHideTextarea: () => void;
   emojiList?: EmojiArrayType;
   onEmojiSelect?: (data: string) => void;
-  onPublish?: (content: string) => void;
-  onReply?: (payload: ICreateReply) => void;
+  onPublish?: (payload: string) => void;
+  onReply?: (payload: Omit<ICreateReply, "article_id">) => void;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
 };
