@@ -17,14 +17,7 @@ export const publishComment = async (content: string, articleId: string) => {
   return await axios(config);
 };
 
-export const replyComment = async (
-  payload: ICreateReply,
-  articleId: string
-) => {
-  const source_key =
-    payload.reply_type === ReplyTypeEnum.COMMENT_TYPE
-      ? "root_comment_id"
-      : "root_reply_id";
+export const replyComment = async (payload: ICreateReply) => {
   const config: AxiosRequestConfig<ICreateReply> = {
     method: "post",
     url: "/comment/reply",

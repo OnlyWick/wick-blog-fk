@@ -1,4 +1,4 @@
-import IComments from "./IComments";
+import IComments from "./Comment/IComments";
 
 export default interface IReturnComments {
   data: IComments[];

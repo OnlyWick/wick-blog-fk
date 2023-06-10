@@ -15,7 +15,6 @@ import { produce } from "immer";
 import Response from "@/interfaces/Response";
 import IReturnComments from "@/interfaces/DTO/IReturnComments";
 import IArticle from "@/interfaces/DTO/IArticle";
-import IReplies from "@/interfaces/DTO/IReplies";
 import {
   ChangeEvent,
   FocusEventHandler,
@@ -28,7 +27,6 @@ import {
   VoteCommentOrReplyType,
 } from "@/interfaces/DTO/IVoteCommentOrReply";
 import { VoteArticleType } from "@/interfaces/DTO/IVoteArticle";
-import { CommentContext } from "@/stories/Comment/CommentContext";
 import { EmojiArrayType } from "@/stories/Common/EmojiSelector/EmojiSelector";
 import ArticleAction from "@/stories/Article/Action/ArticleAction";
 import {
@@ -37,6 +35,7 @@ import {
   voteCommentOrReply,
 } from "@/api/comment.api";
 import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
+import IReplies from "@/interfaces/DTO/Comment/IReplies";
 
 const { Sider, Content } = Layout;
 
@@ -123,12 +122,8 @@ export default function Id({ article }: ArticleIdProps) {
       commentData.data.data &&
       produce(commentData.data.data, (draft) => {
         draft.map((comment) => {
-          return comment.replies.map((reply) => {
-            if (root_reply_id === reply.id) {
-              // TODO: push
-              reply.sub_reply = data.sub_reply;
-            }
-          });
+          // TODO: 更新
+          comment.replies;
         });
       });
     console.log(newCommentData, "updated");
@@ -293,13 +288,10 @@ export default function Id({ article }: ArticleIdProps) {
   const handleReplyComment = async (
     payload: Omit<ICreateReply, "article_id">
   ) => {
-    const response = await replyComment(
-      {
-        ...payload,
-        article_id: article.id,
-      },
-      article.id
-    );
+    const response = await replyComment({
+      ...payload,
+      article_id: article.id,
+    });
     const data = response.data;
     if (data.success == true) {
       notification.success({
