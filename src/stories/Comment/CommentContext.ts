@@ -11,6 +11,7 @@ type CommentContextType = {
   onEmojiSelect?: (data: string) => void;
   onPublish?: (payload: string) => void;
   onReply?: (payload: Omit<ICreateReply, "article_id">) => void;
+  onGetMoreReplies?: (replyId: string, page: string) => void;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
 };

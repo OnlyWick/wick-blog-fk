@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import CommentHeader from "./Header/CommentHeader";
 import CommentItem from "./Item/CommentItem";
-import { Card } from "antd";
+import { Button, Card } from "antd";
 import {
   ChangeEvent,
   FocusEventHandler,
@@ -21,12 +21,19 @@ const CommentWrapper = styled.div`
 const CommentListWrapper = styled.div`
   margin-top: 32px;
 `;
+
+const ReadMoreCommentsWrapper = styled.div`
+  margin-top: var(--wick-large-margin);
+`;
+
 interface CommentProps {
   commentData?: IReturnComments;
   value?: string;
   onEmojiSelect?: (data: string) => void;
   onPublish?: (content: string) => void;
   onReply?: (payload: Omit<ICreateReply, "article_id">) => Promise<boolean>;
+  // onGetMoreComments?: (articleId: string) => void;
+  onGetMoreReplies?: (replyId: string, page: string) => void;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
   onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
@@ -41,6 +48,7 @@ export default function Comment({
   onEmojiSelect,
   onPublish,
   onReply,
+  onGetMoreReplies,
   onChange,
   onBlur,
   onVoteUp,
@@ -50,6 +58,8 @@ export default function Comment({
   const handleShowTextarea = (commentOrReplyId: string) => {
     setActiveTextarea(commentOrReplyId);
   };
+
+  console.log(commentData, "5666");
 
   const handleHideTextarea = () => {
     setActiveTextarea(null);
@@ -63,6 +73,7 @@ export default function Comment({
         onEmojiSelect,
         onPublish,
         onReply,
+        onGetMoreReplies,
         onChange,
         onBlur,
         onShowTextarea: handleShowTextarea,
@@ -77,7 +88,7 @@ export default function Comment({
             value={value}
             onChange={onChange}
             onBlur={onBlur}
-            commentCount={commentData?.count}
+            commentCount={commentData?.total_count}
           ></CommentHeader>
           <CommentListWrapper>
             {Array.isArray(commentData?.data) &&
@@ -92,6 +103,14 @@ export default function Comment({
                 ></CommentItem>
               ))}
           </CommentListWrapper>
+          {commentData &&
+            commentData.comment_count > commentData.data.length && (
+              <ReadMoreCommentsWrapper>
+                <Button block type="primary">
+                  查看更多回复
+                </Button>
+              </ReadMoreCommentsWrapper>
+            )}
         </Card>
       </CommentWrapper>
     </CommentContext.Provider>

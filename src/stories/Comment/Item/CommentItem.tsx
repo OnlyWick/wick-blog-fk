@@ -15,6 +15,7 @@ import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 import { ReplyTypeEnum } from "@/interfaces/DTO/IReplyType";
 import IComments from "@/interfaces/DTO/Comment/IComments";
 import IReplies from "@/interfaces/DTO/Comment/IReplies";
+import { getMoreReply } from "@/api/comment.api";
 const { Paragraph } = Typography;
 
 const CommentItemWrapper = styled.div`
@@ -96,6 +97,10 @@ const CommentItemReplies = styled.div`
   }
 `;
 
+const ReadMoreRepliesWrapper = styled.div`
+  margin-top: var(--wick-large-margin);
+`;
+
 const CommentItemUserBox = styled.div`
   display: flex;
 `;
@@ -168,8 +173,7 @@ function CommentRepliesItem({
   const articleContext = useContext(ArticleContext); // FIXME: 不应该出现这个 context
   const commentContext = useContext(CommentContext);
   const showTextarea = commentContext?.activeTextarea === replies.id;
-  const showReplyText =
-    replies.parent_reply && replies.from_user.id !== replies.to_user.id;
+  const showReplyText = replies.parent_reply;
   const handleVoteUp = useCallback(() => {
     onVoteUp && onVoteUp(replies.id, VoteCategoryType.REPLY);
   }, [onVoteUp, replies]);
@@ -177,13 +181,6 @@ function CommentRepliesItem({
   const handleVoteDown = useCallback(() => {
     onVoteDown && onVoteDown(replies.id, VoteCategoryType.REPLY);
   }, [onVoteDown, replies]);
-
-  const handleGetMoreReply = useCallback(
-    (root_reply_id: string) => {
-      articleContext?.getMoreSubReply(root_reply_id);
-    },
-    [articleContext]
-  );
 
   const handleReply = async (content: string) => {
     if (onReply) {
@@ -334,7 +331,9 @@ export default function CommentItem({
       }
     }
   };
-
+  const handleGetMoreReply = (root_comment_id: string, page: string) => {
+    commentContext?.onGetMoreReplies?.(root_comment_id, page);
+  };
   return comment ? (
     <CommentItemWrapper>
       <CommentItemLeft>
@@ -402,16 +401,29 @@ export default function CommentItem({
             >
               {comment.replies?.map((reply, index) => {
                 return (
-                  <CommentRepliesItem
-                    key={reply.id}
-                    rootCommentId={comment.id}
-                    replies={reply}
-                    onReply={onReply}
-                    onVoteUp={onVoteUp}
-                    onVoteDown={onVoteDown}
-                  ></CommentRepliesItem>
+                  <>
+                    <CommentRepliesItem
+                      key={reply.id}
+                      rootCommentId={comment.id}
+                      replies={reply}
+                      onReply={onReply}
+                      onVoteUp={onVoteUp}
+                      onVoteDown={onVoteDown}
+                    ></CommentRepliesItem>
+                  </>
                 );
               })}
+              {comment.replies.length < comment.reply_count && (
+                <ReadMoreRepliesWrapper>
+                  <Button
+                    onClick={() => handleGetMoreReply(comment.id, "1")}
+                    block
+                    type="primary"
+                  >
+                    查看更多回复
+                  </Button>
+                </ReadMoreRepliesWrapper>
+              )}
             </Card>
           </CommentItemReplies>
         )}

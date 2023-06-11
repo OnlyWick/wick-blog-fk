@@ -2,5 +2,6 @@ import IComments from "./Comment/IComments";
 
 export default interface IReturnComments {
   data: IComments[];
-  count: number;
+  total_count: number;
+  comment_count: number;
 }

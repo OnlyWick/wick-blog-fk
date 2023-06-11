@@ -33,9 +33,13 @@ import {
   replyComment,
   publishComment,
   voteCommentOrReply,
+  getMoreReply,
+  getComments,
 } from "@/api/comment.api";
 import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 import IReplies from "@/interfaces/DTO/Comment/IReplies";
+import axios, { AxiosResponse } from "axios";
+import IComments from "@/interfaces/DTO/Comment/IComments";
 
 const { Sider, Content } = Layout;
 
@@ -106,42 +110,50 @@ interface ArticleIdProps {
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
 export default function Id({ article }: ArticleIdProps) {
-  const commentURL = `http://192.168.31.86:9396/comment/list?article_id=${article.id}`;
-  const { data: commentData } = useSWR<Response<IReturnComments>>(
-    commentURL,
-    fetcher
-  );
-
-  const updateCommentData = (
-    root_reply_id: string,
-    data: IReplies
-  ): Response<IReturnComments> => {
-    const newCommentData =
-      commentData &&
-      commentData.data &&
-      commentData.data.data &&
-      produce(commentData.data.data, (draft) => {
-        draft.map((comment) => {
-          // TODO: 更新
-          comment.replies;
-        });
-      });
-    console.log(newCommentData, "updated");
-    return {
-      message: commentData!.message,
-      success: commentData!.success,
-      data: {
-        data: newCommentData!,
-        count: commentData!.data!.count,
-      },
+  const [comment, setComment] = useState<IReturnComments>();
+  // const commentURL = `http://192.168.31.86:9396/comment/list?article_id=${article.id}`;
+  // const { data: commentData } = useSWR<Response<IReturnComments>>(
+  //   commentURL,
+  //   fetcher
+  // );
+  useEffect(() => {
+    const handleGetComments = async () => {
+      const result: AxiosResponse<Response<IReturnComments>> =
+        await getComments(article.id);
+      setComment(result.data.data);
     };
-  };
-  const handleGetMoreSubReply = async (root_reply_id: string) => {
-    const data = await fetch(
-      `http://192.168.31.86:9396/comment/getMoreSubReply?reply_id=${root_reply_id}`
-    );
-    const result = await data.json();
-    mutate(commentURL, updateCommentData(root_reply_id, result), false);
+    handleGetComments();
+  }, [article.id]);
+
+  // const updateCommentData = (
+  //   root_reply_id: string,
+  //   data: IReplies
+  // ): Response<IReturnComments> => {
+  //   const newCommentData =
+  //     commentData &&
+  //     commentData.data &&
+  //     commentData.data.data &&
+  //     produce(commentData.data.data, (draft) => {
+  //       draft.map((comment) => {
+  //         // TODO: 更新
+  //         comment.replies;
+  //       });
+  //     });
+  //   console.log(newCommentData, "updated");
+  //   return {
+  //     message: commentData!.message,
+  //     success: commentData!.success,
+  //     // TODO: 修改
+  //     data: {
+  //       data: newCommentData!,
+  //       comment_count: 1,
+  //       total_count: commentData!.data!.total_count,
+  //     },
+  //   };
+  // };
+  const handleGetMoreReply = async (replyId: string, page: string) => {
+    const result = await getMoreReply(replyId, page);
+    console.log(result.data, 666);
   };
   const handleCommentOrReplyVoteUp = async (
     voteId: string,
@@ -269,12 +281,7 @@ export default function Id({ article }: ArticleIdProps) {
       console.log(error);
     }
   }, [article]);
-  const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const elem = e.target;
-  };
-  const handleInputBlur: FocusEventHandler<HTMLTextAreaElement> = (e) => {
-    const elem = e.target;
-  };
+
   const handlePublishComment = async (content: string) => {
     const response = await publishComment(content, article.id);
     const data = response.data;
@@ -307,68 +314,61 @@ export default function Id({ article }: ArticleIdProps) {
     fetcher
   );
 
-  // TODO: 不应该使用 context
-  const context: IArticleContext = {
-    articleData: article,
-    getMoreSubReply: handleGetMoreSubReply,
-  };
-
   return (
-    <ArticleContext.Provider value={context}>
-      <LayoutWrapper>
-        <Layout
-          hasSider
+    <LayoutWrapper>
+      <Layout
+        hasSider
+        style={{
+          background: "transparent",
+        }}
+      >
+        <Sider
+          width={378}
           style={{
+            marginRight: "var(--wick-large-margin)",
             background: "transparent",
           }}
         >
-          <Sider
-            width={378}
+          <UserWidget></UserWidget>
+          <ArticleTocWrapper
             style={{
-              marginRight: "var(--wick-large-margin)",
-              background: "transparent",
+              margin: "var(--wick-large-margin) 0 0",
             }}
           >
-            <UserWidget></UserWidget>
-            <ArticleTocWrapper
-              style={{
-                margin: "var(--wick-large-margin) 0 0",
-              }}
-            >
-              <Affix offsetTop={24}>
-                <ArticleToc source=".markdown-body"></ArticleToc>
-              </Affix>
-            </ArticleTocWrapper>
-          </Sider>
-          <Content>
-            <ArticleViewer
-              style={{
-                marginBottom: "24px",
-              }}
-              article={article}
-            />
-            <Comment
-              emojiList={emojiList?.data}
-              onPublish={handlePublishComment}
-              onReply={handleReplyComment}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-              commentData={commentData?.data}
-              onVoteUp={handleCommentOrReplyVoteUp}
-              onVoteDown={handleCommentOrReplyVoteDown}
-            ></Comment>
-          </Content>
-          <ArticleActionWrapper>
             <Affix offsetTop={24}>
-              <ArticleAction
-                onVoteUp={handleArticleVoteUp}
-                onVoteDown={handleArticleVoteDown}
-                voteCount={article.voteUpCount - article.voteDownCount}
-              ></ArticleAction>
+              <ArticleToc source=".markdown-body"></ArticleToc>
             </Affix>
-          </ArticleActionWrapper>
-        </Layout>
-      </LayoutWrapper>
-    </ArticleContext.Provider>
+          </ArticleTocWrapper>
+        </Sider>
+        <Content>
+          <ArticleViewer
+            style={{
+              marginBottom: "24px",
+            }}
+            article={article}
+          />
+          <Comment
+            emojiList={emojiList?.data}
+            onPublish={handlePublishComment}
+            onReply={handleReplyComment}
+            onGetMoreReplies={handleGetMoreReply}
+            // onChange={handleInputChange}
+            // onBlur={handleInputBlur}
+            commentData={comment}
+            onVoteUp={handleCommentOrReplyVoteUp}
+            onVoteDown={handleCommentOrReplyVoteDown}
+          ></Comment>
+        </Content>
+        <ArticleActionWrapper>
+          <Affix offsetTop={24}>
+            <ArticleAction
+              onVoteUp={handleArticleVoteUp}
+              onVoteDown={handleArticleVoteDown}
+              voteCount={article.voteUpCount - article.voteDownCount}
+            ></ArticleAction>
+          </Affix>
+        </ArticleActionWrapper>
+      </Layout>
+    </LayoutWrapper>
   );
 }

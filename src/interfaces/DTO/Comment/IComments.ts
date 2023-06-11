@@ -10,5 +10,6 @@ export default interface IComments {
   voteUpCount: number;
   voteDownCount: number;
   user: IUser;
+  reply_count: number;
   replies: IReplies[];
 }

@@ -1,9 +1,24 @@
 import { VoteCategoryType } from "@/interfaces/DTO/IVoteCommentOrReply";
 import { axios } from "./base";
-import { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ReplyTypeEnum } from "@/interfaces/DTO/IReplyType";
 import { ICreateComment } from "@/interfaces/DTO/Comment/ICreateComment";
 import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
+import { IGetMoreReply } from "@/interfaces/DTO/Comment/IGetMoreReply";
+import IReplies from "@/interfaces/DTO/Comment/IReplies";
+import Response from "@/interfaces/Response";
+
+type AsyncResponseType<T> = AxiosResponse<Response<T>>;
+
+export const getComments = async (articleId: string) => {
+  return await axios({
+    url: `http://192.168.31.86:9396/comment/list`,
+    method: "get",
+    params: {
+      article_id: articleId,
+    },
+  });
+};
 
 export const publishComment = async (content: string, articleId: string) => {
   const config: AxiosRequestConfig<ICreateComment> = {
@@ -42,4 +57,19 @@ export const voteCommentOrReply = async (
       vote_type: voteType,
     },
   });
+};
+
+export const getMoreReply = async (
+  commentId: string,
+  page: string
+): Promise<Response<IReplies>> => {
+  const config: AxiosRequestConfig<IGetMoreReply> = {
+    url: "comment/getMoreReply",
+    method: "get",
+    params: {
+      comment_id: commentId,
+      page,
+    },
+  };
+  return (await axios(config)).data;
 };
