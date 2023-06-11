@@ -15,7 +15,6 @@ import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 import { ReplyTypeEnum } from "@/interfaces/DTO/IReplyType";
 import IComments from "@/interfaces/DTO/Comment/IComments";
 import IReplies from "@/interfaces/DTO/Comment/IReplies";
-import { getMoreReply } from "@/api/comment.api";
 const { Paragraph } = Typography;
 
 const CommentItemWrapper = styled.div`
@@ -170,7 +169,6 @@ function CommentRepliesItem({
   onVoteUp,
   onVoteDown,
 }: CommentRepliesProps) {
-  const articleContext = useContext(ArticleContext); // FIXME: 不应该出现这个 context
   const commentContext = useContext(CommentContext);
   const showTextarea = commentContext?.activeTextarea === replies.id;
   const showReplyText = replies.parent_reply;
@@ -309,6 +307,7 @@ export default function CommentItem({
 }: CommentItemProps) {
   const commentContext = useContext(CommentContext);
   const showTextarea = commentContext?.activeTextarea === comment.id;
+  const [page, setPage] = useState(1);
 
   const handleVoteUp = useCallback(() => {
     onVoteUp && onVoteUp(comment.id, VoteCategoryType.COMMENT);
@@ -331,9 +330,11 @@ export default function CommentItem({
       }
     }
   };
-  const handleGetMoreReply = (root_comment_id: string, page: string) => {
-    commentContext?.onGetMoreReplies?.(root_comment_id, page);
+  const handleGetMoreReplies = (root_comment_id: string) => {
+    commentContext?.onGetMoreReplies?.(root_comment_id, `${page}`);
+    setPage(page + 1);
   };
+
   return comment ? (
     <CommentItemWrapper>
       <CommentItemLeft>
@@ -416,7 +417,7 @@ export default function CommentItem({
               {comment.replies.length < comment.reply_count && (
                 <ReadMoreRepliesWrapper>
                   <Button
-                    onClick={() => handleGetMoreReply(comment.id, "1")}
+                    onClick={() => handleGetMoreReplies(comment.id)}
                     block
                     type="primary"
                   >

@@ -32,8 +32,8 @@ interface CommentProps {
   onEmojiSelect?: (data: string) => void;
   onPublish?: (content: string) => void;
   onReply?: (payload: Omit<ICreateReply, "article_id">) => Promise<boolean>;
-  // onGetMoreComments?: (articleId: string) => void;
-  onGetMoreReplies?: (replyId: string, page: string) => void;
+  onGetMoreComments?: (page: string) => void;
+  onGetMoreReplies?: (commentId: string, page: string) => void;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
   onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
@@ -48,6 +48,7 @@ export default function Comment({
   onEmojiSelect,
   onPublish,
   onReply,
+  onGetMoreComments,
   onGetMoreReplies,
   onChange,
   onBlur,
@@ -55,6 +56,8 @@ export default function Comment({
   onVoteDown,
 }: CommentProps) {
   const [activeTextarea, setActiveTextarea] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+
   const handleShowTextarea = (commentOrReplyId: string) => {
     setActiveTextarea(commentOrReplyId);
   };
@@ -63,6 +66,10 @@ export default function Comment({
 
   const handleHideTextarea = () => {
     setActiveTextarea(null);
+  };
+  const handleGetMoreComments = () => {
+    onGetMoreComments?.(`${page}`);
+    setPage(page + 1);
   };
 
   return (
@@ -106,7 +113,7 @@ export default function Comment({
           {commentData &&
             commentData.comment_count > commentData.data.length && (
               <ReadMoreCommentsWrapper>
-                <Button block type="primary">
+                <Button onClick={handleGetMoreComments} block type="primary">
                   查看更多回复
                 </Button>
               </ReadMoreCommentsWrapper>

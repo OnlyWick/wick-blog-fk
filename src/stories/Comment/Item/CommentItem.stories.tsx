@@ -11,10 +11,6 @@ type Story = StoryObj<typeof CommentItem>;
 
 export const Common: Story = {
   render() {
-    return (
-      <>
-        <CommentItem></CommentItem>
-      </>
-    );
+    return <>{/* <CommentItem></CommentItem> */}</>;
   },
 };

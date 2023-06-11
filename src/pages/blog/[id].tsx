@@ -33,13 +33,15 @@ import {
   replyComment,
   publishComment,
   voteCommentOrReply,
-  getMoreReply,
+  getMoreComments,
+  getMoreReplies,
   getComments,
 } from "@/api/comment.api";
 import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 import IReplies from "@/interfaces/DTO/Comment/IReplies";
 import axios, { AxiosResponse } from "axios";
 import IComments from "@/interfaces/DTO/Comment/IComments";
+import { cp } from "fs";
 
 const { Sider, Content } = Layout;
 
@@ -111,11 +113,7 @@ const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
 export default function Id({ article }: ArticleIdProps) {
   const [comment, setComment] = useState<IReturnComments>();
-  // const commentURL = `http://192.168.31.86:9396/comment/list?article_id=${article.id}`;
-  // const { data: commentData } = useSWR<Response<IReturnComments>>(
-  //   commentURL,
-  //   fetcher
-  // );
+
   useEffect(() => {
     const handleGetComments = async () => {
       const result: AxiosResponse<Response<IReturnComments>> =
@@ -123,37 +121,28 @@ export default function Id({ article }: ArticleIdProps) {
       setComment(result.data.data);
     };
     handleGetComments();
-  }, [article.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // const updateCommentData = (
-  //   root_reply_id: string,
-  //   data: IReplies
-  // ): Response<IReturnComments> => {
-  //   const newCommentData =
-  //     commentData &&
-  //     commentData.data &&
-  //     commentData.data.data &&
-  //     produce(commentData.data.data, (draft) => {
-  //       draft.map((comment) => {
-  //         // TODO: 更新
-  //         comment.replies;
-  //       });
-  //     });
-  //   console.log(newCommentData, "updated");
-  //   return {
-  //     message: commentData!.message,
-  //     success: commentData!.success,
-  //     // TODO: 修改
-  //     data: {
-  //       data: newCommentData!,
-  //       comment_count: 1,
-  //       total_count: commentData!.data!.total_count,
-  //     },
-  //   };
-  // };
-  const handleGetMoreReply = async (replyId: string, page: string) => {
-    const result = await getMoreReply(replyId, page);
-    console.log(result.data, 666);
+  const handleGetMoreComments = async (page: string) => {
+    const comments = await getMoreComments(article.id, page);
+
+    setComment(
+      produce((draft) => {
+        draft?.data.push(...comments.data!);
+      })
+    );
+  };
+  const handleGetMoreReplies = async (commentId: string, page: string) => {
+    const result = await getMoreReplies(commentId, page);
+    setComment(
+      produce((draft) => {
+        const targetComment = draft?.data.find(
+          (comment) => comment.id === commentId
+        );
+        targetComment?.replies.push(...result.data!);
+      })
+    );
   };
   const handleCommentOrReplyVoteUp = async (
     voteId: string,
@@ -351,9 +340,8 @@ export default function Id({ article }: ArticleIdProps) {
             emojiList={emojiList?.data}
             onPublish={handlePublishComment}
             onReply={handleReplyComment}
-            onGetMoreReplies={handleGetMoreReply}
-            // onChange={handleInputChange}
-            // onBlur={handleInputBlur}
+            onGetMoreComments={handleGetMoreComments}
+            onGetMoreReplies={handleGetMoreReplies}
             commentData={comment}
             onVoteUp={handleCommentOrReplyVoteUp}
             onVoteDown={handleCommentOrReplyVoteDown}

@@ -10,6 +10,7 @@ export default meta;
 type Story = StoryObj<typeof EmojiSelector>;
 export const Common: Story = {
   render() {
-    return <EmojiSelector />;
+    // return <EmojiSelector />;
+    return <>Hi</>;
   },
 };

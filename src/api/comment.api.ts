@@ -7,6 +7,8 @@ import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 import { IGetMoreReply } from "@/interfaces/DTO/Comment/IGetMoreReply";
 import IReplies from "@/interfaces/DTO/Comment/IReplies";
 import Response from "@/interfaces/Response";
+import IGetMoreComments from "@/interfaces/DTO/Comment/IGetMoreComments";
+import IComments from "@/interfaces/DTO/Comment/IComments";
 
 type AsyncResponseType<T> = AxiosResponse<Response<T>>;
 
@@ -59,15 +61,30 @@ export const voteCommentOrReply = async (
   });
 };
 
-export const getMoreReply = async (
+export const getMoreReplies = async (
   commentId: string,
   page: string
-): Promise<Response<IReplies>> => {
+): Promise<Response<IReplies[]>> => {
   const config: AxiosRequestConfig<IGetMoreReply> = {
     url: "comment/getMoreReply",
     method: "get",
     params: {
       comment_id: commentId,
+      page,
+    },
+  };
+  return (await axios(config)).data;
+};
+
+export const getMoreComments = async (
+  articleid: string,
+  page: string
+): Promise<Response<IComments[]>> => {
+  const config: AxiosRequestConfig<IGetMoreComments> = {
+    url: "comment/getMoreComments",
+    method: "get",
+    params: {
+      article_id: articleid,
       page,
     },
   };
