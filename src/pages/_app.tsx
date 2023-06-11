@@ -4,15 +4,10 @@ import "../../public/reset.css";
 import "../../public/wick-blog.css";
 import "../../public/antd.min.css";
 import { useRouter } from "next/router";
-import Layout from "@/stories/Layout";
-import Sider from "@/stories/Layout/Sider/Sider";
-import Content from "@/stories/Layout/Content/Content";
 import TopNav from "@/stories/Nav/TopNav/TopNav";
-import Header from "@/stories/Layout/Header/Header";
-import { Affix } from "antd";
-import HomeNav from "@/stories/Nav/HomeNav";
+import { Affix, Layout } from "antd";
 import { useEffect } from "react";
-// import { Header } from "antd/es/layout/layout";
+const { Header, Content } = Layout;
 
 const GlobalStyle = createGlobalStyle`
     :root, body {
@@ -51,8 +46,8 @@ const MainContainer = styled.div`
     padding: 0 10px;
   }
 
-  @media screen and (max-width: 959px) {
-    padding: 0;
+  & > .ant-layout-content {
+    max-width: 1280px;
   }
 `;
 
@@ -78,19 +73,19 @@ export default function App({ Component, pageProps }: AppProps) {
                 background: "#fff",
               }}
             >
-              <Header>
+              <Header
+                style={{
+                  padding: 0,
+                  background: "transparent",
+                }}
+              >
                 <TopNav></TopNav>
               </Header>
             </Affix>
           </HeaderWrapper>
           <Layout style={{ width: "100%" }}>
             <MainContainer>
-              <Content
-                style={{
-                  maxWidth: "1280px",
-                  margin: "var(--wick-large-margin)",
-                }}
-              >
+              <Content>
                 <Component {...pageProps} />
               </Content>
             </MainContainer>

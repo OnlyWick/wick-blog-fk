@@ -28,7 +28,7 @@ import {
 } from "@/interfaces/DTO/IVoteCommentOrReply";
 import { VoteArticleType } from "@/interfaces/DTO/IVoteArticle";
 import { EmojiArrayType } from "@/stories/Common/EmojiSelector/EmojiSelector";
-import ArticleAction from "@/stories/Article/Action/ArticleAction";
+// import ArticleAction from "@/stories/Article/Action/ArticleAction";
 import {
   replyComment,
   publishComment,
@@ -40,8 +40,6 @@ import {
 import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 import IReplies from "@/interfaces/DTO/Comment/IReplies";
 import axios, { AxiosResponse } from "axios";
-import IComments from "@/interfaces/DTO/Comment/IComments";
-import { cp } from "fs";
 
 const { Sider, Content } = Layout;
 
@@ -51,10 +49,10 @@ type Data = {
 };
 
 // TODO: 不需要 SSR
-// const ArticleAction = dynamic(
-//   () => import("@/stories/Article/Action/ArticleAction"),
-//   { ssr: false }
-// );
+const ArticleAction = dynamic(
+  () => import("@/stories/Article/Action/ArticleAction"),
+  { ssr: false }
+);
 
 const Comment = dynamic(() => import("@/stories/Comment/Comment"), {
   ssr: false,
