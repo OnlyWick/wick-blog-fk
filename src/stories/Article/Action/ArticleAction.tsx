@@ -1,8 +1,15 @@
+import IUserInteract from "@/interfaces/DTO/IUserInteract";
 import { ArrowUpIcon, CommentIcon } from "@/stories/Common/icon";
 import ArrowDownIcon from "@/stories/Common/icon/ArrowDownIcon";
 import Share from "@/stories/Common/icon/Share";
 import { Button, Divider, QRCode } from "antd";
-import { BaseSyntheticEvent, useCallback, useEffect, useState } from "react";
+import {
+  BaseSyntheticEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import styled from "styled-components";
 
 const ArticleActionWrapper = styled.div`
@@ -51,17 +58,30 @@ const ArticleActionQRCode = styled.div<ArticleActionQRCodeProps>`
 
 interface ArticleActionProps {
   voteCount?: number;
+  voteInfo?: IUserInteract;
   onVoteUp?: (id: string) => void;
   onVoteDown?: (id: string) => void;
 }
 
 export default function ArticleAction({
   voteCount = 0,
+  voteInfo,
   onVoteUp,
   onVoteDown,
 }: ArticleActionProps) {
   const [showQRCode, setShowQRCode] = useState(false);
   const [href, setHref] = useState("");
+  const voteDirection = useMemo(() => {
+    if (voteInfo === undefined) {
+      return undefined;
+    }
+    if (voteInfo?.is_vote_up) {
+      return "up";
+    } else if (!voteInfo?.is_vote_up) {
+      return "down";
+    }
+  }, [voteInfo]);
+
   const handleGenerateQrCode = useCallback(
     (e: BaseSyntheticEvent) => {
       e.stopPropagation();
@@ -96,6 +116,14 @@ export default function ArticleAction({
         <Button
           type="link"
           onClick={handleVoteUp}
+          style={{
+            color:
+              voteDirection === undefined
+                ? "rgb(207, 210, 214)"
+                : voteDirection === "up"
+                ? "rgb(244, 130, 37)"
+                : "rgb(207, 210, 214)",
+          }}
           icon={<ArrowUpIcon />}
         ></Button>
       </ArticleActionItem>
@@ -104,6 +132,14 @@ export default function ArticleAction({
         <Button
           type="link"
           onClick={handleVoteDown}
+          style={{
+            color:
+              voteDirection === undefined
+                ? "rgb(207, 210, 214)"
+                : voteDirection === "down"
+                ? "rgb(244, 130, 37)"
+                : "rgb(207, 210, 214)",
+          }}
           icon={<ArrowDownIcon />}
         ></Button>
       </ArticleActionItem>

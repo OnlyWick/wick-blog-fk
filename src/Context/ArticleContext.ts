@@ -1,4 +1,4 @@
-import IArticle from "@/interfaces/DTO/IArticle";
+import IArticle from "@/interfaces/DTO/Article/IArticle";
 import { createContext } from "react";
 
 export interface IArticleContext {

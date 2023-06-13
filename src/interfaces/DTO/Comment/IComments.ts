@@ -1,5 +1,6 @@
 import IReplies from "./IReplies";
 import IUser from "../IUser";
+import IUserInteract from "../IUserInteract";
 
 export default interface IComments {
   id: string;
@@ -12,4 +13,5 @@ export default interface IComments {
   user: IUser;
   reply_count: number;
   replies: IReplies[];
+  user_interact?: IUserInteract;
 }

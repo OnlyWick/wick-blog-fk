@@ -62,8 +62,6 @@ export default function Comment({
     setActiveTextarea(commentOrReplyId);
   };
 
-  console.log(commentData, "5666");
-
   const handleHideTextarea = () => {
     setActiveTextarea(null);
   };
@@ -103,6 +101,7 @@ export default function Comment({
                 <CommentItem
                   key={comment.id}
                   comment={comment}
+                  voteInfo={comment.user_interact}
                   onPublish={onPublish}
                   onReply={onReply}
                   onVoteUp={onVoteUp}

@@ -83,7 +83,7 @@ export default function App({ Component, pageProps }: AppProps) {
               </Header>
             </Affix>
           </HeaderWrapper>
-          <Layout style={{ width: "100%" }}>
+          <Layout style={{ width: "100%", background: "transparent" }}>
             <MainContainer>
               <Content>
                 <Component {...pageProps} />

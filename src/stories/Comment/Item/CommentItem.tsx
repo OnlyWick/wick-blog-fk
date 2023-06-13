@@ -6,8 +6,7 @@ import ArrowDownIcon from "@/stories/Common/icon/ArrowDownIcon";
 import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
 // import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
 import { Avatar, Button, Typography, Card } from "antd";
-import TextArea from "antd/es/input/TextArea";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { CommentContext } from "../CommentContext";
 import { CommentTextarea } from "../Textarea/CommentTextarea";
@@ -15,6 +14,7 @@ import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 import { ReplyTypeEnum } from "@/interfaces/DTO/IReplyType";
 import IComments from "@/interfaces/DTO/Comment/IComments";
 import IReplies from "@/interfaces/DTO/Comment/IReplies";
+import IUserInteract from "@/interfaces/DTO/IUserInteract";
 const { Paragraph } = Typography;
 
 const CommentItemWrapper = styled.div`
@@ -147,6 +147,7 @@ const SubCommentItemWrapper = styled.div`
 `;
 
 interface CommentItemBase {
+  voteInfo?: IUserInteract;
   onVoteUp?: (id: string, categoryType: VoteCategoryType) => void;
   onVoteDown?: (id: string, categoryType: VoteCategoryType) => void;
   onPublish?: (content: string) => void;
@@ -158,35 +159,35 @@ interface CommentItemProps extends CommentItemBase {
 }
 
 interface CommentRepliesProps extends CommentItemBase {
-  replies: IReplies;
+  reply: IReplies;
   rootCommentId: string;
 }
 
 function CommentRepliesItem({
-  replies,
+  reply,
   rootCommentId,
   onReply,
   onVoteUp,
   onVoteDown,
 }: CommentRepliesProps) {
   const commentContext = useContext(CommentContext);
-  const showTextarea = commentContext?.activeTextarea === replies.id;
-  const showReplyText = replies.parent_reply;
+  const showTextarea = commentContext?.activeTextarea === reply.id;
+  const showReplyText = reply.parent_reply;
   const handleVoteUp = useCallback(() => {
-    onVoteUp && onVoteUp(replies.id, VoteCategoryType.REPLY);
-  }, [onVoteUp, replies]);
+    onVoteUp && onVoteUp(reply.id, VoteCategoryType.REPLY);
+  }, [onVoteUp, reply]);
 
   const handleVoteDown = useCallback(() => {
-    onVoteDown && onVoteDown(replies.id, VoteCategoryType.REPLY);
-  }, [onVoteDown, replies]);
+    onVoteDown && onVoteDown(reply.id, VoteCategoryType.REPLY);
+  }, [onVoteDown, reply]);
 
   const handleReply = async (content: string) => {
     if (onReply) {
       const isClose = await onReply({
         content,
-        to_user_id: replies.from_user.id,
+        to_user_id: reply.from_user.id,
         root_comment_id: rootCommentId,
-        parent_id: replies.id,
+        parent_id: reply.id,
       });
       if (isClose) {
         commentContext?.onHideTextarea();
@@ -194,41 +195,53 @@ function CommentRepliesItem({
     } else {
       commentContext?.onReply?.({
         content,
-        root_comment_id: replies.parent_reply!.id,
-        to_user_id: replies.from_user.id,
-        parent_id: replies.id,
+        root_comment_id: reply.parent_reply!.id,
+        to_user_id: reply.from_user.id,
+        parent_id: reply.id,
       });
     }
   };
+  console.log(reply, "222222222");
+
+  const voteDirection = useMemo(() => {
+    if (reply.user_interact === undefined) {
+      return undefined;
+    }
+    if (reply.user_interact?.is_vote_up) {
+      return "up";
+    } else if (!reply.user_interact?.is_vote_up) {
+      return "down";
+    }
+  }, [reply.user_interact]);
 
   return (
     <SubCommentItemWrapper>
       <CommentItemLeft>
-        <Avatar size="large" src={replies.from_user.avatar_url}></Avatar>
+        <Avatar size="large" src={reply.from_user.avatar_url}></Avatar>
       </CommentItemLeft>
       <CommentItemRight>
         <CommentItemHeader>
           <CommentItemUserBox>
-            <CommentItemUsername href={replies.from_user.github_home}>
-              {replies.from_user.name}
+            <CommentItemUsername href={reply.from_user.github_home}>
+              {reply.from_user.name}
             </CommentItemUsername>
             {showReplyText && (
               <>
                 <CommentItemReplyBox>回复</CommentItemReplyBox>
-                <CommentItemUsername href={replies.from_user.github_home}>
-                  {replies.to_user.name}
+                <CommentItemUsername href={reply.from_user.github_home}>
+                  {reply.to_user.name}
                 </CommentItemUsername>
               </>
             )}
           </CommentItemUserBox>
-          <CommentItemTime>{replies.updatedAt}</CommentItemTime>
+          <CommentItemTime>{reply.updatedAt}</CommentItemTime>
         </CommentItemHeader>
         <CommentItemMain>
           <CommentItemContent>
-            <MarkdownPreview>{replies.content}</MarkdownPreview>
+            <MarkdownPreview>{reply.content}</MarkdownPreview>
             {showReplyText && (
               <CommentItemParentReplyWrapper>
-                {replies.parent_reply!.content}
+                {reply.parent_reply!.content}
               </CommentItemParentReplyWrapper>
             )}
           </CommentItemContent>
@@ -238,17 +251,29 @@ function CommentRepliesItem({
                 type="link"
                 style={{
                   width: "auto",
+                  color:
+                    voteDirection === undefined
+                      ? "rgb(207, 210, 214)"
+                      : voteDirection === "up"
+                        ? "rgb(244, 130, 37)"
+                        : "rgb(207, 210, 214)",
                 }}
                 onClick={handleVoteUp}
                 icon={<ArrowUpIcon size={16} />}
               ></Button>
               <CommentItemActionItemCounter>
-                {replies.voteUpCount - replies.voteDownCount}
+                {reply.voteUpCount - reply.voteDownCount}
               </CommentItemActionItemCounter>
               <Button
                 type="link"
                 style={{
                   width: "auto",
+                  color:
+                    voteDirection === undefined
+                      ? "rgb(207, 210, 214)"
+                      : voteDirection === "down"
+                        ? "rgb(244, 130, 37)"
+                        : "rgb(207, 210, 214)",
                 }}
                 onClick={handleVoteDown}
                 icon={<ArrowDownIcon size={16} />}
@@ -261,7 +286,7 @@ function CommentRepliesItem({
                   width: "auto",
                 }}
                 onClick={() => {
-                  commentContext?.onShowTextarea(replies.id);
+                  commentContext?.onShowTextarea(reply.id);
                 }}
                 icon={<CommentIcon size={16}></CommentIcon>}
               ></Button>
@@ -270,28 +295,9 @@ function CommentRepliesItem({
           {showTextarea && (
             <CommentTextarea
               onReply={handleReply}
-              placeholder={`回复 ${replies.from_user.name}: `}
+              placeholder={`回复 ${reply.from_user.name}: `}
             ></CommentTextarea>
           )}
-          {/* {replies.sub_reply_count > 2 ? (
-            <SubCommentItemWrapper>
-              <CommentItemLeft style={{ width: "40px" }}></CommentItemLeft>
-              <CommentItemRight>
-                <Button
-                  type="link"
-                  style={{
-                    marginTop: "var(--wick-medium-margin)",
-                    padding: 0,
-                  }}
-                  onClick={() => {
-                    handleGetMoreReply(replies.id);
-                  }}
-                >
-                  查看更多回复
-                </Button>
-              </CommentItemRight>
-            </SubCommentItemWrapper>
-          ) : null} */}
         </CommentItemMain>
       </CommentItemRight>
     </SubCommentItemWrapper>
@@ -300,6 +306,7 @@ function CommentRepliesItem({
 
 export default function CommentItem({
   comment,
+  voteInfo,
   onPublish,
   onReply,
   onVoteUp,
@@ -308,6 +315,17 @@ export default function CommentItem({
   const commentContext = useContext(CommentContext);
   const showTextarea = commentContext?.activeTextarea === comment.id;
   const [page, setPage] = useState(1);
+
+  const voteDirection = useMemo(() => {
+    if (comment.user_interact === undefined) {
+      return undefined;
+    }
+    if (comment.user_interact?.is_vote_up) {
+      return "up";
+    } else if (!comment.user_interact?.is_vote_up) {
+      return "down";
+    }
+  }, [comment.user_interact]);
 
   const handleVoteUp = useCallback(() => {
     onVoteUp && onVoteUp(comment.id, VoteCategoryType.COMMENT);
@@ -356,7 +374,13 @@ export default function CommentItem({
               <Button
                 type="link"
                 style={{
-                  width: "auto",
+                  width: 'auto',
+                  color:
+                    voteDirection === undefined
+                      ? "rgb(207, 210, 214)"
+                      : voteDirection === "up"
+                        ? "rgb(244, 130, 37)"
+                        : "rgb(207, 210, 214)",
                 }}
                 onClick={handleVoteUp}
                 icon={<ArrowUpIcon size={16} />}
@@ -367,7 +391,13 @@ export default function CommentItem({
               <Button
                 type="link"
                 style={{
-                  width: "auto",
+                  width: 'auto',
+                  color:
+                    voteDirection === undefined
+                      ? "rgb(207, 210, 214)"
+                      : voteDirection === "down"
+                        ? "rgb(244, 130, 37)"
+                        : "rgb(207, 210, 214)",
                 }}
                 onClick={handleVoteDown}
                 icon={<ArrowDownIcon size={16} />}
@@ -406,7 +436,7 @@ export default function CommentItem({
                     <CommentRepliesItem
                       key={reply.id}
                       rootCommentId={comment.id}
-                      replies={reply}
+                      reply={reply}
                       onReply={onReply}
                       onVoteUp={onVoteUp}
                       onVoteDown={onVoteDown}

@@ -1,7 +1,9 @@
 import IFromUser from "../IFromUser";
 import IToUser from "../IToUser";
+import IUserInteract from "../IUserInteract";
 import IParentReply from "./IParentReply";
 
+// FIX: 命名问题
 export default interface IReplies {
   id: string;
   content: string;
@@ -14,4 +16,5 @@ export default interface IReplies {
   parent_reply?: IParentReply;
   from_user: IFromUser;
   to_user: IToUser;
+  user_interact?: IUserInteract;
 }

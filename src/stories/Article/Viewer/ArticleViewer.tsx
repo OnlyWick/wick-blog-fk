@@ -7,7 +7,7 @@ import highlight from "@bytemd/plugin-highlight";
 import highlightSSR from "@bytemd/plugin-highlight-ssr";
 import "highlight.js/styles/vs2015.css";
 import "juejin-markdown-themes/dist/vuepress.min.css";
-import IArticle from "@/interfaces/DTO/IArticle";
+import IArticle from "@/interfaces/DTO/Article/IArticle";
 
 const ArticleViewerWrapper = styled.div``;
 

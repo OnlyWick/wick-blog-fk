@@ -11,10 +11,9 @@ import UserWidget from "@/stories/Sidebar/UserWidget";
 import useSWR, { mutate, useSWRConfig } from "swr";
 
 import { produce } from "immer";
-// import ArticleAction from "@/stories/Article/Action/ArticleAction";
 import Response from "@/interfaces/Response";
 import IReturnComments from "@/interfaces/DTO/IReturnComments";
-import IArticle from "@/interfaces/DTO/IArticle";
+import IArticle from "@/interfaces/DTO/Article/IArticle";
 import {
   ChangeEvent,
   FocusEventHandler,
@@ -28,7 +27,6 @@ import {
 } from "@/interfaces/DTO/IVoteCommentOrReply";
 import { VoteArticleType } from "@/interfaces/DTO/IVoteArticle";
 import { EmojiArrayType } from "@/stories/Common/EmojiSelector/EmojiSelector";
-// import ArticleAction from "@/stories/Article/Action/ArticleAction";
 import {
   replyComment,
   publishComment,
@@ -40,6 +38,8 @@ import {
 import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 import IReplies from "@/interfaces/DTO/Comment/IReplies";
 import axios, { AxiosResponse } from "axios";
+import { getArticleDetail } from "@/api/article.api";
+import IReturnArticleDetail from "@/interfaces/DTO/Article/IArticleDetail";
 
 const { Sider, Content } = Layout;
 
@@ -48,7 +48,6 @@ type Data = {
   data: IArticle;
 };
 
-// TODO: 不需要 SSR
 const ArticleAction = dynamic(
   () => import("@/stories/Article/Action/ArticleAction"),
   { ssr: false }
@@ -63,6 +62,13 @@ const ArticleToc = dynamic(() => import("@/stories/Article/Toc/ArticleToc"), {
 });
 
 const LayoutWrapper = styled.div`
+  position: relative;
+  padding-right: 56px;
+
+  @media screen and (max-width: 960px) {
+    padding-right: 0;
+  }
+
   & .ant-layout-sider {
     @media screen and (max-width: 960px) {
       display: none;
@@ -73,6 +79,10 @@ const LayoutWrapper = styled.div`
 const ArticleActionWrapper = styled.div`
   margin: 0 0 0 var(--wick-medium-margin);
   display: none;
+  position: absolute;
+  top: 0;
+  width: 48px;
+  right: 0px;
 
   @media screen and (min-width: 960px) {
     display: flex;
@@ -111,6 +121,7 @@ const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
 export default function Id({ article }: ArticleIdProps) {
   const [comment, setComment] = useState<IReturnComments>();
+  const [articleDetail, setArticleDetail] = useState<IReturnArticleDetail>();
 
   useEffect(() => {
     const handleGetComments = async () => {
@@ -119,6 +130,11 @@ export default function Id({ article }: ArticleIdProps) {
       setComment(result.data.data);
     };
     handleGetComments();
+    const handleGetArticleDetail = async () => {
+      const result = await getArticleDetail(article.id);
+      setArticleDetail(result.data.data);
+    };
+    handleGetArticleDetail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -302,59 +318,62 @@ export default function Id({ article }: ArticleIdProps) {
   );
 
   return (
-    <LayoutWrapper>
-      <Layout
-        hasSider
-        style={{
-          background: "transparent",
-        }}
-      >
-        <Sider
-          width={378}
+    <>
+      <LayoutWrapper>
+        <Layout
+          hasSider
           style={{
-            marginRight: "var(--wick-large-margin)",
             background: "transparent",
           }}
         >
-          <UserWidget></UserWidget>
-          <ArticleTocWrapper
+          <Sider
+            width={378}
             style={{
-              margin: "var(--wick-large-margin) 0 0",
+              marginRight: "var(--wick-large-margin)",
+              background: "transparent",
             }}
           >
-            <Affix offsetTop={24}>
-              <ArticleToc source=".markdown-body"></ArticleToc>
-            </Affix>
-          </ArticleTocWrapper>
-        </Sider>
-        <Content>
-          <ArticleViewer
-            style={{
-              marginBottom: "24px",
-            }}
-            article={article}
-          />
-          <Comment
-            emojiList={emojiList?.data}
-            onPublish={handlePublishComment}
-            onReply={handleReplyComment}
-            onGetMoreComments={handleGetMoreComments}
-            onGetMoreReplies={handleGetMoreReplies}
-            commentData={comment}
-            onVoteUp={handleCommentOrReplyVoteUp}
-            onVoteDown={handleCommentOrReplyVoteDown}
-          ></Comment>
-        </Content>
+            <UserWidget></UserWidget>
+            <ArticleTocWrapper
+              style={{
+                margin: "var(--wick-large-margin) 0 0",
+              }}
+            >
+              <Affix offsetTop={24}>
+                <ArticleToc source=".markdown-body"></ArticleToc>
+              </Affix>
+            </ArticleTocWrapper>
+          </Sider>
+          <Content>
+            <ArticleViewer
+              style={{
+                marginBottom: "24px",
+              }}
+              article={article}
+            />
+            <Comment
+              emojiList={emojiList?.data}
+              onPublish={handlePublishComment}
+              onReply={handleReplyComment}
+              onGetMoreComments={handleGetMoreComments}
+              onGetMoreReplies={handleGetMoreReplies}
+              commentData={comment}
+              onVoteUp={handleCommentOrReplyVoteUp}
+              onVoteDown={handleCommentOrReplyVoteDown}
+            ></Comment>
+          </Content>
+        </Layout>
         <ArticleActionWrapper>
           <Affix offsetTop={24}>
             <ArticleAction
+              voteInfo={articleDetail?.user_interact}
               onVoteUp={handleArticleVoteUp}
               onVoteDown={handleArticleVoteDown}
               voteCount={article.voteUpCount - article.voteDownCount}
             ></ArticleAction>
           </Affix>
         </ArticleActionWrapper>
-      </Layout>
-    </LayoutWrapper>
+      </LayoutWrapper>
+    </>
   );
 }

@@ -14,7 +14,7 @@ type AsyncResponseType<T> = AxiosResponse<Response<T>>;
 
 export const getComments = async (articleId: string) => {
   return await axios({
-    url: `http://192.168.31.86:9396/comment/list`,
+    url: `comment/list`,
     method: "get",
     params: {
       article_id: articleId,
