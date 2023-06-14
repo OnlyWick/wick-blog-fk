@@ -1,7 +1,6 @@
 import { VoteCategoryType } from "@/interfaces/DTO/IVoteCommentOrReply";
 import { axios } from "./base";
-import { AxiosRequestConfig, AxiosResponse } from "axios";
-import { ReplyTypeEnum } from "@/interfaces/DTO/IReplyType";
+import { AxiosRequestConfig } from "axios";
 import { ICreateComment } from "@/interfaces/DTO/Comment/ICreateComment";
 import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 import { IGetMoreReply } from "@/interfaces/DTO/Comment/IGetMoreReply";
@@ -9,8 +8,7 @@ import IReplies from "@/interfaces/DTO/Comment/IReplies";
 import Response from "@/interfaces/Response";
 import IGetMoreComments from "@/interfaces/DTO/Comment/IGetMoreComments";
 import IComments from "@/interfaces/DTO/Comment/IComments";
-
-type AsyncResponseType<T> = AxiosResponse<Response<T>>;
+import { ResponseType } from "./type/ResponseType";
 
 export const getComments = async (articleId: string) => {
   return await axios({
@@ -22,7 +20,10 @@ export const getComments = async (articleId: string) => {
   });
 };
 
-export const publishComment = async (content: string, articleId: string) => {
+export const publishComment = async (
+  content: string,
+  articleId: string
+): Promise<ResponseType<IComments>> => {
   const config: AxiosRequestConfig<ICreateComment> = {
     method: "post",
     url: "/comment/publish",

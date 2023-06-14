@@ -201,7 +201,6 @@ function CommentRepliesItem({
       });
     }
   };
-  console.log(reply, "222222222");
 
   const voteDirection = useMemo(() => {
     if (reply.user_interact === undefined) {
@@ -255,8 +254,8 @@ function CommentRepliesItem({
                     voteDirection === undefined
                       ? "rgb(207, 210, 214)"
                       : voteDirection === "up"
-                        ? "rgb(244, 130, 37)"
-                        : "rgb(207, 210, 214)",
+                      ? "rgb(244, 130, 37)"
+                      : "rgb(207, 210, 214)",
                 }}
                 onClick={handleVoteUp}
                 icon={<ArrowUpIcon size={16} />}
@@ -272,8 +271,8 @@ function CommentRepliesItem({
                     voteDirection === undefined
                       ? "rgb(207, 210, 214)"
                       : voteDirection === "down"
-                        ? "rgb(244, 130, 37)"
-                        : "rgb(207, 210, 214)",
+                      ? "rgb(244, 130, 37)"
+                      : "rgb(207, 210, 214)",
                 }}
                 onClick={handleVoteDown}
                 icon={<ArrowDownIcon size={16} />}
@@ -374,13 +373,13 @@ export default function CommentItem({
               <Button
                 type="link"
                 style={{
-                  width: 'auto',
+                  width: "auto",
                   color:
                     voteDirection === undefined
                       ? "rgb(207, 210, 214)"
                       : voteDirection === "up"
-                        ? "rgb(244, 130, 37)"
-                        : "rgb(207, 210, 214)",
+                      ? "rgb(244, 130, 37)"
+                      : "rgb(207, 210, 214)",
                 }}
                 onClick={handleVoteUp}
                 icon={<ArrowUpIcon size={16} />}
@@ -391,13 +390,13 @@ export default function CommentItem({
               <Button
                 type="link"
                 style={{
-                  width: 'auto',
+                  width: "auto",
                   color:
                     voteDirection === undefined
                       ? "rgb(207, 210, 214)"
                       : voteDirection === "down"
-                        ? "rgb(244, 130, 37)"
-                        : "rgb(207, 210, 214)",
+                      ? "rgb(244, 130, 37)"
+                      : "rgb(207, 210, 214)",
                 }}
                 onClick={handleVoteDown}
                 icon={<ArrowDownIcon size={16} />}

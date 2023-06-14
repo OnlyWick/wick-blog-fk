@@ -48,6 +48,7 @@ const CommentHeaderRight = styled.div`
 interface CommentHeaderProps {
   commentCount?: number;
   value?: string;
+  onLogin?: () => void;
   onPublish?: (content: string) => void;
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
@@ -57,30 +58,10 @@ export default function CommentHeader({
   commentCount,
   value,
   onPublish,
+  onLogin,
   onChange,
   onBlur,
 }: CommentHeaderProps) {
-  const commentContext = useContext(CommentContext);
-
-  const handleLogin = () => {
-    const childWindow = window.open(
-      `${window.location.origin}/oauth/?platform=github`,
-      "_blank",
-      "toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=800, height=600"
-    );
-
-    // 授权页面关闭后后刷新父窗口
-    const timerId = window.setInterval(function () {
-      console.log("关闭", childWindow?.closed);
-      if (!(childWindow && !childWindow.closed)) {
-        window.clearInterval(timerId);
-        setTimeout(function () {
-          window.location.reload();
-        }, 100);
-      }
-    }, 300);
-  };
-
   return (
     <>
       <CommentHeaderWrapper>
@@ -91,7 +72,7 @@ export default function CommentHeader({
               : "暂无评论"}
           </CommentCount>
           <CommentLogin>
-            <Button type="link" onClick={handleLogin}>
+            <Button type="link" onClick={onLogin}>
               登录
             </Button>
           </CommentLogin>

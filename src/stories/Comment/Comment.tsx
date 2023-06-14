@@ -29,6 +29,7 @@ const ReadMoreCommentsWrapper = styled.div`
 interface CommentProps {
   commentData?: IReturnComments;
   value?: string;
+  onLogin?: () => void;
   onEmojiSelect?: (data: string) => void;
   onPublish?: (content: string) => void;
   onReply?: (payload: Omit<ICreateReply, "article_id">) => Promise<boolean>;
@@ -45,6 +46,7 @@ export default function Comment({
   commentData,
   value,
   emojiList,
+  onLogin,
   onEmojiSelect,
   onPublish,
   onReply,
@@ -89,6 +91,7 @@ export default function Comment({
       <CommentWrapper>
         <Card>
           <CommentHeader
+            onLogin={onLogin}
             onPublish={onPublish}
             value={value}
             onChange={onChange}

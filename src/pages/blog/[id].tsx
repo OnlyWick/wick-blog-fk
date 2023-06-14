@@ -17,6 +17,7 @@ import IArticle from "@/interfaces/DTO/Article/IArticle";
 import {
   ChangeEvent,
   FocusEventHandler,
+  createContext,
   useCallback,
   useEffect,
   useState,
@@ -26,7 +27,10 @@ import {
   VoteCommentOrReplyType,
 } from "@/interfaces/DTO/IVoteCommentOrReply";
 import { VoteArticleType } from "@/interfaces/DTO/IVoteArticle";
-import { EmojiArrayType } from "@/stories/Common/EmojiSelector/EmojiSelector";
+import {
+  EmojiArrayType,
+  EmojiType,
+} from "@/stories/Common/EmojiSelector/EmojiSelector";
 import {
   replyComment,
   publishComment,
@@ -38,8 +42,11 @@ import {
 import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 import IReplies from "@/interfaces/DTO/Comment/IReplies";
 import axios, { AxiosResponse } from "axios";
-import { getArticleDetail } from "@/api/article.api";
+import { articleVote, getArticleDetail } from "@/api/article.api";
 import IReturnArticleDetail from "@/interfaces/DTO/Article/IArticleDetail";
+import { getEmoji } from "@/api/emoji.api";
+import { whoAmI } from "@/api/user.api";
+import IUser from "@/interfaces/DTO/IUser";
 
 const { Sider, Content } = Layout;
 
@@ -62,6 +69,7 @@ const ArticleToc = dynamic(() => import("@/stories/Article/Toc/ArticleToc"), {
 });
 
 const LayoutWrapper = styled.div`
+  margin: var(--wick-large-margin) 0 var(--wick-large-margin);
   position: relative;
   padding-right: 56px;
 
@@ -117,10 +125,18 @@ interface ArticleIdProps {
   article: IArticle;
 }
 
-const fetcher = (url: any) => fetch(url).then((r) => r.json());
+const UserContext = createContext<{
+  userData: {
+    id: string;
+    github_home: string;
+    name: string;
+  };
+} | null>(null);
 
 export default function Id({ article }: ArticleIdProps) {
   const [comment, setComment] = useState<IReturnComments>();
+  const [user, setUser] = useState<IUser>();
+  const [emoji, setEmoji] = useState<EmojiArrayType>();
   const [articleDetail, setArticleDetail] = useState<IReturnArticleDetail>();
 
   useEffect(() => {
@@ -136,6 +152,25 @@ export default function Id({ article }: ArticleIdProps) {
     };
     handleGetArticleDetail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const handleGetEmoji = async () => {
+      const response = await getEmoji();
+      const data = response.data;
+      setEmoji(data.data);
+    };
+    handleGetEmoji();
+  }, []);
+
+  useEffect(() => {
+    const handleWhoAmI = async () => {
+      const response = await whoAmI();
+      const data = response.data;
+      setUser(data.data);
+      console.log(data);
+    };
+    handleWhoAmI();
   }, []);
 
   const handleGetMoreComments = async (page: string) => {
@@ -206,67 +241,33 @@ export default function Id({ article }: ArticleIdProps) {
       }
     }
   };
-  const handleArticleVoteUp = useCallback(
-    async (voteId: string) => {
-      try {
-        console.log(voteId);
-        const response = await fetch(`http://localhost:9396/article/vote`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            vote_id: article.id,
-            vote_type: VoteArticleType.UP,
-          }),
-          credentials: "include",
-        });
-        if (response.status == 401) {
-          notification.warning({
-            message: "您没登录呢",
+  const handleArticleVoteUp = useCallback(async () => {
+    try {
+      const response = await articleVote(article.id, VoteArticleType.UP);
+      if (response !== undefined) {
+        const data = response.data;
+        const message = data.message;
+        if (data.success) {
+          notification.success({
+            message,
             placement: "top",
           });
         } else {
-          const data = await response.json();
-          const message = data.message;
-          if (data.success) {
-            notification.success({
-              message,
-              placement: "top",
-            });
-          } else {
-            notification.warning({
-              message,
-              placement: "top",
-            });
-          }
+          notification.warning({
+            message,
+            placement: "top",
+          });
         }
-      } catch (error) {
-        console.log(error);
       }
-    },
-    [article]
-  );
+    } catch (error) {
+      console.log(error);
+    }
+  }, [article]);
   const handleArticleVoteDown = useCallback(async () => {
     try {
-      const response = await fetch(`http://localhost:9396/article/vote`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          vote_id: article.id,
-          vote_type: VoteArticleType.DOWN,
-        }),
-        credentials: "include",
-      });
-      if (response.status == 401) {
-        notification.warning({
-          message: "您没登录呢",
-          placement: "top",
-        });
-      } else {
-        const data = await response.json();
+      const response = await articleVote(article.id, VoteArticleType.DOWN);
+      if (response !== undefined) {
+        const data = response.data;
         const message = data.message;
         if (data.success) {
           notification.success({
@@ -286,13 +287,29 @@ export default function Id({ article }: ArticleIdProps) {
   }, [article]);
 
   const handlePublishComment = async (content: string) => {
-    const response = await publishComment(content, article.id);
-    const data = response.data;
-    if (data.success == true) {
-      notification.success({
-        message: data.message,
-        placement: "top",
-      });
+    try {
+      const response = await publishComment(content, article.id);
+      if (response !== undefined) {
+        const data = response.data;
+        if (response.status === 201) {
+          if (data.data !== undefined) {
+            data.data.user = user!;
+            setComment(
+              produce((draft) => {
+                draft?.data.unshift(data.data!);
+              })
+            );
+            if (data.success == true) {
+              notification.success({
+                message: data.message,
+                placement: "top",
+              });
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
   const handleReplyComment = async (
@@ -312,10 +329,24 @@ export default function Id({ article }: ArticleIdProps) {
     }
     return false;
   };
-  const { data: emojiList } = useSWR<Response<EmojiArrayType>>(
-    `http://localhost:9396/emoji`,
-    fetcher
-  );
+  const handleLogin = () => {
+    const childWindow = window.open(
+      `${window.location.origin}/oauth/?platform=github`,
+      "_blank",
+      "toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, width=800, height=600"
+    );
+
+    // 授权页面关闭后后刷新父窗口
+    const timerId = window.setInterval(function () {
+      console.log("关闭", childWindow?.closed);
+      if (!(childWindow && !childWindow.closed)) {
+        window.clearInterval(timerId);
+        setTimeout(function () {
+          window.location.reload();
+        }, 100);
+      }
+    }, 300);
+  };
 
   return (
     <>
@@ -347,12 +378,13 @@ export default function Id({ article }: ArticleIdProps) {
           <Content>
             <ArticleViewer
               style={{
-                marginBottom: "24px",
+                marginBottom: "var(--wick-large-margin)",
               }}
               article={article}
             />
             <Comment
-              emojiList={emojiList?.data}
+              onLogin={handleLogin}
+              emojiList={emoji}
               onPublish={handlePublishComment}
               onReply={handleReplyComment}
               onGetMoreComments={handleGetMoreComments}
