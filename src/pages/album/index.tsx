@@ -2,7 +2,6 @@
 import Layout from "@/stories/Layout";
 import Content from "@/stories/Layout/Content/Content";
 import Header from "@/stories/Layout/Header/Header";
-import { Segmented } from "antd";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 
@@ -25,23 +24,6 @@ export default function Album() {
             alignItems: "center",
           }}
         >
-          <Segmented
-            size="middle"
-            onChange={(value) => {
-              if (value === "thumbnail") {
-                handleSegmentedChange(value);
-              } else if (value === "detail") {
-                handleSegmentedChange(value);
-              }
-            }}
-            style={{
-              background: "rgb(208 208 208)",
-            }}
-            options={[
-              { label: "缩略", value: "thumbnail" },
-              { label: "详细", value: "detail" },
-            ]}
-          ></Segmented>
         </Header>
         <Content>
           <AlbumItem mode={albumState}></AlbumItem>

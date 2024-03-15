@@ -47,11 +47,13 @@ const footerStyle: React.CSSProperties = {
 export const First: Story = {
   render() {
     return (
-      <Layout>
-        <Header style={headerStyle}>Header</Header>
-        <Content style={contentStyle}>Content</Content>
-        <Footer style={footerStyle}>Footer</Footer>
-      </Layout>
+      <div style={{ height: "1500px" }}>
+        <Layout>
+          <Header style={headerStyle}>Header</Header>
+          <Content style={contentStyle}>Content</Content>
+          <Footer style={footerStyle}>Footer</Footer>
+        </Layout>
+      </div>
     );
   },
 };

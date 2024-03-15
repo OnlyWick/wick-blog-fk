@@ -2,7 +2,7 @@ import IUserInteract from "@/interfaces/DTO/IUserInteract";
 import { ArrowUpIcon, CommentIcon } from "@/stories/Common/icon";
 import ArrowDownIcon from "@/stories/Common/icon/ArrowDownIcon";
 import Share from "@/stories/Common/icon/Share";
-import { Button, Divider, QRCode } from "antd";
+import { Button, Divider } from "@douyinfe/semi-ui";
 import {
   BaseSyntheticEvent,
   useCallback,
@@ -121,8 +121,8 @@ export default function ArticleAction({
               voteDirection === undefined
                 ? "rgb(207, 210, 214)"
                 : voteDirection === "up"
-                ? "rgb(244, 130, 37)"
-                : "rgb(207, 210, 214)",
+                  ? "rgb(244, 130, 37)"
+                  : "rgb(207, 210, 214)",
           }}
           icon={<ArrowUpIcon />}
         ></Button>
@@ -130,15 +130,14 @@ export default function ArticleAction({
       <ArticleActionVoteCount>{voteCount}</ArticleActionVoteCount>
       <ArticleActionItem>
         <Button
-          type="link"
           onClick={handleVoteDown}
           style={{
             color:
               voteDirection === undefined
                 ? "rgb(207, 210, 214)"
                 : voteDirection === "down"
-                ? "rgb(244, 130, 37)"
-                : "rgb(207, 210, 214)",
+                  ? "rgb(244, 130, 37)"
+                  : "rgb(207, 210, 214)",
           }}
           icon={<ArrowDownIcon />}
         ></Button>
@@ -160,7 +159,7 @@ export default function ArticleAction({
             e.stopPropagation();
           }}
         >
-          <QRCode value={href}></QRCode>
+          {/* <QRCode value={href}></QRCode> */}
         </ArticleActionQRCode>
       </ArticleActionItem>
     </ArticleActionWrapper>

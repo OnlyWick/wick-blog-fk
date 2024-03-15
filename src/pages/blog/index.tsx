@@ -1,16 +1,8 @@
-import ArticleFilter from "@/stories/Article/Filter";
-import { MenuIcon } from "@/stories/Common/icon";
-import Layout from "@/stories/Layout";
-import Content from "@/stories/Layout/Content/Content";
-import Header from "@/stories/Layout/Header/Header";
-import Sider from "@/stories/Layout/Sider/Sider";
-import UserWidget from "@/stories/Sidebar/UserWidget";
-import SiteConfig from "@/stories/SiteConfig";
-import { SmileOutlined } from "@ant-design/icons";
-import { Affix, Card, Dropdown, Empty, MenuProps, Segmented } from "antd";
+import TopNav from '@/stories/Nav/TopNav/TopNav';
+import { Card, Empty, Skeleton } from '@douyinfe/semi-ui'
 import dynamic from "next/dynamic";
-import styled from "styled-components";
 import useSWR from "swr";
+import { Pagination } from '@douyinfe/semi-ui';
 
 const ArticleList = dynamic(() => import("@/stories/Article/List/ArticleList"));
 
@@ -20,48 +12,38 @@ const ArticleItem = dynamic(
 
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
+
 export default function Blog() {
   const {
     data: articles,
     error,
     isLoading,
-  } = useSWR("http://192.168.31.86:9396/article", fetcher);
+  } = useSWR("http://localhost:9396/article", fetcher);
+  console.log(articles)
+
+  const placeholder = (
+    <div className='bg-red-500'>
+      <Skeleton.Title style={{ width: 120, marginTop: 10 }} />
+      <Skeleton.Title style={{ width: "100%", marginTop: 10 }} />
+    </div>
+  );
 
   return (
-    <Layout style={{ width: "100%", marginTop: "var(--wick-large-margin)" }}>
-      <Sider
-        style={{
-          marginRight: "var(--wick-large-margin)",
-        }}
-      >
-        <UserWidget
-          style={{
-            marginBottom: "var(--wick-medium-margin)",
-          }}
-        ></UserWidget>
-        <SiteConfig config={{ approve: "FK", copyright: "ok" }}></SiteConfig>
-      </Sider>
-      <Layout>
-        <Header
-          style={{
-            height: "auto",
-            marginBottom: "var(--wick-medium-margin)",
-          }}
-        >
-          <ArticleFilter />
-        </Header>
-        <Content>
-          {!articles ? (
-            <Card loading={true}></Card>
-          ) : articles.data.length === 0 ? (
-            <Card>
-              <Empty description="作者是个废物, 写不出东西? 啊, 作者竟然是我"></Empty>
-            </Card>
-          ) : (
+    <>
+      <div className='m-auto max-w-screen-lg'>
+        {!articles ? (
+          <Card loading={true}></Card>
+        ) : articles.data.length === 0 ? (
+          <Card>
+            <Empty description="作者是个废物, 写不出东西? 啊, 作者竟然是我"></Empty>
+          </Card>
+        ) : (
+          <Skeleton placeholder={placeholder} loading={isLoading}>
             <ArticleList articles={articles.data}></ArticleList>
-          )}
-        </Content>
-      </Layout>
-    </Layout>
+          </Skeleton>
+        )}
+      </div>
+      <Pagination total={30} style={{ marginBottom: 12 }}></Pagination>
+    </>
   );
 }

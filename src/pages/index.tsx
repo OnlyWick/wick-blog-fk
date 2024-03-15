@@ -1,5 +1,5 @@
 import HomeNav from "@/stories/Nav/HomeNav";
-import { Button, Modal } from "antd";
+import TopNav from "@/stories/Nav/TopNav/TopNav";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import styled from "styled-components";

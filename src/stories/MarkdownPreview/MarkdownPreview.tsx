@@ -1,8 +1,9 @@
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
-import { Button } from "antd";
+import markdownit from 'markdown-it'
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { okaidia } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import styled from "styled-components";
+import { Button } from "@douyinfe/semi-ui";
 
 interface MarkdownPreviewProp {
   children: string;
@@ -11,6 +12,7 @@ interface MarkdownPreviewProp {
 const ArticleViewerCode = styled.div`
   position: relative;
 `;
+
 const ArticleViewerCodeAction = styled.div`
   position: absolute;
   right: 0;
@@ -18,16 +20,6 @@ const ArticleViewerCodeAction = styled.div`
   user-select: none;
 
   color: rgb(166, 226, 46);
-
-  & > .ant-btn {
-    color: rgb(166, 226, 46);
-  }
-
-  & > .ant-btn:hover {
-    background-color: transparent;
-    opacity: 0.7;
-    color: rgb(166, 226, 46);
-  }
 `;
 
 export default function MarkdownPreview(config: MarkdownPreviewProp) {
@@ -41,10 +33,13 @@ export default function MarkdownPreview(config: MarkdownPreviewProp) {
               <ArticleViewerCode>
                 <ArticleViewerCodeAction>
                   <span>{match[1]}</span>
-                  <Button type="text" ghost>
+                  <Button>
                     复制代码
                   </Button>
                 </ArticleViewerCodeAction>
+                {/* {
+                  new markdownit().render(String(children))
+                } */}
                 <SyntaxHighlighter
                   {...props}
                   style={okaidia}
@@ -63,7 +58,7 @@ export default function MarkdownPreview(config: MarkdownPreviewProp) {
           },
         }}
       >
-        {config.children}
+        {/* {config.children} */}
       </ReactMarkdown>
     </>
   );

@@ -1,6 +1,5 @@
-import { Avatar, Button, Divider } from "antd";
+import { Avatar, Button } from "@douyinfe/semi-ui";
 import styled from "styled-components";
-import { Input } from "antd";
 import { useCallback, useContext, useEffect, useState } from "react";
 import EmojiIcon from "@/stories/Common/icon/EmojiIcon";
 import EmojiSelector from "@/stories/Common/EmojiSelector/EmojiSelector";
@@ -21,10 +20,6 @@ const CommentHeaderHeader = styled.div`
 `;
 
 const CommentCount = styled.div`
-  font-size: 16px;
-  line-height: 24px;
-  color: #2a2e2e;
-  font-weight: bold;
 `;
 const CommentLogin = styled.div`
   & > .ant-btn {
@@ -66,20 +61,21 @@ export default function CommentHeader({
     <>
       <CommentHeaderWrapper>
         <CommentHeaderHeader>
-          <CommentCount>
+          <div className="text-base text-gray-500 font-bold">
             {Number.isInteger(commentCount) && commentCount !== 0
+
               ? `${commentCount} 条评论`
               : "暂无评论"}
-          </CommentCount>
+          </div>
           <CommentLogin>
-            <Button type="link" onClick={onLogin}>
+            <Button onClick={onLogin}>
               登录
             </Button>
           </CommentLogin>
         </CommentHeaderHeader>
         <CommentHeaderBody>
           <CommentHeaderLeft>
-            <Avatar src="/freddie.jpg" size={52}></Avatar>
+            <Avatar src="/freddie.jpg" ></Avatar>
           </CommentHeaderLeft>
           <CommentHeaderRight>
             <CommentTextarea onPublish={onPublish}></CommentTextarea>

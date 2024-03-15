@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import ArticleItem from "./Item/ArticleItem";
 import styled from "styled-components";
 import Link from "next/link";

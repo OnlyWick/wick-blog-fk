@@ -1,58 +1,46 @@
-import { Card, Divider, Tag } from "antd";
+import { Divider, Icon, Tag } from '@douyinfe/semi-ui'
 import { CSSProperties } from "react";
-import { Viewer } from "@bytemd/react";
 import styled from "styled-components";
-import "bytemd/dist/index.min.css";
-import highlight from "@bytemd/plugin-highlight";
-import highlightSSR from "@bytemd/plugin-highlight-ssr";
-import "highlight.js/styles/vs2015.css";
-import "juejin-markdown-themes/dist/vuepress.min.css";
 import IArticle from "@/interfaces/DTO/Article/IArticle";
-
-const ArticleViewerWrapper = styled.div``;
-
-const ArticleViewerHeader = styled.div``;
-const ArticleViewerBaseInfo = styled.div`
-  color: #bdbdbd;
-`;
-const ArticleViewerTitle = styled.h1`
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 4px;
-`;
-const ArticleViewerBody = styled.div``;
+import dayjs from 'dayjs';
+import ReactMarkdown from 'react-markdown';
+import MarkdownIt from 'markdown-it'
+import Shiki from '@shikijs/markdown-it'
+import { codeToHtml } from 'shiki/index.mjs';
+import IconEye from '@/stories/icon/eye';
 interface ArticleViewerProps {
   article: IArticle;
   style?: CSSProperties;
 }
 
-const plugins = [highlight(), highlightSSR()];
+const md = MarkdownIt()
 
-export default function ArticleViewer({ article, style }: ArticleViewerProps) {
+md.use(await Shiki({
+  themes: {
+    light: 'material-theme-palenight',
+    dark: 'github-dark'
+  }
+}))
+
+export default function ArticleViewer({ article }: ArticleViewerProps) {
   return (
-    <ArticleViewerWrapper style={style}>
-      <Card>
-        <ArticleViewerHeader>
-          <ArticleViewerTitle>{article.title}</ArticleViewerTitle>
-          <ArticleViewerBaseInfo>
-            <span>{article.updatedAt}</span>
-            <Divider type="vertical"></Divider>
-            <span>{article.readCount}</span>
-            <Divider type="vertical"></Divider>
-            {article.tags &&
-              article.tags.map((tag) => {
-                return (
-                  <Tag key={tag.id} color={tag.color ? tag.color : "orange"}>
-                    {tag.name}
-                  </Tag>
-                );
-              })}
-          </ArticleViewerBaseInfo>
-        </ArticleViewerHeader>
-        <ArticleViewerBody>
-          <Viewer plugins={plugins} value={article.content}></Viewer>
-        </ArticleViewerBody>
-      </Card>
-    </ArticleViewerWrapper>
+    <article>
+      <div className='flex items-center gap-2'>
+        <span>{dayjs(article.updatedAt).format("YYYY-MM-DD")}</span>
+        <span className='inline-flex items-center gap-2'><Icon svg={<IconEye />} />{article.readCount}</span>
+        {article.tags.length > 0 &&
+          article.tags.map((tag) => {
+            return (
+              <Tag key={tag.id} color={tag.color ? tag.color : "orange"}>
+                {tag.name}
+              </Tag>
+            );
+          })}
+      </div>
+      <div className='markdown-body' dangerouslySetInnerHTML={{
+        __html: md.render(article.content)
+      }}>
+      </div>
+    </article >
   );
 }

@@ -1,32 +1,17 @@
 import EmojiSelector from "@/stories/Common/EmojiSelector/EmojiSelector";
 import EmojiIcon from "@/stories/Common/icon/EmojiIcon";
-import { Button, Input } from "antd";
+import { Button, Popover, TextArea } from "@douyinfe/semi-ui";
 import {
   ChangeEvent,
   FocusEventHandler,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import styled from "styled-components";
 import { CommentContext } from "../CommentContext";
 import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 
-const { TextArea } = Input;
-
 const CommentActions = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 8px;
-`;
-
-const CommentActionLeft = styled.div`
-  position: relative;
-
-  & > .ant-btn:first-child {
-    padding: 0;
-  }
 `;
 interface EmojiSelectorWrapperProps {
   show?: boolean;
@@ -82,9 +67,9 @@ export function CommentTextarea({
   };
 
   const handleShowEmojiSelector = (event: any) => {
-    event.stopPropagation();
-    setShowEmojiSelector(true);
+    setVisible(!visible)
   };
+
   const handleCloseEmojiSelector = () => {
     setShowEmojiSelector(false);
   };
@@ -112,6 +97,7 @@ export function CommentTextarea({
       curPointPosition
     )}${emoji}${internalValue.slice(curPointPosition)}`;
     SetInternalValue(newValue);
+    setVisible(false)
   };
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -133,48 +119,34 @@ export function CommentTextarea({
       commentContext?.onBlur?.(e);
     }
   };
-
-  useEffect(() => {
-    document.body.addEventListener("click", handleCloseEmojiSelector);
-    return () => {
-      document.body.removeEventListener("click", handleCloseEmojiSelector);
-    };
-  }, [showEmojiSelector]);
+  const [visible, setVisible] = useState(false);
 
   return (
     <>
       <TextArea
-        size={"large"}
         value={internalValue}
-        onChange={handleChange}
-        onBlur={handleBlur}
         placeholder={placeholder ? placeholder : "快来发表一条友善的评论吧"}
-        autoSize
         maxLength={500}
-        showCount={{
-          formatter: (info) => handleFormatter(info),
-        }}
       />
-      <CommentActions>
-        <CommentActionLeft>
-          <Button
-            type="link"
-            icon={<EmojiIcon />}
-            onClick={handleShowEmojiSelector}
-          >
-            表情
-          </Button>
-          <EmojiSelectorWrapper show={showEmojiSelector}>
+      <div className="flex justify-between items-center mt-2">
+        <div>
+          <Popover visible={visible} onClickOutSide={() => setVisible(false)} trigger="custom" content={
             <EmojiSelector
               onEmojiSelect={handleGetEmoji}
               emojiList={
                 commentContext && commentContext.emojiList
                   ? commentContext.emojiList
                   : []
-              }
-            />
-          </EmojiSelectorWrapper>
-        </CommentActionLeft>
+              } />
+          }>
+            <Button
+              icon={<EmojiIcon />}
+              onClick={handleShowEmojiSelector}
+            >
+              表情
+            </Button>
+          </Popover>
+        </div>
         <CommentActionRight>
           {count > 15 && (
             <CommentWordsLeft>剩余 {maxLength - count}</CommentWordsLeft>
@@ -184,7 +156,7 @@ export function CommentTextarea({
           </Button>
           {/* <Button type="primary">发表评论</Button> */}
         </CommentActionRight>
-      </CommentActions>
+      </div>
     </>
   );
 }

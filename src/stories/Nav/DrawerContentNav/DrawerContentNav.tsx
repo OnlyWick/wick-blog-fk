@@ -35,16 +35,7 @@ export default function DrawerContent() {
         </DrawerContentItemMenuList>
       </DrawerContentItem>
       <DrawerContentItem>
-        <DrawerContentItemName>标签</DrawerContentItemName>
-        <DrawerContentItemMenuList>
-          <DrawerContentItemMenuItem>主页</DrawerContentItemMenuItem>
-          <DrawerContentItemMenuItem>博客</DrawerContentItemMenuItem>
-          <DrawerContentItemMenuItem>照片集</DrawerContentItemMenuItem>
-          <DrawerContentItemMenuItem>关于</DrawerContentItemMenuItem>
-        </DrawerContentItemMenuList>
-      </DrawerContentItem>
-      <DrawerContentItem>
-        <DrawerContentItemName>标签</DrawerContentItemName>
+        <DrawerContentItemName>目录</DrawerContentItemName>
         <DrawerContentItemMenuList>
           <DrawerContentItemMenuItem>主页</DrawerContentItemMenuItem>
           <DrawerContentItemMenuItem>博客</DrawerContentItemMenuItem>

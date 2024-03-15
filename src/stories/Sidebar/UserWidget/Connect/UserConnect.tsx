@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button } from "@douyinfe/semi-ui";
 import styled from "styled-components";
 
 const UserConnectWrapper = styled.ul`

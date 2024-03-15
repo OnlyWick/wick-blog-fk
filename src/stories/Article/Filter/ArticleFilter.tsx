@@ -1,6 +1,6 @@
 import { MenuIcon } from "@/stories/Common/icon";
 import Overview from "@/stories/Overview";
-import { Button, Dropdown, Modal, Segmented } from "antd";
+import { Button, Dropdown, Modal } from "@douyinfe/semi-ui";
 import { useCallback, useState } from "react";
 import styled from "styled-components";
 
@@ -43,13 +43,13 @@ export default function ArticleFilter() {
   return (
     <>
       <ArticleFilterWrapper>
-        <Segmented
+        {/* <Segmented
           size="middle"
           style={{
             background: "rgb(208 208 208)",
           }}
           options={["最新", "最热"]}
-        ></Segmented>
+        ></Segmented> */}
 
         <MenuWrapper>
           <Button onClick={showModal} style={{ padding: 0 }} type="link">

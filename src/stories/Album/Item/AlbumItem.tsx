@@ -1,5 +1,3 @@
-import { AlertProps, Button, Divider, Image } from "antd";
-import { useState } from "react";
 import styled from "styled-components";
 
 const AlbumItemWrapper = styled.div`
@@ -113,7 +111,7 @@ interface AlbumItemProps {
 export default function AlbumItem({ mode }: AlbumItemProps) {
   return (
     <AlbumItemWrapper>
-      <AlbumItemLeft>
+      {/* <AlbumItemLeft>
         <AlbumItemTimeline>
           <Divider style={{ margin: "0 0 4px" }} plain>
             4 月
@@ -135,7 +133,7 @@ export default function AlbumItem({ mode }: AlbumItemProps) {
             </AlbumItemImage>
           </Image.PreviewGroup>
         </AlbumItemContent>
-      </AlbumItemLeft>
+      </AlbumItemLeft> */}
     </AlbumItemWrapper>
   );
 }

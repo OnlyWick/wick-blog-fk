@@ -1,12 +1,10 @@
 import styled from "styled-components";
 import CommentHeader from "./Header/CommentHeader";
 import CommentItem from "./Item/CommentItem";
-import { Button, Card } from "antd";
+import { Button, Card } from "@douyinfe/semi-ui";
 import {
   ChangeEvent,
   FocusEventHandler,
-  useContext,
-  useEffect,
   useState,
 } from "react";
 import IReturnComments from "@/interfaces/DTO/IReturnComments";
@@ -15,9 +13,6 @@ import { EmojiArrayType } from "../Common/EmojiSelector/EmojiSelector";
 import { CommentContext } from "./CommentContext";
 import { ICreateReply } from "@/interfaces/DTO/Comment/ICreateReply";
 
-const CommentWrapper = styled.div`
-  width: 100%;
-`;
 const CommentListWrapper = styled.div`
   margin-top: 32px;
 `;
@@ -88,40 +83,38 @@ export default function Comment({
         emojiList: emojiList || [],
       }}
     >
-      <CommentWrapper>
-        <Card>
-          <CommentHeader
-            onLogin={onLogin}
-            onPublish={onPublish}
-            value={value}
-            onChange={onChange}
-            onBlur={onBlur}
-            commentCount={commentData?.total_count}
-          ></CommentHeader>
-          <CommentListWrapper>
-            {Array.isArray(commentData?.data) &&
-              commentData?.data.map((comment) => (
-                <CommentItem
-                  key={comment.id}
-                  comment={comment}
-                  voteInfo={comment.user_interact}
-                  onPublish={onPublish}
-                  onReply={onReply}
-                  onVoteUp={onVoteUp}
-                  onVoteDown={onVoteDown}
-                ></CommentItem>
-              ))}
-          </CommentListWrapper>
-          {commentData &&
-            commentData.comment_count > commentData.data.length && (
-              <ReadMoreCommentsWrapper>
-                <Button onClick={handleGetMoreComments} block type="primary">
-                  查看更多回复
-                </Button>
-              </ReadMoreCommentsWrapper>
-            )}
-        </Card>
-      </CommentWrapper>
+      <div>
+        <CommentHeader
+          onLogin={onLogin}
+          onPublish={onPublish}
+          value={value}
+          onChange={onChange}
+          onBlur={onBlur}
+          commentCount={commentData?.total_count}
+        ></CommentHeader>
+        <CommentListWrapper>
+          {Array.isArray(commentData?.data) &&
+            commentData?.data.map((comment) => (
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                voteInfo={comment.user_interact}
+                onPublish={onPublish}
+                onReply={onReply}
+                onVoteUp={onVoteUp}
+                onVoteDown={onVoteDown}
+              ></CommentItem>
+            ))}
+        </CommentListWrapper>
+        {commentData &&
+          commentData.comment_count > commentData.data.length && (
+            <ReadMoreCommentsWrapper>
+              <Button onClick={handleGetMoreComments} block type="primary">
+                查看更多回复
+              </Button>
+            </ReadMoreCommentsWrapper>
+          )}
+      </div>
     </CommentContext.Provider>
   );
 }

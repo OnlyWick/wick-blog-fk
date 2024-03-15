@@ -1,22 +1,16 @@
 import ArticleViewer from "@/stories/Article/Viewer";
-// import Layout from "@/stories/Layout";
-// import Content from "@/stories/Layout/Content/Content";
-// import Sider from "@/stories/Layout/Sider/Sider";
-import { Affix, Layout, notification } from "antd";
 import { GetServerSidePropsContext } from "next";
 import dynamic from "next/dynamic";
 import styled from "styled-components";
 import ArticleContext, { IArticleContext } from "../../Context/ArticleContext";
 import UserWidget from "@/stories/Sidebar/UserWidget";
-import useSWR, { mutate, useSWRConfig } from "swr";
+import { Anchor, BackTop, Button, Notification } from '@douyinfe/semi-ui';
 
 import { produce } from "immer";
 import Response from "@/interfaces/Response";
 import IReturnComments from "@/interfaces/DTO/IReturnComments";
 import IArticle from "@/interfaces/DTO/Article/IArticle";
 import {
-  ChangeEvent,
-  FocusEventHandler,
   createContext,
   useCallback,
   useEffect,
@@ -29,7 +23,6 @@ import {
 import { VoteArticleType } from "@/interfaces/DTO/IVoteArticle";
 import {
   EmojiArrayType,
-  EmojiType,
 } from "@/stories/Common/EmojiSelector/EmojiSelector";
 import {
   replyComment,
@@ -47,8 +40,8 @@ import IReturnArticleDetail from "@/interfaces/DTO/Article/IArticleDetail";
 import { getEmoji } from "@/api/emoji.api";
 import { whoAmI } from "@/api/user.api";
 import IUser from "@/interfaces/DTO/IUser";
-
-const { Sider, Content } = Layout;
+import TopNav from "@/stories/Nav/TopNav/TopNav";
+import ExternalLink from "@/stories/icon/externalLink";
 
 type Data = {
   id: string;
@@ -69,18 +62,13 @@ const ArticleToc = dynamic(() => import("@/stories/Article/Toc/ArticleToc"), {
 });
 
 const LayoutWrapper = styled.div`
-  margin: var(--wick-large-margin) 0 var(--wick-large-margin);
+  margin: 0 auto;
   position: relative;
-  padding-right: 56px;
+  max-width: 65ch;
+  width: 100%;
 
   @media screen and (max-width: 960px) {
     padding-right: 0;
-  }
-
-  & .ant-layout-sider {
-    @media screen and (max-width: 960px) {
-      display: none;
-    }
   }
 `;
 
@@ -97,7 +85,22 @@ const ArticleActionWrapper = styled.div`
   }
 `;
 
-const ArticleTocWrapper = styled.div``;
+const ArticleTocWrapper = styled.div`
+  position: fixed;
+  left: 0;
+  top: 50px;
+  height: calc(100% - 50px);
+  opacity: 0;
+  transition: all cubic-bezier(0.075, 0.82, 0.165, 1) .7s;
+
+  @media screen and (max-width: 1024px) {
+    display: none;
+  }
+
+  &:hover {
+  opacity: 1;
+  }
+`;
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
@@ -111,6 +114,7 @@ export const getServerSideProps = async (
     };
   }
 
+  console.log(id)
   const res = await fetch(`http://localhost:9396/article/${id}`);
   const articleData: Data = await res.json();
 
@@ -300,9 +304,8 @@ export default function Id({ article }: ArticleIdProps) {
               })
             );
             if (data.success == true) {
-              notification.success({
-                message: data.message,
-                placement: "top",
+              Notification.open({
+                content: data.message,
               });
             }
           }
@@ -321,9 +324,8 @@ export default function Id({ article }: ArticleIdProps) {
     });
     const data = response.data;
     if (data.success == true) {
-      notification.success({
-        message: data.message,
-        placement: "top",
+      Notification.open({
+        content: data.message,
       });
       return true;
     }
@@ -350,62 +352,25 @@ export default function Id({ article }: ArticleIdProps) {
 
   return (
     <>
-      <LayoutWrapper>
-        <Layout
-          hasSider
-          style={{
-            background: "transparent",
-          }}
-        >
-          <Sider
-            width={378}
-            style={{
-              marginRight: "var(--wick-large-margin)",
-              background: "transparent",
-            }}
-          >
-            <UserWidget></UserWidget>
-            <ArticleTocWrapper
-              style={{
-                margin: "var(--wick-large-margin) 0 0",
-              }}
-            >
-              <Affix offsetTop={24}>
-                <ArticleToc source=".markdown-body"></ArticleToc>
-              </Affix>
-            </ArticleTocWrapper>
-          </Sider>
-          <Content>
-            <ArticleViewer
-              style={{
-                marginBottom: "var(--wick-large-margin)",
-              }}
-              article={article}
-            />
-            <Comment
-              onLogin={handleLogin}
-              emojiList={emoji}
-              onPublish={handlePublishComment}
-              onReply={handleReplyComment}
-              onGetMoreComments={handleGetMoreComments}
-              onGetMoreReplies={handleGetMoreReplies}
-              commentData={comment}
-              onVoteUp={handleCommentOrReplyVoteUp}
-              onVoteDown={handleCommentOrReplyVoteDown}
-            ></Comment>
-          </Content>
-        </Layout>
-        <ArticleActionWrapper>
-          <Affix offsetTop={24}>
-            <ArticleAction
-              voteInfo={articleDetail?.user_interact}
-              onVoteUp={handleArticleVoteUp}
-              onVoteDown={handleArticleVoteDown}
-              voteCount={article.voteUpCount - article.voteDownCount}
-            ></ArticleAction>
-          </Affix>
-        </ArticleActionWrapper>
-      </LayoutWrapper>
+      <div className="mt-16 fixed left-0 top-0 z-0 h-full opacity-0 hover:opacity-100 ease-in-out transition-all duration-300">
+        <ArticleToc source=".markdown-body"></ArticleToc>
+      </div>
+      <div className="prose m-auto">
+        <h1>{article.title}</h1>
+        <ArticleViewer article={article} />
+        <Comment
+          onLogin={handleLogin}
+          emojiList={emoji}
+          onPublish={handlePublishComment}
+          onReply={handleReplyComment}
+          onGetMoreComments={handleGetMoreComments}
+          onGetMoreReplies={handleGetMoreReplies}
+          commentData={comment}
+          onVoteUp={handleCommentOrReplyVoteUp}
+          onVoteDown={handleCommentOrReplyVoteDown}
+        ></Comment>
+      </div>
+      <BackTop />
     </>
   );
 }

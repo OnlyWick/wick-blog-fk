@@ -1,10 +1,14 @@
-import { Card } from "antd";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 
-const ArticleCatalogWrapper = styled.ul`
-  padding-left: 4px;
+const TocWrapper = styled.div`
 
+  & > ul {
+    opacity: .85;
+  }
+`;
+
+const ArticleCatalogWrapper = styled.ul`
   & > li {
     font-weight: bold;
   }
@@ -18,32 +22,35 @@ interface ArticleCatalogItemProps {
 }
 
 const ArticleCatalogItem = styled.li<ArticleCatalogItemProps>`
-  font-size: 16px;
-
+max-width: 200px;
+  font-size: .8em;
   text-overflow: ellipsis;
   overflow: hidden;
-  white-space: nowrap;
 
   & > a {
+    text-decoration: none;
     display: inline-block;
-    width: 100%;
     border-left: 4px solid transparent;
     ${(props) =>
-      props.originHref === props.targetHref ||
+    props.originHref === props.targetHref ||
       props.parentHref === props.originHref
-        ? `
+      ? `
       border-left: 4px solid #3eaf7c;
       color: #3eaf7c;
     `
-        : ""};
+      : ""};
     padding: 2px 2px 2px 14px;
   }
+
+  & > a:hover {
+    text-decoration: underline;
+  }
+
 
   & ul > li {
     font-weight: normal;
     padding: 0px 0 4px 16px;
     & a {
-      width: 100%;
       border: none;
     }
   }
@@ -53,18 +60,6 @@ interface ArticleCatalogItemLinkProps {
   href: string;
   targetHref: string;
 }
-
-const ArticleCatalogItemLink = styled.a<ArticleCatalogItemLinkProps>`
-  color: #2c3e50;
-  ${(props) => {
-    // console.log(props.href, 222, props.targetHref, 123);
-    return props.href === props.targetHref
-      ? `
-        color:#3eaf7c;
-    `
-      : "";
-  }};
-`;
 
 type CatalogItem = {
   level: number;
@@ -81,6 +76,7 @@ export default function ArticleToc({ source }: ArticleTocProps) {
   const [level, setLevel] = useState<CatalogItem[]>([]);
   const [activeCatalog, setActiveCatalog] = useState("");
   const [parentCatalog, setParentCatalog] = useState("");
+  const replaceSpaceToHyphen = (str: string) => str.replaceAll(' ', '-')
   // 生成目录数据结构
   useEffect(() => {
     const tempLevel: CatalogItem[] = [];
@@ -100,7 +96,7 @@ export default function ArticleToc({ source }: ArticleTocProps) {
         const level = Number(elem.tagName[1]);
         const item: CatalogItem = {
           level: level,
-          href: `heading${index}-${encodeURI(elem.innerText)}`,
+          href: `${replaceSpaceToHyphen(elem.innerText)}`,
           text: elem.innerText,
         };
 
@@ -127,7 +123,7 @@ export default function ArticleToc({ source }: ArticleTocProps) {
         }
         lastItem = item;
 
-        elem.setAttribute("id", `heading${index}-${encodeURI(elem.innerText)}`);
+        elem.dataset["id"] = `${replaceSpaceToHyphen(elem.innerText)}`;
         return acc;
       }, tempLevel);
     }
@@ -135,11 +131,15 @@ export default function ArticleToc({ source }: ArticleTocProps) {
   }, [viewerRef]);
 
   const handleHashChange = () => {
-    setActiveCatalog(window.location.hash);
+    const hash = decodeURI(window.location.hash);
+    setActiveCatalog(hash);
   };
 
   useEffect(() => {
     window.addEventListener("hashchange", handleHashChange);
+    const hash = decodeURI(window.location.hash);
+    console.log(hash)
+    handleToAnchor(hash.replace("#", ''))
 
     return () => {
       window.removeEventListener("hashchange", handleHashChange);
@@ -159,36 +159,45 @@ export default function ArticleToc({ source }: ArticleTocProps) {
     }
   }, []);
 
+  const handleToAnchor = (id: string) => {
+    const elem = document.querySelector(`[data-id="${id}"]`) as HTMLElement;
+
+    if (elem) {
+      window.scrollTo({
+        top: elem.offsetTop - 56,
+        behavior: "smooth"
+      })
+    }
+  }
+
   const renderItems = (items: CatalogItem[]) => {
     return items.map((item) => {
       return (
-        <ArticleCatalogItem
-          parentHref={`${parentCatalog}`}
-          originHref={`#${item.href}`}
-          isH1={`${item.level === 1}`}
-          targetHref={activeCatalog}
+        <li className={`group text-[.8em]`}
           key={item.href}
           onClick={handleParentActive}
         >
-          <ArticleCatalogItemLink
+          <a
             href={`#${item.href}`}
-            targetHref={activeCatalog}
+            onClick={() => handleToAnchor(item.href)}
+            className={`${activeCatalog === item.href ? "color:#3eaf7c" : ""} ${item.href === activeCatalog ||
+              parentCatalog === item.href ? "text-green-200" : ""} pr-1 py-1 pl-4 inline-block hover:underline`}
           >
             {item.text}
-          </ArticleCatalogItemLink>
+          </a>
           {item.children && (
-            <ArticleCatalogWrapper>
+            <ul className="pl-4">
               {renderItems(item.children)}
-            </ArticleCatalogWrapper>
+            </ul>
           )}
-        </ArticleCatalogItem>
+        </li>
       );
     });
   };
 
   return level.length !== 0 ? (
-    <Card>
-      <ArticleCatalogWrapper>{renderItems(level)}</ArticleCatalogWrapper>
-    </Card>
+    <aside className="h-full w-48">
+      <ul className="pl-4">{renderItems(level)}</ul>
+    </aside>
   ) : null;
 }

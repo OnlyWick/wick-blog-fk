@@ -1,4 +1,4 @@
-import { notification } from "antd";
+import { Notification } from "@douyinfe/semi-ui";
 
 enum ProcessedState {
   Unauthorized = 401,
@@ -15,9 +15,8 @@ export const ErrorHandler = (status: number) => {
 };
 
 const handleUnauthorized = () => {
-  notification.error({
-    message: "您还没有登录!",
-    placement: "top",
+  Notification.open({
+    content: "您还没有登录!",
   });
 };
 

@@ -1,5 +1,6 @@
-import { Card, Tag } from "antd";
+import { Card, Tag } from "@douyinfe/semi-ui";
 import styled from "styled-components";
+import dayjs from 'dayjs'
 
 interface ArticleItemProps {
   article: {
@@ -50,17 +51,16 @@ const ArticleItemContent = styled.div`
 export default function ArticleItem({ article }: ArticleItemProps) {
   return (
     <>
-      <Card hoverable>
+      <Card>
         <ArticleItemHeader>
           <ArticleItemBaseInfo>
-            <ArticleItemUsername>OnlyWick</ArticleItemUsername>
-            <ArticleItemTime>{article.updatedAt}</ArticleItemTime>
+            <ArticleItemTime>{dayjs(article.updatedAt).format('M D')}</ArticleItemTime>
           </ArticleItemBaseInfo>
           <ArticleItemTags>
             {article.tags &&
               article.tags.map((tag) => {
                 return (
-                  <Tag key={tag.id} color={tag.color ? tag.color : "cyan"}>
+                  <Tag key={tag.id}>
                     {tag.name}
                   </Tag>
                 );

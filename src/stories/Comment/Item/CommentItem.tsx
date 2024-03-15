@@ -5,7 +5,7 @@ import { ArrowUpIcon, CommentIcon } from "@/stories/Common/icon";
 import ArrowDownIcon from "@/stories/Common/icon/ArrowDownIcon";
 import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
 // import MarkdownPreview from "@/stories/MarkdownPreview/MarkdownPreview";
-import { Avatar, Button, Typography, Card } from "antd";
+import { Avatar, Button, Typography, Card } from "@douyinfe/semi-ui";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { CommentContext } from "../CommentContext";
@@ -254,8 +254,8 @@ function CommentRepliesItem({
                     voteDirection === undefined
                       ? "rgb(207, 210, 214)"
                       : voteDirection === "up"
-                      ? "rgb(244, 130, 37)"
-                      : "rgb(207, 210, 214)",
+                        ? "rgb(244, 130, 37)"
+                        : "rgb(207, 210, 214)",
                 }}
                 onClick={handleVoteUp}
                 icon={<ArrowUpIcon size={16} />}
@@ -271,8 +271,8 @@ function CommentRepliesItem({
                     voteDirection === undefined
                       ? "rgb(207, 210, 214)"
                       : voteDirection === "down"
-                      ? "rgb(244, 130, 37)"
-                      : "rgb(207, 210, 214)",
+                        ? "rgb(244, 130, 37)"
+                        : "rgb(207, 210, 214)",
                 }}
                 onClick={handleVoteDown}
                 icon={<ArrowDownIcon size={16} />}
@@ -371,15 +371,14 @@ export default function CommentItem({
           <CommentItemActions>
             <CommentItemActionItem>
               <Button
-                type="link"
                 style={{
                   width: "auto",
                   color:
                     voteDirection === undefined
                       ? "rgb(207, 210, 214)"
                       : voteDirection === "up"
-                      ? "rgb(244, 130, 37)"
-                      : "rgb(207, 210, 214)",
+                        ? "rgb(244, 130, 37)"
+                        : "rgb(207, 210, 214)",
                 }}
                 onClick={handleVoteUp}
                 icon={<ArrowUpIcon size={16} />}
@@ -388,15 +387,14 @@ export default function CommentItem({
                 {comment.voteUpCount - comment.voteDownCount}
               </CommentItemActionItemCounter>
               <Button
-                type="link"
                 style={{
                   width: "auto",
                   color:
                     voteDirection === undefined
                       ? "rgb(207, 210, 214)"
                       : voteDirection === "down"
-                      ? "rgb(244, 130, 37)"
-                      : "rgb(207, 210, 214)",
+                        ? "rgb(244, 130, 37)"
+                        : "rgb(207, 210, 214)",
                 }}
                 onClick={handleVoteDown}
                 icon={<ArrowDownIcon size={16} />}
@@ -404,7 +402,6 @@ export default function CommentItem({
             </CommentItemActionItem>
             <CommentItemActionItem>
               <Button
-                type="link"
                 style={{
                   width: "auto",
                 }}

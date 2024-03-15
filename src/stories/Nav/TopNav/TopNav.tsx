@@ -1,18 +1,13 @@
-import { MenuProps, Menu, Drawer, Button } from "antd";
+import { SideSheet, Button, Switch, Icon } from "@douyinfe/semi-ui";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import DrawerContent from "../DrawerContentNav";
+import IconMoon from "@/stories/icon/moon";
+import IconSun from "@/stories/icon/sun";
+import IconMenu from "@/stories/icon/menu";
 
 const TopNavWrapper = styled.div`
-  transition: all 0.35s;
-  display: flex;
-  background-color: var(--wick-bg);
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  height: 100%;
-
   @media screen and (min-width: 769px) {
     padding: 0 50px;
   }
@@ -22,79 +17,82 @@ const TopNavWrapper = styled.div`
   }
 `;
 
-const TopNavIcon = styled.div`
-  font-size: 16px !important;
-  font-weight: bold;
-`;
-
-const TopNavControl = styled.div``;
-
 export default function TopNav() {
-  const [open, setOpen] = useState(false);
-  const showDrawer = () => {
-    setOpen(true);
+  const [mode, setMode] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const change = () => {
+    setVisible(!visible);
   };
 
-  const onClose = () => {
-    setOpen(false);
+  const switchMode = () => {
+    const body = document.body;
+    // document.body.classList.toggle('dark')
+    if (body.hasAttribute('theme-mode')) {
+      body.removeAttribute('theme-mode');
+      body.removeAttribute('data-theme');
+      document.documentElement.classList.remove('dark')
+      setMode(true)
+    } else {
+      body.setAttribute('theme-mode', 'dark');
+      body.dataset.theme = "dark"
+      document.documentElement.classList.add('dark')
+      setMode(false)
+    }
   };
+
+  useEffect(() => {
+    const body = document.body;
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      if (!body.hasAttribute('theme-mode')) {
+        body.setAttribute('theme-mode', 'dark');
+      }
+      body.setAttribute('theme-mode', 'dark');
+      document.documentElement.classList.add('dark')
+      setMode(false)
+    } else {
+      if (body.hasAttribute('theme-mode')) {
+        body.removeAttribute('theme-mode');
+      }
+      document.documentElement.classList.remove('dark')
+      setMode(true)
+    }
+  }, [])
 
   return (
-    <TopNavWrapper>
-      <TopNavIcon>Wick</TopNavIcon>
-      <TopNavControl>
-        <svg
-          viewBox="0 0 1024 1024"
-          version="1.1"
-          xmlns="http://www.w3.org/2000/svg"
-          p-id="5256"
-          width="28"
-          height="28"
-        >
-          <path
-            d="M469.333333 768c-166.4 0-298.666667-132.266667-298.666666-298.666667s132.266667-298.666667 298.666666-298.666666 298.666667 132.266667 298.666667 298.666666-132.266667 298.666667-298.666667 298.666667z m0-85.333333c119.466667 0 213.333333-93.866667 213.333334-213.333334s-93.866667-213.333333-213.333334-213.333333-213.333333 93.866667-213.333333 213.333333 93.866667 213.333333 213.333333 213.333334z m251.733334 0l119.466666 119.466666-59.733333 59.733334-119.466667-119.466667 59.733334-59.733333z"
-            fill="#444444"
-            p-id="5257"
-          ></path>
-        </svg>
-        <Button
-          style={{
-            padding: 0,
-          }}
-          type="link"
-          onClick={showDrawer}
-        >
-          <svg
-            viewBox="0 0 1024 1024"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            p-id="3042"
-            width="28"
-            height="28"
+    <nav className="bg-[--wick-bg] w-full h-12 flex z-10 px-6 items-center justify-between fixed box-border border-b border-solid border-gray-300 dark:border-gray-500">
+      <Link href="/"><Icon svg={"Wick"} onClick={() => void (location.href = "/")} /></Link>
+      <ul className="flex items-center gap-4">
+        <li>
+          <Link href="/blog">博客</Link>
+        </li>
+        <li>
+          <Link href="/catalog">笔记</Link>
+        </li>
+        <li className="flex items-center">
+          <Switch style={{ backgroundColor: "transparent", border: `${mode ? "1px solid rgb(209 213 219)" : "1px solid rgb(107 114 128)"}` }} checkedText={<Icon size="small" style={{ color: "#fff" }} svg={<IconMoon />} />} uncheckedText={<Icon style={{ color: "#ff2323" }} size="small" svg={<IconSun />} />}
+            checked={!mode} onChange={switchMode} />
+        </li>
+        <li>
+          <Button
+            theme="borderless"
+            icon={<IconMenu />}
+            onClick={change}
           >
-            <path
-              d="M170.666667 213.333333h682.666666v85.333334H170.666667V213.333333z m0 512h682.666666v85.333334H170.666667v-85.333334z m0-256h682.666666v85.333334H170.666667v-85.333334z"
-              fill="#444444"
-              p-id="3043"
-            ></path>
-          </svg>
-        </Button>
-      </TopNavControl>
-      <Drawer
-        open={open}
+          </Button>
+        </li>
+      </ul>
+      <SideSheet
+        visible={visible}
         placement="right"
         width={300}
         closable={false}
-        maskStyle={
-          {
-            // background: "rgba(255, 255, 255, 0.65)",
-            // backdropFilter: "saturate(180%) blur(20px)",
-          }
-        }
-        onClose={onClose}
+        maskStyle={{
+          backdropFilter: "saturate(180%) blur(2px)",
+        }}
+        onCancel={change}
       >
         <DrawerContent></DrawerContent>
-      </Drawer>
-    </TopNavWrapper>
+      </SideSheet>
+    </nav>
   );
 }

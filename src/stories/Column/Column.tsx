@@ -1,4 +1,4 @@
-import { Card, Divider } from "antd";
+import { Card, Divider } from "@douyinfe/semi-ui";
 import styled from "styled-components";
 
 const ColumnWrapper = styled.div`

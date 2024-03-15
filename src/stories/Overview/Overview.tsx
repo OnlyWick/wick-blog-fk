@@ -1,4 +1,4 @@
-import { Badge, Card } from "antd";
+import { Badge, Card } from "@douyinfe/semi-ui";
 import styled from "styled-components";
 
 const OverviewWrapper = styled.div`

@@ -1,26 +1,22 @@
-import { Button, Card, Popconfirm } from "antd";
+import { Card, Popconfirm, Button } from '@douyinfe/semi-ui'
 import styled from "styled-components";
 import UserInfo from "./Info/UserInfo";
 import UserConnect from "./Connect";
 import { CSSProperties } from "react";
-
-const UserWidgetWrapper = styled.div``;
 
 interface UserWidgetProps {
   style?: CSSProperties;
 }
 
 export default function UserWidget({ style }: UserWidgetProps) {
+
   return (
-    <UserWidgetWrapper style={style}>
+    <div style={style}>
       <Card>
         <UserInfo />
         <Popconfirm
           title="订阅"
-          description="你还没登录, 是否需要登录?"
-          placement="bottom"
-          okText="确定"
-          cancelText="取消"
+          content="你还没登录, 是否需要登录?"
         >
           <Button
             block
@@ -33,6 +29,6 @@ export default function UserWidget({ style }: UserWidgetProps) {
         </Popconfirm>
         <UserConnect></UserConnect>
       </Card>
-    </UserWidgetWrapper>
+    </div>
   );
 }

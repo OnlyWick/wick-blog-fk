@@ -1,6 +1,5 @@
-import { Avatar, Button } from "antd";
-import { ConfigConsumerProps } from "antd/es/config-provider";
-import Link from "next/link";
+import { Avatar } from "@douyinfe/semi-ui";
+import Image from "next/image";
 import styled from "styled-components";
 
 interface UserInfoProps {
@@ -10,48 +9,11 @@ interface UserInfoProps {
   };
 }
 
-const InfoWrapper = styled.div`
-  text-align: center;
-`;
-
-const AvatarWrapper = styled.div`
-  user-select: none;
-  position: relative;
-  display: inline-block;
-  margin: 0 auto;
-  height: 200px;
-  width: 100%;
-  font-size: 20px;
-
-  .ant-avatar img {
-    transition: all 0.6s;
-  }
-  .ant-avatar img:hover {
-    transform: scale(1.2);
-  }
-`;
-
 const UserName = styled.h1`
-  user-select: none;
-  font-size: 24px;
-  font-weight: bold;
-  margin: 10px 0;
-  line-height: 1.25;
-  background: linear-gradient(315deg, #42d392 25%, #647eff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  /* background:  */
+  /* -webkit-text-fill-color: transparent; */
 `;
 
-const AuthorStatus = styled.div`
-  width: 34px;
-  height: 34px;
-  background-color: #57bd6a;
-  position: absolute;
-  right: 10px;
-  bottom: 0px;
-  border-radius: 50%;
-  border: 6px solid #fff;
-`;
 const Motto = styled.ul`
   color: var(--wick-gray);
   margin: var(--wick-medium-margin) 0;
@@ -87,56 +49,29 @@ const RightFloating = styled.div`
 
 export default function UserInfo({ config }: UserInfoProps) {
   return (
-    <InfoWrapper>
-      <AvatarWrapper>
-        <LeftFloating>
-          🎵
-          <br />
-          <br />
-          🎹
-          <br />
-          <br />
-          🎸
-          <br />
-          <br />
-          🥁
-        </LeftFloating>
-        <Avatar
-          // TODO: Antd SSR BUG
-          // size={{ xs: 48, sm: 64, md: 80, lg: 128, xl: 160, xxl: 200 }}
-          style={{
-            position: "absolute",
-            left: "50%",
-            marginLeft: "-100px",
-            zIndex: 100,
-          }}
-          size={200}
-          draggable={false}
-          src="/freddie.jpg"
-        />
-        <RightFloating>
-          🎤
-          <br />
-          <br />
-          💥
-          <br />
-          <br />
-          🍺
-          <br />
-          <br />
-          🎵
-        </RightFloating>
-        {/* <AuthorStatus /> */}
-      </AvatarWrapper>
-      <UserName>OnlyWick</UserName>
-      <Motto>
-        生活不能没有音乐, 就像西方不能失去耶路撒冷。
-        {config &&
-          config.intro &&
-          config.intro.map((item, index) => {
-            return <li key={index}>{item}</li>;
-          })}
-      </Motto>
-    </InfoWrapper>
+    <div className="w-full">
+      <section className="flex mb-12">
+        <div className="inline-block relative select-none m-auto">
+          <div className="text-[42px] inline-block rotate-[20deg] absolute top-[-12px] right-[54px] z-[1]">
+            👑
+          </div>
+          <Image className="rounded" width={200} height={200} src="/freddie.jpg" alt="" />
+        </div>
+        <section className="flex-1 ml-4">
+          <h1 className="bg-gradient-to-br from-blue-400 to-indigo-700 bg-clip-text text-transparent font-bold select-none text-3xl mb-4">Wick</h1>
+          <Motto>
+            生活不能没有音乐, 就像西方不能失去耶路撒冷。
+          </Motto>
+        </section>
+      </section>
+      <article style={{ margin: "auto" }}>
+        <p>
+          皇后乐队的狂热粉丝, 摇滚无时无刻在粉刷我的灵魂
+        </p>
+        <p>
+          我需要唤醒大多数记忆...
+        </p>
+      </article>
+    </div>
   );
 }
